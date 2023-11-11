@@ -123,11 +123,10 @@ export default {
 					"&:hover": {
 						backgroundImage:
 							"linear-gradient(transparent,transparent 4px,hsl(var(--theme-link)) 4px,hsl(var(--theme-link)))",
-						"@apply font-semibold text-accent": {},
 					},
 				},
 				".title": {
-					"@apply text-2xl font-semibold text-accent": {},
+					"@apply text-2xl font-semibold text-accent-2": {},
 				},
 			});
 		}),
