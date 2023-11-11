@@ -1,7 +1,7 @@
 ---
-title: "Unique tags validation"
+title: "Cookie Clicker Privacy Policy"
 publishDate: "11 November 2023"
-description: "Cookie Clicker privacy policy"
+description: "This page contains the complete Cookie Clicker privacy policy"
 tags: ["blog", "blog", "Blog", "test", "bloG", "Test", "BLOG"]
 ---
 
