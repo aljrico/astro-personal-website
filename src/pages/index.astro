@@ -8,6 +8,34 @@ const MAX_POSTS = 10;
 const allPosts = await getAllPosts();
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
 
+const projects: Array<{ title: string; desc: string; href: string }> = [
+	{
+		title: "Cookie Clicker",
+		desc: "An idle iOS game made with SwiftUI.",
+		href: "#",
+	},
+	{
+		title: "Pizza Clicker",
+		desc: "An idle iOS game made with react-native.",
+		href: "https://apps.apple.com/au/app/idle-pizza-clicker/id1638610470",
+	},
+	{
+		title: "Coffee Galley",
+		desc: "Web App available in the Shopify App Store. Made with Shiny.",
+		href: "https://apps.shopify.com/coffee-merchantr",
+	},
+	{
+		title: "harrypotter",
+		desc: "Data Visualisation R library. Facilitates colouring of graphs using Harry Potter inspired palettes.",
+		href: "https://github.com/aljrico/harrypotter",
+	},
+	{
+		title: "gameofthrones",
+		desc: "Data Visualisation R library. Facilitates colouring of graphs using Game of Thrones inspired palettes.",
+		href: "https://github.com/aljrico/gameofthrones",
+	},
+];
+
 const cactusTech: Array<{ title: string; desc: string; href: string }> = [
 	{
 		title: "Astro",
@@ -71,10 +99,10 @@ const cactusTech: Array<{ title: string; desc: string; href: string }> = [
 		</ul>
 	</section>
 	<section class="mt-16">
-		<h2 class="title mb-4 text-xl">Technologies</h2>
+		<h2 class="title mb-4 text-xl">Projects</h2>
 		<ul class="space-y-4 sm:space-y-2">
 			{
-				cactusTech.map(({ href, title, desc }) => (
+				projects.map(({ href, title, desc }) => (
 					<li>
 						<a
 							href={href}
