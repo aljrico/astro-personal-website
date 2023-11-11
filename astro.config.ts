@@ -1,16 +1,16 @@
+import mdx from "@astrojs/mdx";
+import prefetch from "@astrojs/prefetch";
+import sitemap from "@astrojs/sitemap";
+import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 import fs from "fs";
-import mdx from "@astrojs/mdx";
-import tailwind from "@astrojs/tailwind";
-import sitemap from "@astrojs/sitemap";
-import prefetch from "@astrojs/prefetch";
 import remarkUnwrapImages from "remark-unwrap-images";
 import { remarkReadingTime } from "./src/utils/remark-reading-time";
 
 // https://astro.build/config
 export default defineConfig({
 	// ! Please remember to replace the following site property with your own domain
-	site: "https://astro-cactus.chriswilliams.dev/",
+	site: "https://aljrico.com/",
 	markdown: {
 		remarkPlugins: [remarkUnwrapImages, remarkReadingTime],
 		remarkRehype: { footnoteLabelProperties: { className: [""] } },
