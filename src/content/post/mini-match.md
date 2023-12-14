@@ -1,6 +1,6 @@
 ---
 title: "Mini Match Privacy Policy"
-publishDate: "11 November 2023"
+publishDate: "14 December 2023"
 description: "This page contains the complete Mini Match privacy policy"
 tags: ["blog", "blog", "Blog", "test", "bloG", "Test", "BLOG"]
 ---
