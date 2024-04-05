@@ -48,18 +48,6 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 		<p class="mb-4">Data Scientist / Sowftware Developer</p>
 		<SocialList />
 	</section>
-	<section aria-label="Blog post list" class="mt-16">
-		<h2 class="title mb-4 text-xl">Posts</h2>
-		<ul class="space-y-4 sm:space-y-2">
-			{
-				allPostsByDate.map((p) => (
-					<li class="flex flex-col gap-x-2 sm:flex-row">
-						<PostPreview post={p} />
-					</li>
-				))
-			}
-		</ul>
-	</section>
 	<section class="mt-16">
 		<h2 class="title mb-4 text-xl">Projects</h2>
 		<ul class="space-y-4 sm:space-y-2">
@@ -75,6 +63,18 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 							{title}
 						</a>
 						: <p class="inline-block sm:mt-2">{desc}</p>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+	<section aria-label="Blog post list" class="mt-16">
+		<h2 class="title mb-4 text-xl">Posts</h2>
+		<ul class="space-y-4 sm:space-y-2">
+			{
+				allPostsByDate.map((p) => (
+					<li class="flex flex-col gap-x-2 sm:flex-row">
+						<PostPreview post={p} />
 					</li>
 				))
 			}
