@@ -1,0 +1,80 @@
+---
+import PageLayout from "@/layouts/Base";
+
+const meta = {
+	title: "Cookie Empire",
+	description: "An idle clicker game with no exploitative mechanics. Built with love by one solo developer.",
+};
+
+const features = [
+	"50+ unique buildings with complex synergies",
+	"Offline progress — cookies bake while you sleep",
+	"Farming minigame with crop synergies",
+	"Stock market simulator",
+	"Mine exploration",
+	"Ascension mechanics with powerful prestige boosts",
+	"Descent to hell (yes, really)",
+	"No forced ads. No exploitative mechanics.",
+];
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<h1 class="title mb-2 text-3xl">Cookie Empire</h1>
+		<p class="mb-8 text-gray-500 dark:text-gray-400">Idle Clicker</p>
+
+		<section class="mb-12">
+			<p class="mb-4">Click the Big Cookie. Automate production. Explore the Mines.</p>
+			<p class="mb-4">
+				This is a passion project by one solo developer. A work of love, with no exploitative mechanics and no forced ads.
+			</p>
+			<p class="text-sm italic text-gray-500 dark:text-gray-400">
+				"The economy must grow. Cookies are all we know."
+			</p>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Features</h2>
+			<ul class="list-inside list-disc space-y-1">
+				{features.map((feature) => <li>{feature}</li>)}
+			</ul>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Download</h2>
+			<p class="mb-4">Free on iOS, iPad, Mac (M1+), and Vision Pro.</p>
+			<a
+				href="https://apps.apple.com/app/cookie-empire-idle-clicker/id6471402254"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="cactus-link"
+			>
+				App Store →
+			</a>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Community</h2>
+			<a
+				href="https://discord.gg/thqU7G8hXt"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="cactus-link"
+			>
+				Discord →
+			</a>
+		</section>
+
+		<section>
+			<h2 class="title mb-4 text-xl">Links</h2>
+			<ul class="space-y-2">
+				<li>
+					<a href="/apps/cookie-empire/privacy" class="cactus-link">Privacy Policy</a>
+				</li>
+				<li>
+					<a href="/apps/cookie-empire/support" class="cactus-link">Support</a>
+				</li>
+			</ul>
+		</section>
+	</div>
+</PageLayout>
