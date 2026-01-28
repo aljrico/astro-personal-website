@@ -33,4 +33,14 @@ const post = defineCollection({
 		}),
 });
 
-export const collections = { post };
+const apps = defineCollection({
+	type: "content",
+	schema: () =>
+		z.object({
+			title: z.string(),
+			description: z.string(),
+			app: z.string(),
+		}),
+});
+
+export const collections = { post, apps };

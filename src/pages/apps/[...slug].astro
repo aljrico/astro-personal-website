@@ -1,0 +1,29 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import { getCollection } from "astro:content";
+import PageLayout from "@/layouts/Base";
+
+export const getStaticPaths = (async () => {
+	const appEntries = await getCollection("apps");
+	return appEntries.map((entry) => ({
+		params: { slug: entry.slug },
+		props: { entry },
+	}));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const { title, description, app } = entry.data;
+---
+
+<PageLayout meta={{ title, description }}>
+	<div class="w-full max-w-3xl mx-auto px-4 py-8">
+		<p class="text-sm text-gray-500 dark:text-gray-400 mb-2">{app}</p>
+		<h1 class="text-3xl font-bold mb-8">{title}</h1>
+		<article class="prose prose-sm prose-cactus dark:prose-invert">
+			<Content />
+		</article>
+	</div>
+</PageLayout>

@@ -1,8 +1,7 @@
 ---
-title: "Cookie Empire Support Page"
-publishDate: "18 March 2025"
-description: "This page contains the page support for the game Cookie Empire"
-tags: ["blog", "cookie-empire"]
+title: "Cookie Empire Support"
+description: "Support page for Cookie Empire"
+app: "Cookie Empire"
 ---
 
 Do you have any suggestions or questions? Do not hesitate to contact me! You can do it by using any of the methods below:

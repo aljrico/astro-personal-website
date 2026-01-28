@@ -1,8 +1,7 @@
 ---
 title: "Flama Coach Privacy Policy"
-publishDate: "27 January 2026"
-description: "Privacy Policy for Flama Coach - the gamified app for Spanish public sector exam preparation"
-tags: ["blog", "flama-coach"]
+description: "Privacy Policy for Flama Coach"
+app: "Flama Coach"
 ---
 
 **Last updated: January 27, 2026**
