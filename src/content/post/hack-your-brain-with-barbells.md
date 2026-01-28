@@ -1,6 +1,6 @@
 ---
 title: "Hack Your Brain With Barbells"
-publishDate: "28 January 2025"
+publishDate: "28 January 2026"
 description: "Your brain is mounted on a skeleton. That skeleton has opinions."
 tags: ["fitness", "productivity"]
 ---
