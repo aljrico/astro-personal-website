@@ -29,8 +29,9 @@ export default {
 			},
 			fontFamily: {
 				// Add any custom fonts here
-				sans: [...fontFamily.sans],
+				sans: ['"JetBrains Mono"', ...fontFamily.mono],
 				serif: [...fontFamily.serif],
+				mono: ['"JetBrains Mono"', ...fontFamily.mono],
 			},
 			transitionProperty: {
 				height: "height",
