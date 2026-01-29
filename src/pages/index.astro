@@ -53,16 +53,16 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 		<ul class="space-y-4 sm:space-y-2">
 			{
 				projects.map(({ href, title, desc }) => (
-					<li>
+					<li class="flex flex-col gap-x-2 sm:flex-row">
 						<a
 							href={href}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="cactus-link inline-block"
+							class="cactus-link min-w-[150px]"
 						>
 							{title}
 						</a>
-						: <p class="inline-block sm:mt-2">{desc}</p>
+						<p class="text-gray-500">{desc}</p>
 					</li>
 				))
 			}
