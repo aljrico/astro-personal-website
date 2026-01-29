@@ -1,0 +1,78 @@
+---
+import PageLayout from "@/layouts/Base";
+
+const meta = {
+	title: "CV",
+	description: "Alejandro Rico's CV",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<section class="mb-12">
+			<p class="mb-4">
+				Data and product leader. 7+ years building analytics and experimentation platforms for games and apps.
+			</p>
+			<p class="text-sm text-gray-500">
+				aljrico@gmail.com · Based near Barcelona
+			</p>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Experience</h2>
+			<ul class="space-y-6">
+				<li>
+					<div class="font-semibold">Uplift Games</div>
+					<div class="text-sm text-gray-500">Senior Data Analyst · 2022–present</div>
+					<p class="mt-1">Own all analytics for Roblox's most-visited game (2M peak CCU, 40B+ visits). Set the A/B testing strategy and built pipelines and dashboards from scratch. Led ML efforts for forecasting, economy balancing, and exploit detection. Experimentation and live ops work helped product hit record-breaking CCU.</p>
+				</li>
+				<li>
+					<div class="font-semibold">Mango Solutions</div>
+					<div class="text-sm text-gray-500">Senior Data Scientist · 2019–2022</div>
+					<p class="mt-1">Technical lead for enterprise analytics tools. Spoke at R conferences and ran workshops (Shiny at scale, high-performance R). Client-facing: represented the technical side in sales and scoping.</p>
+				</li>
+				<li>
+					<div class="font-semibold">Supersolid</div>
+					<div class="text-sm text-gray-500">Product Manager & Data Analyst · 2019</div>
+					<p class="mt-1">Hybrid role: owned product strategy and analytics for the flagship game (100k DAU). Reported to CEO, led cross-functional prioritisation, built the A/B testing practice.</p>
+				</li>
+				<li>
+					<div class="font-semibold">Cass Business School</div>
+					<div class="text-sm text-gray-500">Research Scientist · 2018–2019</div>
+					<p class="mt-1">High-performance simulations (R + C++) and ML research applied to stock market prediction.</p>
+				</li>
+				<li>
+					<div class="font-semibold">Socialpoint</div>
+					<div class="text-sm text-gray-500">Junior Data Scientist · 2018</div>
+					<p class="mt-1">A/B test analysis, LTV modelling, and ML for mobile games with 100M+ downloads.</p>
+				</li>
+			</ul>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Education</h2>
+			<ul class="space-y-1 text-sm">
+				<li>MSc Data Science & Mathematical Modelling — UAB</li>
+				<li>MSc Financial Mathematics — UAB</li>
+				<li>BSc Physics — UAB</li>
+				<li>International Certificate in Wealth and Investment Management — CISI</li>
+			</ul>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Side Projects</h2>
+			<ul class="space-y-1">
+				<li><a href="/apps/cookie-empire" class="cactus-link">Cookie Empire</a> — idle game, 100k downloads, solo dev</li>
+				<li><a href="https://www.etoro.com/people/mrknoot" target="_blank" rel="noopener noreferrer" class="cactus-link">eToro</a> — Popular Investor, monthly stock analysis</li>
+				<li><a href="https://github.com/aljrico/harrypotter" target="_blank" rel="noopener noreferrer" class="cactus-link">Open source</a> — R packages on CRAN</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2 class="title mb-4 text-xl">Skills</h2>
+			<p class="text-sm text-gray-500">
+				BigQuery, ClickHouse, Looker · R, Python, Swift, TypeScript · A/B testing, LTV modelling, retention analysis
+			</p>
+		</section>
+	</div>
+</PageLayout>
