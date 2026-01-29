@@ -4,7 +4,7 @@ description: "Privacy Policy for Cookie Empire"
 app: "Cookie Empire"
 ---
 
-Alejandro J Rico built the Cookie Empire app as an Ad Supported app. This SERVICE is provided by Alejandro J Rico at no cost and is intended for use as is.
+Alejandro Rico built the Cookie Empire app as an Ad Supported app. This SERVICE is provided by Alejandro Rico at no cost and is intended for use as is.
 
 This page is used to inform visitors regarding my policies with the collection, use, and disclosure of Personal Information if anyone decided to use my Service.
 
