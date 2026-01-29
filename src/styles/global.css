@@ -3,14 +3,21 @@
 @tailwind utilities;
 
 @layer components {
-	.nav-link {
-		@apply relative;
+	.nav-link,
+	.cactus-link {
+		@apply relative font-semibold transition-colors duration-200;
 	}
-	.nav-link::after {
+	.nav-link:hover,
+	.cactus-link:hover {
+		@apply text-accent;
+	}
+	.nav-link::after,
+	.cactus-link::after {
 		@apply absolute bottom-0 left-0 h-0.5 w-0 rounded-full bg-accent transition-all duration-200;
 		content: "";
 	}
-	.nav-link:hover::after {
+	.nav-link:hover::after,
+	.cactus-link:hover::after {
 		@apply w-full;
 	}
 	.nav-item:not(:first-child)::before {
