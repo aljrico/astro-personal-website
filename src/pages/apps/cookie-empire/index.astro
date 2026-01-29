@@ -1,5 +1,6 @@
 ---
 import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
 
 const meta = {
 	title: "Cookie Empire",
@@ -43,9 +44,10 @@ const features = [
 				href="https://apps.apple.com/app/cookie-empire-idle-clicker/id6471402254"
 				target="_blank"
 				rel="noopener noreferrer"
-				class="cactus-link"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
 			>
-				App Store →
+				<Icon name="fa-brands:apple" class="h-5 w-5" />
+				App Store
 			</a>
 		</section>
 
@@ -55,9 +57,10 @@ const features = [
 				href="https://discord.gg/thqU7G8hXt"
 				target="_blank"
 				rel="noopener noreferrer"
-				class="cactus-link"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
 			>
-				Discord →
+				<Icon name="fa-brands:discord" class="h-5 w-5" />
+				Discord
 			</a>
 		</section>
 
