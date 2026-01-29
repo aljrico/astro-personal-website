@@ -41,11 +41,11 @@ const url = new URL(Astro.request.url);
 	<div class="flex sm:flex-col">
 		<a
 			href="/"
-			class="inline-flex items-center gap-2 hover:opacity-80"
+			class="group/logo inline-flex items-center gap-2 hover:opacity-80"
 			aria-current={url.pathname === "/" ? "page" : false}
 		>
 			<svg
-				class="h-6 w-6"
+				class="h-6 w-6 transition-transform duration-700 group-hover/logo:rotate-[60deg]"
 				aria-hidden="true"
 				focusable="false"
 				xmlns="http://www.w3.org/2000/svg"
