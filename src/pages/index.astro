@@ -56,8 +56,8 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 					<li class="flex flex-col gap-x-2 sm:flex-row">
 						<a
 							href={href}
-							target="_blank"
-							rel="noopener noreferrer"
+							target={href.startsWith("/") ? undefined : "_blank"}
+							rel={href.startsWith("/") ? undefined : "noopener noreferrer"}
 							class="min-w-[150px]"
 						>
 							<span class="cactus-link">{title}</span>
