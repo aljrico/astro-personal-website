@@ -37,5 +37,26 @@ const {
 			<slot />
 		</main>
 		<Footer />
+		<script>
+			const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+			let konamiIndex = 0;
+
+			document.addEventListener('keydown', (e) => {
+				if (e.code === konamiCode[konamiIndex]) {
+					konamiIndex++;
+					if (konamiIndex === konamiCode.length) {
+						konamiIndex = 0;
+						// Load confetti dynamically
+						import('https://cdn.skypack.dev/canvas-confetti').then((module) => {
+							const confetti = module.default;
+							confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+							setTimeout(() => confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } }), 250);
+						});
+					}
+				} else {
+					konamiIndex = 0;
+				}
+			});
+		</script>
 	</body>
 </html>
