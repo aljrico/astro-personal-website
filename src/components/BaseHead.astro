@@ -17,6 +17,9 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
+{/* Preload font */}
+<link rel="preload" href="/fonts/JetBrainsMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
+
 <title>{siteTitle}</title>
 
 {/* Icons / Favicon */}
