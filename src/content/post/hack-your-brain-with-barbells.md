@@ -5,52 +5,26 @@ description: "Your brain is mounted on a skeleton. That skeleton has opinions."
 tags: ["fitness", "productivity"]
 ---
 
-Your brain is mounted on a skeleton. That skeleton has opinions.
+Our brain is mounted on a skeleton. Knowledge workers often how important that is, until our neck, back, or shoulders start complaining, output drops to zero and we start googling physical therapists and ergonomic chairs.
 
-You can optimize productivity all you want. But when your neck, back, or shoulders start complaining, your output drops to zero and your hobby becomes googling physical therapists.
+There's a huge focus on taking care of one's mind that misses the most important piece: the machinery that supports it.
 
-To hack your brain, you have to maintain the body that runs it.
+### Ergonomics is a bandaid
 
-## Ergonomics is a bandaid
+Changing the desk setup feels productive. Sometimes it even helps. But it rarely fixes the real problem: you're weak and you sit too much. Sitting still all day will break your body, doesn't matter how ergonomic your chair is, the height of your table or whether you have feet support.
 
-Changing your desk setup feels productive. Sometimes it helps. But it rarely fixes the real problem: you're weak and you sit too much.
+You have to move. The best posture is your next posture.
 
-The best posture is your next posture. Variation matters more than the perfect chair.
+### Strength as infrastructure
 
-## What lifting actually does
+Running, yoga, walking, all that is good and healthy. But if you sit at a desk for a living, nothing pays off like getting strong. Not fit. Not lean. *Strong*.
 
-It won't upgrade your IQ. But it improves the conditions your brain runs on:
+A weak body accumulates damage from sitting. A strong body tolerates it. The back pain, the stiff neck, the shoulder that clicks — these aren't just aging. They're signs of weakness. You can't cure aging, but you can cure weakness.
 
-- **Sleep**: resistance training improves sleep quality. Better sleep is the most boring and effective brain hack.
-- **Mood**: exercise reduces depressive symptoms. Lifting included.
-- **Pain**: strength training is one of the few things that consistently helps desk-body pain long term.
-- **Longevity**: people who lift live longer than people who don't.
+When you get strong, you don't even notice it directly. It's not just about being more capable of moving furniture around or carrying big bags (although that's a nice perk), but the downstream effects that come with becoming stronger. Sleep improves. Mood stabilises. Any posture is more comfortable. Self-confidence is through the roof. Random aches disappear. Most of your body's friction is gone. And when that friction that was distracting your brain is gone, your brain can focus better.
 
-The theme: strength training reduces friction. Your brain can do its job when your body isn't fighting you.
+The people who stay strong long-term aren't doing anything exciting. They squat, they press, they pull. A handful of compound movements, twice a week, forever. They leave a couple reps in the tank and add weight slowly.
 
-## The program
+That's it. No optimisation. No periodisation rabbit holes. No new program every six weeks.
 
-Five movements. Twice a week. Repeat forever.
-
-**Session A**
-- Back Squat
-- Overhead Press
-- Pull-ups
-- Bulgarian Split Squat
-- Farmer Carries
-
-**Session B**
-- Deadlift
-- Overhead Press
-- Pull-ups
-- Farmer Carries
-
-Leave 2 reps in the tank. Add weight when you complete all reps with good form. That's it.
-
-## Why this works
-
-Compounds train everything in minimal time. Pull-ups build the back you need after hunching over a keyboard. Farmer carries make you hard to break.
-
-Boring is effective. Simple is sustainable.
-
-The goal isn't to become a powerlifter. It's to not feel fragile.
+The goal isn't to become a powerlifter. It's to build a body that doesn't get in the way of your work.
