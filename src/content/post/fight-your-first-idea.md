@@ -1,6 +1,6 @@
 ---
 title: "Fight Your First Idea"
-publishDate: "28 January 2026"
+publishDate: "12 January 2026"
 description: "Most bad thinking doesn't come from a lack of intelligence. It comes from rushed reasoning."
 tags: ["thinking", "habits"]
 ---

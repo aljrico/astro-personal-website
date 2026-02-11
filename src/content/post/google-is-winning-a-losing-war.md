@@ -1,6 +1,6 @@
 ---
 title: "Google Is Winning a Losing War"
-publishDate: "28 January 2026"
+publishDate: "20 January 2026"
 description: "Google is taking AI market share. But the war itself might be destroying what made Search valuable."
 tags: ["ai", "google", "business"]
 ---
