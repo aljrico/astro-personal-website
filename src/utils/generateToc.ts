@@ -15,14 +15,14 @@ function diveChildren(item: TocItem, depth: number): Array<TocItem> {
 
 export function generateToc(headings: ReadonlyArray<MarkdownHeading>) {
 	// this ignores/filters out h1 element(s)
-	const bodyHeadings = [...headings.filter(({ depth }) => depth > 1)];
+	const bodyHeadings = [...headings.filter((h) => h && h.depth > 1)];
 	const toc: Array<TocItem> = [];
 
 	bodyHeadings.forEach((h) => {
 		const heading: TocItem = { ...h, subheadings: [] };
 
-		// add h2 elements into the top level
-		if (heading.depth === 2) {
+		// add h2 elements (or deeper if no h2 exists yet) into the top level
+		if (heading.depth === 2 || toc.length === 0) {
 			toc.push(heading);
 		} else {
 			const lastItemInToc = toc[toc.length - 1]!;
