@@ -35,6 +35,6 @@ The game was dead. And the dream of quitting my job and going full-time on it ju
 
 Some months later, some things have been recovered but most haven't. Numbers are somewhat stable but at a far lower level than what they peaked at. I definitely can't live off this. It has a very small niche of enthusiastic players that keep enjoying it. And it makes enough revenue to buy me a couple of fancy dinners a month. 
 
-I still want to call it a success. It's a side-project that gets me _some_ money, and brings joy to a decent amount of players. And I have learned _a lot_ from it. But it's also somewhat bittersweet. The "what if" thoughts sting me from time to time. And I keep working on it. I keep the _grind_ on. If only to make something I'm proud of.
+I still want to call it a success. It's a side-project that makes _some_ money, and brings joy to a decent amount of players. And I have learned _a lot_ from it. But it's also somewhat bittersweet. The "what if" thoughts sting me from time to time. And I keep working on it. I keep the _grind_ on. If only to make something I'm proud of.
 
 [Cookie Empire is free on the App Store.](https://apps.apple.com/app/cookie-empire-idle-clicker/id6471402254)
