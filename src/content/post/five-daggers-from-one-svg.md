@@ -1,70 +1,38 @@
 ---
 title: "Five Daggers From One SVG"
 publishDate: "14 February 2026"
-description: "How I turned a single icon pack SVG into five color-coded weapon tiers by swapping fills and exporting PNGs from the terminal."
-tags: ["gamedev", "design", "assets"]
+description: "I needed five weapon tiers for my game. I had one SVG and a text editor."
+tags: ["gamedev", "devlog", "cookie-empire"]
 ---
 
-My idle clicker game has a dagger upgrade system. Five tiers: bone, ruby, sapphire, golden, obsidian. I needed five distinct icons. I had one.
+I needed five dagger icons for [Cookie Empire](/apps/cookie-empire). The game has a pickaxe upgrade system with five tiers — bone, ruby, sapphire, golden, obsidian — and each one needed to look distinct. I had one SVG from an icon pack and no desire to open Figma.
 
-![The original bone dagger](/posts/dagger-bone.png)
+<img src="/posts/dagger-bone.png" alt="The original bone dagger" width="128" />
 
-The SVG from the icon pack has seven CSS classes. Three control the blade, two control the hilt, one is the outline, one is an invisible bounding box. That's it. Seven fills to define the whole thing.
+Turns out the SVG is just seven CSS classes. Three fills for the blade, two for the hilt, one outline, one bounding box. So making a ruby dagger is literally changing three hex values in a text editor.
 
 ```css
 .cls-1 { fill: #ffdfb5; }  /* blade main */
 .cls-2 { fill: #f0ba84; }  /* blade shadow */
 .cls-4 { fill: #fff2d4; }  /* blade highlight */
-.cls-3 { fill: #9c3d29; }  /* hilt cross-guard */
-.cls-5 { fill: #d1774b; }  /* hilt wrap */
 ```
 
-To make a ruby dagger, I just needed three new hex values for the blade fills.
+I didn't want to eyeball the colors, so I grabbed them from the ore stones in the same icon pack. Ruby ore uses these deep, saturated reds — `#e62e49`, `#a72d3e`. Plugged those into the blade fills, derived a lighter pink for the highlight, swapped the wooden hilt for slate tones. Looked great immediately.
 
-## Stealing colors from the right place
+<img src="/posts/dagger-ruby.png" alt="Ruby dagger" width="128" />
 
-I didn't want to eyeball the reds. The same icon pack has ore stones — ruby ore, sapphire ore — with colors that already look good at small sizes. So I opened those SVGs and grabbed their fills.
+Then I tried the same thing with sapphire and it looked like shit. Too dark, too muddy. What reads as a rich blue on a big chunky ore polygon becomes an indistinct blob on a thin blade surrounded by black outline. Same hex value, completely different perception. I had to manually crank the brightness way up while keeping saturation high. Took me three attempts to land on something that read as "sapphire" and not "sky blue" or "bruise."
 
-Ruby ore uses `#e62e49` and `#a72d3e`. Deep, saturated, jewel-toned. I mapped those to the blade's main and shadow fills, then derived a lighter `#ff6675` for the highlight.
+<img src="/posts/dagger-sapphire.png" alt="Sapphire dagger" width="128" />
 
-![Ruby dagger](/posts/dagger-ruby.png)
+Golden was a freebie — already existed in the pack, I just swapped the hilt to slate. Done.
 
-For the hilt, I borrowed the slate tones from the crystal dagger variant in the same pack (`#324652` / `#476475`). The cool metal handle against the warm red blade creates a nice contrast.
+<img src="/posts/dagger-golden.png" alt="Golden dagger" width="128" />
 
-## The sapphire problem
+Obsidian was the interesting one. I tried the same formula — dark blade, slate hilt — and it looked terrible. Everything merged together. Dark blade, dark hilt, black outline. No contrast, no readability. So I flipped it. The blade got the slate colors that had been the hilt on every other dagger, and the hilt got stone-grey tones from a coal ore SVG.
 
-I did the same thing with sapphire ore colors (`#0049c7` / `#1778ff`). It looked wrong. Too dark, too muddy at icon size. What reads as a rich blue on a large ore stone becomes an indistinct blob on a tiny dagger blade.
+<img src="/posts/dagger-obsidian.png" alt="Obsidian dagger" width="128" />
 
-I had to manually bump the brightness while keeping saturation high. Ended up at `#2b88ff` / `#0055dd` / `#5cadff` — noticeably brighter than the ore, but still reads as "sapphire" rather than "sky blue."
+It accidentally ended up being the coolest one. Monochromatic, cold, looks carved from a single piece of volcanic rock. It breaks the visual pattern of the other four, which is exactly what a top-tier item should do. I didn't plan that — I just ran out of options and the constraint forced something better than what I would've designed on purpose.
 
-![Sapphire dagger](/posts/dagger-sapphire.png)
-
-Lesson: colors don't transfer 1:1 between shapes. The ore is a big chunky polygon. The blade is a thin sliver surrounded by black outline. Same hex value, completely different perception.
-
-## The freebie
-
-Golden already existed in the pack. I just swapped the hilt from wooden brown to slate. Done.
-
-![Golden dagger](/posts/dagger-golden.png)
-
-## Breaking the pattern on purpose
-
-For obsidian — the top tier — I tried the same formula. Dark blade, slate hilt. It looked terrible. The dark blade merged with the dark hilt and the black outline. No contrast, no readability.
-
-So I flipped it. The blade got the slate colors that had been the hilt on every other dagger. And the hilt got stone-grey tones from a coal ore SVG (`#7b97a6` / `#abc0c9`).
-
-![Obsidian dagger](/posts/dagger-obsidian.png)
-
-The result is a monochromatic, cold weapon that looks carved from a single piece of volcanic rock. It breaks the pattern of the other four daggers, which is exactly what a top-tier item should do.
-
-## The pipeline
-
-The whole process is three steps:
-
-1. Edit CSS fills in the SVG
-2. `rsvg-convert -w 256 -h 256 input.svg -o output.png`
-3. Drop the PNG into an Xcode asset catalog
-
-No Photoshop. No Figma. No manual exporting. Just a text editor and a terminal command.
-
-Five icons, one source file, maybe an hour of iteration. Most of that hour was arguing about whether the sapphire was too dark.
+Five icons, one source file, maybe an hour of work. Most of that hour was arguing with myself about whether the sapphire was too dark.
