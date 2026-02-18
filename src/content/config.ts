@@ -43,4 +43,19 @@ const apps = defineCollection({
 		}),
 });
 
-export const collections = { post, apps };
+const devlog = defineCollection({
+	type: "content",
+	schema: () =>
+		z.object({
+			title: z.string(),
+			description: z.string().min(10).max(200),
+			publishDate: z
+				.string()
+				.or(z.date())
+				.transform((val) => new Date(val)),
+			tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
+			draft: z.boolean().default(false),
+		}),
+});
+
+export const collections = { post, apps, devlog };

@@ -1,0 +1,22 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import DevlogLayout from "@/layouts/DevlogEntry";
+import { getAllDevlogEntries } from "@/utils";
+
+export const getStaticPaths = (async () => {
+	const devlogEntries = await getAllDevlogEntries();
+	return devlogEntries.map((entry) => ({
+		params: { slug: entry.slug },
+		props: { entry },
+	}));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<DevlogLayout entry={entry}>
+	<Content />
+</DevlogLayout>
