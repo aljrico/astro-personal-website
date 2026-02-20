@@ -5,7 +5,7 @@ description: "167 commits, a dungeon crawler, and eldritch lore. What happened a
 tags: ["gamedev", "cookie-empire", "devlog", "programming"]
 ---
 
-After shipping v5.2 of Cookie Empire, I went a bit overboard. What started as a "small addition to Expeditions" turned into 167 commits, a full roguelite minigame, a lore bible, and a custom tree layout algorithm. Here's everything that went in.
+After shipping v5.1 of Cookie Empire, I went a bit overboard. What started as a "small addition to Expeditions" turned into 167 commits, a full roguelite minigame, a lore bible, and a custom tree layout algorithm. Here's everything that went in.
 
 ## The Hollows — A Roguelite Minigame
 The biggest addition by far. A full dungeon exploration system living inside the Expeditions tab.
@@ -45,14 +45,14 @@ Pinch-to-zoom uses a UIScrollView wrapped in UIViewRepresentable. Nodes and line
 ### Lore
 110 lost journal fragments across four depth-scaled tiers. I wrote a full lore bible for this — an eldritch entity at the bottom of the mine, grandma sacrifices, cookie compulsion reframed as communion. The tiers progress from surface unease through growing dread to full cosmic horror.
 
-Probably nobody will read all 110 entries. But the ones they do find should feel like they stumbled onto something real.
+Probably nobody will read all 110 entries. But the ones they do find should feel like they stumbled onto something real. It should feel like a reward.
 
 ## A/B Test: Offline Production
-Ran a deep forensic analysis on the `freeOfflineProduction_v2` test. Initial surface-level conclusion was "free wins" — higher 7-day ARPU, better D7 retention. A second pass poked holes in all of it.
+Ran a deep forensic analysis on the `freeOfflineProduction_v2` test. Initial surface-level conclusion was _so_ good. Higher **ARPDAU**, higher **D7 Retention**, higher **LTV**, just higher everything.
 
-The real finding: control users convert to payers at 2.11% vs 1.34% for free (57% gap). NoAds conversion specifically 3.7x higher in control. Free offline production removes the key monetization trigger — users never see ads, feel no friction, never buy.
+But it was too good to be true. A bunch of whales were nudging the numbers way up. The real finding: control users convert to payers at 2.11% vs 1.34% on the `free` variant. NoAds conversion specifically 3.7x higher in control. Free offline production removes the key monetization trigger — users never see ads, feel no friction, never buy.
 
-Killed the free variant. Replaced the test with a new `offlineProductionDesign_v1` experiment.
+Killed the free variant. But it had a better UI than control, so I replaced the test with one that keeps the new design but the same monetization strategy. We'll see how it goes.
 
 ## Bug Fixes
 - **Tiles Match booster bug:** Boosters were consumed even when their effect failed. Changed the effect signature from `() -> Void` to `() -> Bool` — only decrement on success.
