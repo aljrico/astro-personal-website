@@ -61,7 +61,7 @@ const jsonLd = {
 	<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	<div class="gap-x-10 lg:flex lg:items-start">
 		{!!headings.length && <TOC headings={headings} />}
-		<article class="flex-grow break-words" data-pagefind-body>
+		<article class="flex-grow break-words">
 			<div id="blog-hero"><BlogHero content={post} /></div>
 			<div
 				class="prose prose-sm prose-cactus mt-12 prose-headings:font-serif prose-headings:font-bold prose-headings:text-accent-2 prose-h2:text-2xl prose-h3:text-xl prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-accent prose-headings:before:content-['#'] prose-th:before:content-none"
