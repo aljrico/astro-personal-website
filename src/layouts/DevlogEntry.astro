@@ -18,6 +18,22 @@ const { remarkPluginFrontmatter } = await entry.render();
 const dateTimeOptions: Intl.DateTimeFormatOptions = {
 	month: "long",
 };
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "BlogPosting",
+	headline: title,
+	description,
+	datePublished: publishDate.toISOString(),
+	author: {
+		"@type": "Person",
+		name: "Alejandro Rico",
+		url: "https://aljrico.com",
+	},
+	url: canonicalURL.href,
+	mainEntityOfPage: canonicalURL.href,
+};
 ---
 
 <script>
@@ -39,6 +55,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 </script>
 
 <BaseLayout meta={{ title, description, articleDate }}>
+	<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	<article class="flex-grow break-words" data-pagefind-body>
 		<div id="devlog-hero">
 			<h1 class="title mb-3 sm:mb-1">{title}</h1>

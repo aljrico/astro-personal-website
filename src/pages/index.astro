@@ -43,6 +43,17 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 ---
 
 <PageLayout meta={{ title: "Home" }}>
+	<script type="application/ld+json" set:html={JSON.stringify({
+		"@context": "https://schema.org",
+		"@type": "Person",
+		name: "Alejandro Rico",
+		url: "https://aljrico.com",
+		jobTitle: "Data Lead",
+		description: "Data lead at a gaming studio. Game developer. Based near Barcelona.",
+		sameAs: [
+			"https://github.com/aljrico",
+		],
+	})} />
 	<section>
 		<p class="mb-4">
 			Data lead at a gaming studio. I also like studying companies and the stock market. When I'm not doing either, I make my own games. Based near Barcelona.

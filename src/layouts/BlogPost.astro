@@ -18,6 +18,24 @@ const {
 const socialImage = ogImage ?? `/og-image/${slug}.png`;
 const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString();
 const { headings } = await post.render();
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "BlogPosting",
+	headline: title,
+	description,
+	datePublished: publishDate.toISOString(),
+	...(updatedDate && { dateModified: updatedDate.toISOString() }),
+	author: {
+		"@type": "Person",
+		name: "Alejandro Rico",
+		url: "https://aljrico.com",
+	},
+	image: new URL(socialImage, Astro.site).href,
+	url: canonicalURL.href,
+	mainEntityOfPage: canonicalURL.href,
+};
 ---
 
 <script>
@@ -40,6 +58,7 @@ const { headings } = await post.render();
 </script>
 
 <BaseLayout meta={{ title, description, articleDate, ogImage: socialImage }}>
+	<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	<div class="gap-x-10 lg:flex lg:items-start">
 		{!!headings.length && <TOC headings={headings} />}
 		<article class="flex-grow break-words" data-pagefind-body>

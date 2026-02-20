@@ -1,4 +1,16 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://astro-cactus.chriswilliams.dev/sitemap-index.xml
+User-agent: GPTBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://aljrico.com/sitemap-index.xml
