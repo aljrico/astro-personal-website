@@ -56,16 +56,32 @@ export default {
 				DEFAULT: {
 					css: {
 						a: {
-							"@apply cactus-link no-underline": "",
+							color: "hsl(var(--theme-accent) / 1)",
+							textDecoration: "underline",
+							textDecorationColor: "hsl(var(--theme-accent) / 0.2)",
+							textUnderlineOffset: "3px",
+							textDecorationThickness: "2px",
+							fontWeight: "inherit",
+							transition: "color 0.2s, text-decoration-color 0.2s",
+							"&:hover": {
+								color: "hsl(var(--theme-accent) / 1)",
+								textDecorationColor: "hsl(var(--theme-accent) / 1)",
+							},
 						},
 						strong: {
 							fontWeight: "700",
 						},
 						code: {
-							backgroundColor: "hsl(0 0% 92%)",
+							backgroundColor: "hsl(var(--theme-accent) / 0.15)",
 							padding: "0.15em 0.35em",
 							borderRadius: "4px",
 							fontSize: "1em",
+						},
+						"pre code": {
+							backgroundColor: "transparent",
+							padding: "0",
+							borderRadius: "0",
+							fontWeight: "600",
 						},
 						"code::before": {
 							content: "none",

@@ -89,6 +89,6 @@
 	}
 
 	.dark .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-		background-color: hsl(210deg 6% 20%);
+		background-color: hsl(var(--theme-accent) / 0.2);
 	}
 }
