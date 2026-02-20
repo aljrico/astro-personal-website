@@ -70,7 +70,7 @@ const url = new URL(Astro.request.url);
 					class="fill-accent"
 				/>
 			</svg>
-			<span class="text-xl font-bold sm:text-2xl">Alejandro Rico</span>
+			<span class="font-serif text-xl font-bold sm:text-2xl">Alejandro Rico</span>
 		</a>
 		<nav
 			id="navigation-menu"
@@ -81,7 +81,7 @@ const url = new URL(Astro.request.url);
 				menuLinks.map((link) => (
 					<a
 						href={link.path}
-						class="nav-item relative px-4 py-4 font-semibold sm:py-0"
+						class="nav-item relative px-4 py-4 font-sans font-bold sm:py-0"
 						aria-current={url.pathname === link.path ? "page" : false}
 						rel="prefetch"
 					>
