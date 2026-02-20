@@ -62,8 +62,16 @@ export default {
 							fontWeight: "700",
 						},
 						code: {
-							border: "1px dotted #666",
-							borderRadius: "2px",
+							backgroundColor: "hsl(0 0% 92%)",
+							padding: "0.15em 0.35em",
+							borderRadius: "4px",
+							fontSize: "1em",
+						},
+						"code::before": {
+							content: "none",
+						},
+						"code::after": {
+							content: "none",
 						},
 						blockquote: {
 							borderLeftWidth: "0",
@@ -104,8 +112,8 @@ export default {
 				sm: {
 					css: {
 						code: {
-							fontSize: theme("fontSize.sm")[0],
-							fontWeight: "400",
+							fontSize: "1em",
+							fontWeight: "500",
 						},
 					},
 				},

@@ -16,9 +16,21 @@ You explore a branching tree map shrouded in fog of war, one node at a time. Eac
 The whole thing unlocks from a 5% "Tattered Map" drop on expedition payouts. No fanfare, no tutorial. You find a map, a new tab appears, and you start descending.
 
 ### Combat
-Early on I had a d20-based system, but it didn't feel right — too swingy for a game where death has real consequences. I moved to a ratio-based formula where win probability is `(playerATK + 2) / (playerATK + 2 + monsterDEF)`. Predictable, but still tense.
+Early on I had a d20-based system, but it didn't feel right — too swingy for a game where death has real consequences. I moved to a ratio-based formula where win probability is:
 
-Sanity damage also uses ratios now: `max(1, ceil(100 * (monsterATK - playerDEF) / (monsterATK + 10)))`. This means partial shield coverage actually matters — you don't need to fully outstat a monster to survive the fight.
+```swift
+(playerATK + 2) / (playerATK + 2 + monsterDEF)
+```
+
+Predictable, but still tense.
+
+Sanity damage also uses ratios now:
+
+```swift
+max(1, ceil(100 * (monsterATK - playerDEF) / (monsterATK + 10)))
+```
+
+This means partial shield coverage actually matters — you don't need to fully outstat a monster to survive the fight.
 
 Defeating a monster converts the danger node into a chest. Harder fights drop better treasure. There's a clash flash animation with haptics on engagement, and 12 randomized narration phrases per outcome so it doesn't feel repetitive.
 

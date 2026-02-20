@@ -87,4 +87,8 @@
 	html body {
 		@apply mx-auto flex min-h-screen max-w-3xl flex-col bg-bgColor px-8 pt-16 font-sans text-sm font-normal text-textColor antialiased;
 	}
+
+	.dark .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+		background-color: hsl(210deg 6% 20%);
+	}
 }
