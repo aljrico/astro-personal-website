@@ -58,7 +58,7 @@ const jsonLd = {
 </script>
 
 <BaseLayout meta={{ title, description, articleDate, ogImage: socialImage }}>
-	<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+	<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	<div class="gap-x-10 lg:flex lg:items-start">
 		{!!headings.length && <TOC headings={headings} />}
 		<article class="flex-grow break-words">

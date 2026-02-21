@@ -55,7 +55,7 @@ const jsonLd = {
 </script>
 
 <BaseLayout meta={{ title, description, articleDate }}>
-	<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+	<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	<article class="flex-grow break-words">
 		<div id="devlog-hero">
 			<h1 class="title mb-3 sm:mb-1">{title}</h1>

@@ -43,7 +43,7 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 ---
 
 <PageLayout meta={{ title: "Home" }}>
-	<script type="application/ld+json" set:html={JSON.stringify({
+	<script is:inline type="application/ld+json" set:html={JSON.stringify({
 		"@context": "https://schema.org",
 		"@type": "Person",
 		name: "Alejandro Rico",
