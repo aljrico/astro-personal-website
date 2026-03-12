@@ -4,92 +4,54 @@ description: "Privacy Policy for Flama Coach"
 app: "Flama Coach"
 ---
 
-**Last updated: January 27, 2026**
+*Last updated: March 2026*
 
-## Introduction
+Your privacy matters. This policy explains what data we collect, how we use it, and your rights.
 
-Flama Coach ("we", "our", or "the app") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.
+## Data We Collect
 
-## Information We Collect
+### Study Data
 
-### Account Information
-- Email address (for authentication)
-- Display name (optional)
+- Your answers, accuracy, completed topics, and difficulty progression
+- Study streaks and session history
+- This data is stored **exclusively on your device** using a local SQLite database
 
-### Usage Data
-- Quiz answers and progress
-- Study streaks and XP earned
-- Time spent in the app
-- Feature usage patterns
+### Subscription Data
 
-### Device Information
-- Device type and operating system
-- App version
-- Language preferences
+- Managed entirely by Apple through the App Store
+- We only verify whether you have an active subscription
+- We do not have access to your payment information
 
-## How We Use Your Information
+### Basic Analytics
 
-We use the collected information to:
+- Anonymous, aggregated usage data to improve the app
+- We do not link this data to your personal identity
 
-- Provide and maintain the app's functionality
-- Track your learning progress and sync across devices
-- Power the spaced repetition algorithm to optimize your study sessions
-- Generate personalized recommendations
-- Improve our content and features based on aggregate usage patterns
-- Send important notifications about your study progress (if enabled)
+## Local Storage
 
-## AI Tutor ("Ask Flama")
+All your study progress is stored locally on your device. **We do not send your study data to any external server.** If you uninstall the app, your study data will be permanently deleted.
 
-When you use the AI Tutor feature (premium subscribers only):
-- Your questions are sent to our AI service provider to generate responses
-- We do not store the content of your conversations beyond your current session
-- AI responses include source citations from official legal documents
+## Third Parties
 
-## Data Storage and Security
-
-- Your data is stored securely using Supabase infrastructure
-- Progress data is synced when you're online and stored locally for offline use
-- We use industry-standard encryption for data transmission
-
-## Third-Party Services
-
-We use the following third-party services:
-
-- **Supabase**: Authentication and data storage
-- **RevenueCat**: Subscription management and payment processing
-- **OpenAI**: AI-powered explanations and tutor feature
-- **Analytics**: To understand app usage and improve the experience
-
-These services have their own privacy policies governing how they handle your data.
-
-## Data Retention
-
-- Your account data is retained while your account is active
-- You can request deletion of your account and associated data at any time
-- Anonymized, aggregate data may be retained for analytics purposes
+- **Apple** — subscription and payment management through the App Store
+- **RevenueCat** — subscription status verification (no personal data shared)
 
 ## Your Rights
 
-You have the right to:
-
-- Access your personal data
-- Request correction of inaccurate data
-- Request deletion of your data
-- Export your progress data
-- Opt out of non-essential communications
+- You can delete all your study data by uninstalling the app
+- You can request information about your data at any time
+- For specific requests: **privacitat@flamacoach.com**
 
 ## Children's Privacy
 
 Flama Coach is not intended for children under 16. We do not knowingly collect personal information from children under 16.
 
-## Changes to This Policy
+## Changes
 
-We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy in the app and updating the "Last updated" date.
+We will notify you of any significant changes to this policy through the app. We recommend reviewing it periodically.
 
-## Contact Us
+## Contact
 
-If you have any questions about this Privacy Policy, please contact us:
+For any privacy-related questions:
 
-- [Bluesky](https://bsky.app/profile/aljrico.bsky.social)
-- [GitHub](https://github.com/aljrico)
-- [Twitter](https://twitter.com/aljrico)
+**privacitat@flamacoach.com**

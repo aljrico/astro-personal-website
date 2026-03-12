@@ -1,0 +1,69 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "Flama Coach",
+	description: "Study app for Catalan public service entrance exams. Mossos d'Esquadra, Bombers de Catalunya, and more.",
+};
+
+const features = [
+	"8,800+ questions with source-anchored answers",
+	"Adaptive difficulty progression (5 levels)",
+	"Official exam simulation mode",
+	"Study guides and learning materials",
+	"Fully offline — all data stays on your device",
+	"Streak tracking to build study habits",
+];
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<div class="flex h-20 w-20 items-center justify-center rounded-2xl bg-orange-500 text-4xl">
+				🔥
+			</div>
+			<div>
+				<h1 class="title mb-1 text-3xl">Flama Coach</h1>
+				<p class="text-gray-500 dark:text-gray-400">Oposicions</p>
+			</div>
+		</div>
+
+		<section class="mb-12">
+			<p class="mb-4">
+				A study app for Catalan public service entrance exams (oposicions). Prep for Mossos d'Esquadra, Bombers de Catalunya, and more — with thousands of questions, adaptive drilling, and exam simulations. All offline, all local.
+			</p>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Features</h2>
+			<ul class="list-inside list-disc space-y-1">
+				{features.map((feature) => <li>{feature}</li>)}
+			</ul>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Download</h2>
+			<p class="mb-4">Available on iOS.</p>
+			<a
+				href="#"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor opacity-60 cursor-default"
+			>
+				<Icon name="fa-brands:apple" class="h-5 w-5" />
+				Coming Soon
+			</a>
+		</section>
+
+		<section>
+			<h2 class="title mb-4 text-xl">Links</h2>
+			<ul class="space-y-2">
+				<li>
+					<a href="/apps/flama-coach/privacy" class="cactus-link">Privacy Policy</a>
+				</li>
+				<li>
+					<a href="/apps/flama-coach/support" class="cactus-link">Support</a>
+				</li>
+			</ul>
+		</section>
+	</div>
+</PageLayout>
