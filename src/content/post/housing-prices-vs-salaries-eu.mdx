@@ -8,15 +8,17 @@ draft: false
 
 import MetricFrame from "../../components/MetricFrame.astro";
 
-House prices are usually discussed in nominal terms, which is fine if the point is sticker shock. But affordability lives somewhere closer to the relationship between prices and wages.
+House prices are usually discussed as sticker shock. That misses the more vicious question: did pay keep up?
 
-This chart indexes house prices to 2015 and then adjusts that index by salary growth. Values above 100 mean housing prices rose faster than salaries. Values below 100 mean salaries gained ground.
+This chart treats housing as a race between transaction prices and full-time salaries. I take Eurostat's House Price Index for dwellings bought by households, set 2015 to 100, and divide it by growth in Eurostat's average full-time adjusted salary per employee. A positive value means house prices outran salaries; a negative value means salaries gained ground.
 
 <MetricFrame
 	src="/metrics/housing-prices-vs-salaries-eu/observable_replication.html"
 	title="House prices adjusted by salary growth in the European Union"
 />
 
-The short version: Spain is up around 29% by this measure. Portugal is worse. The Netherlands is not shown because Eurostat does not publish the required harmonised salary series for it in `nama_10_fte`.
+The interesting part is where Spain lands. Its house prices rose about 60% from 2015 to 2024, while the salary measure rose about 24%, leaving Spain roughly 29% above its salary-adjusted 2015 baseline. The EU aggregate is closer to 15%, so Spain is not merely expensive in isolation; it is well ahead of the European average by this measure.
 
-Source pipeline and caveats live in JON under `jon-project/metrics/housing-prices-vs-salaries-eu`.
+Portugal and Ireland are further out. Romania goes the other way, not because the chart broke, but because reported full-time salaries in national currency rose much faster than house prices. The Netherlands is missing because Eurostat does not publish this harmonised salary series for it; Greece is missing because the required HPI series is incomplete under the selected filters.
+
+Source pipeline, formula, and caveats live in [JON](https://github.com/aljrico/jon-project/tree/main/metrics/housing-prices-vs-salaries-eu).
