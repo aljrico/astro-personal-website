@@ -1,0 +1,79 @@
+---
+interface Props {
+	src: string;
+	title: string;
+}
+
+const { src, title } = Astro.props;
+const id = `metric-frame-${src.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")}`;
+---
+
+<iframe
+	id={id}
+	data-metric-frame
+	src={src}
+	title={title}
+	style="display: block; width: 100%; height: 1180px; border: 0; margin: 2rem auto; background: transparent; overflow: hidden;"
+	loading="lazy"
+></iframe>
+
+<script>
+	function resizeMetricFrame(frame: HTMLIFrameElement) {
+		if (!frame?.contentDocument) return;
+
+		const { body, documentElement } = frame.contentDocument;
+		const content = frame.contentDocument.querySelector("main");
+		const contentHeight = content?.getBoundingClientRect().height || 0;
+		const height = Math.ceil(
+			contentHeight ||
+				Math.max(
+					body?.scrollHeight || 0,
+					body?.offsetHeight || 0,
+					documentElement?.scrollHeight || 0,
+					documentElement?.offsetHeight || 0,
+				),
+		);
+
+		if (height > 0) {
+			frame.style.height = `${height}px`;
+		}
+	}
+
+	function setupMetricFrames() {
+		document.querySelectorAll("iframe[data-metric-frame]").forEach((frame) => {
+			if (!(frame instanceof HTMLIFrameElement) || frame.dataset.metricFrameReady) return;
+
+			frame.dataset.metricFrameReady = "true";
+
+			const handleFrameReady = () => {
+				resizeMetricFrame(frame);
+				window.setTimeout(() => resizeMetricFrame(frame), 250);
+				window.setTimeout(() => resizeMetricFrame(frame), 1000);
+
+				try {
+					const doc = frame.contentDocument;
+					if (!doc) return;
+
+					const observer = new ResizeObserver(() => resizeMetricFrame(frame));
+					observer.observe(doc.documentElement);
+					observer.observe(doc.body);
+				} catch {
+					// Same-origin metric embeds can be measured; if that changes, keep the fallback height.
+				}
+			};
+
+			frame.addEventListener("load", handleFrameReady);
+			handleFrameReady();
+
+			window.addEventListener("resize", () => resizeMetricFrame(frame));
+		});
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", setupMetricFrames);
+	} else {
+		setupMetricFrames();
+	}
+
+	document.addEventListener("astro:page-load", setupMetricFrames);
+</script>

@@ -1,0 +1,22 @@
+---
+title: "Housing Prices Beat Salaries"
+publishDate: "11 May 2026"
+description: "A first JON chart tracking how European house prices changed after adjusting for salary growth."
+tags: ["housing", "economics", "data"]
+draft: true
+---
+
+import MetricFrame from "../../components/MetricFrame.astro";
+
+House prices are usually discussed in nominal terms, which is fine if the point is sticker shock. But affordability lives somewhere closer to the relationship between prices and wages.
+
+This chart indexes house prices to 2015 and then adjusts that index by salary growth. Values above 100 mean housing prices rose faster than salaries. Values below 100 mean salaries gained ground.
+
+<MetricFrame
+	src="/metrics/housing-prices-vs-salaries-eu/observable_replication.html"
+	title="House prices adjusted by salary growth in the European Union"
+/>
+
+The short version: Spain is up around 29% by this measure. Portugal is worse. The Netherlands is not shown because Eurostat does not publish the required harmonised salary series for it in `nama_10_fte`.
+
+Source pipeline and caveats live in JON under `jon-project/metrics/housing-prices-vs-salaries-eu`.
