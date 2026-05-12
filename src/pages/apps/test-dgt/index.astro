@@ -1,0 +1,77 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "Test DGT",
+	description:
+		"Spanish driving theory exam practice app for Permiso B, with real exam-style questions, visual scenarios, explanations, and offline study.",
+};
+
+const features = [
+	"Real exam-style questions for the Spanish DGT theory test",
+	"Official simulator format: 30 questions, 30 minutes, up to 3 mistakes",
+	"Visual road scenarios, signs, tunnels, manoeuvres, and vehicle cases",
+	"Clear explanations after each answer",
+	"Guided theory blocks and topic practice",
+	"Progress tracking, streaks, and exam history",
+	"Works offline once installed",
+	"One-time premium pack to remove ads",
+];
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img
+				src="/testDgtIcon.png"
+				alt="Test DGT app icon"
+				class="h-20 w-20 rounded-2xl"
+			/>
+			<div>
+				<h1 class="title mb-1 text-3xl">Test DGT</h1>
+				<p class="text-gray-500 dark:text-gray-400">Permiso B</p>
+			</div>
+		</div>
+
+		<section class="mb-12">
+			<p class="mb-4">
+				A Spanish driving theory exam practice app for Permiso B. Test DGT combines real exam-style questions, visual road situations, guided theory, adaptive practice, and full exam simulations that match the DGT format.
+			</p>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Features</h2>
+			<ul class="list-inside list-disc space-y-1">
+				{features.map((feature) => <li>{feature}</li>)}
+			</ul>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Download</h2>
+			<p class="mb-4">Coming soon on iOS.</p>
+			<a
+				href="#"
+				class="inline-flex cursor-default items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor opacity-60"
+			>
+				<Icon name="fa-brands:apple" class="h-5 w-5" />
+				Coming Soon
+			</a>
+		</section>
+
+		<section>
+			<h2 class="title mb-4 text-xl">Links</h2>
+			<ul class="space-y-2">
+				<li>
+					<a href="/apps/test-dgt/privacy" class="cactus-link">Privacy Policy</a>
+				</li>
+				<li>
+					<a href="/apps/test-dgt/terms" class="cactus-link">Terms of Use</a>
+				</li>
+				<li>
+					<a href="/apps/test-dgt/support" class="cactus-link">Support</a>
+				</li>
+			</ul>
+		</section>
+	</div>
+</PageLayout>
