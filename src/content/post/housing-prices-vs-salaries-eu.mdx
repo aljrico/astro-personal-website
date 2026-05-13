@@ -1,24 +1,34 @@
 ---
-title: "Housing Prices Beat Salaries"
+title: "House Prices Beat Salaries"
 publishDate: "11 May 2026"
-description: "A first JON chart tracking how European house prices changed after adjusting for salary growth."
+description: "A JON chart tracking how European house prices changed after adjusting for salary growth."
 tags: ["housing", "economics", "data"]
 draft: false
 ---
 
 import MetricFrame from "../../components/MetricFrame.astro";
 
-House prices are usually discussed as sticker shock. That misses the more vicious question: did pay keep up?
+House prices are usually discussed as sticker shock. That misses the sharper question: did pay keep up?
 
-This chart treats housing as a race between transaction prices and full-time salaries. I take Eurostat's House Price Index for dwellings bought by households, set 2015 to 100, and divide it by growth in Eurostat's average full-time adjusted salary per employee. A positive value means house prices outran salaries; a negative value means salaries gained ground.
+This chart treats housing as a race between transaction prices and full-time salaries. I take Eurostat's House Price Index for dwellings bought by households, set 2015 to 100, and divide it by growth in Eurostat's average full-time adjusted salary per employee.
+
+The formula is simple: `house price index / salary growth index - 1`. A positive value means house prices outran salaries. A negative value means salaries gained ground.
 
 <MetricFrame
 	src="/metrics/housing-prices-vs-salaries-eu/observable_replication.html"
 	title="House prices adjusted by salary growth in the European Union"
 />
 
-The interesting part is where Spain lands. Its house prices rose about 60% from 2015 to 2024, while the salary measure rose about 24%, leaving Spain roughly 29% above its salary-adjusted 2015 baseline. The EU aggregate is closer to 15%, so Spain is not merely expensive in isolation; it is well ahead of the European average by this measure.
+The interesting part is where Spain lands. Its house prices rose about 60% from 2015 to 2024, while the salary measure rose about 24%, leaving Spain roughly 29% above where it would be if prices had only tracked salaries. The EU aggregate is closer to 15%, so Spain is not merely expensive in isolation; it is well ahead of the European average by this measure.
 
-Portugal and Ireland are further out. Romania goes the other way, not because the chart broke, but because reported full-time salaries in national currency rose much faster than house prices. The Netherlands is missing because Eurostat does not publish this harmonised salary series for it; Greece is missing because the required HPI series is incomplete under the selected filters.
+There is a trap here: 2015 is close to Spain's post-crash housing trough. Same for Portugal and Ireland. That flatters the size of the rebound. Some of the gap is mean reversion from a wrecked market, not a clean new affordability shock.
 
-Source pipeline, formula, and caveats live in [JON](https://github.com/aljrico/jon-project/tree/main/metrics/housing-prices-vs-salaries-eu).
+Still, the direction matters. Spanish nominal salaries barely kept up with consumer inflation over this period, while homes did something else entirely. And the national number probably understates the pain in Madrid, Barcelona, the Balearics, and the places people actually fight to live.
+
+Portugal and Ireland are further out. Romania goes the other way, not because the chart broke, but because reported full-time salaries in national currency rose much faster than house prices in a high-inflation catch-up economy. The Netherlands is missing because Eurostat does not publish this harmonised salary series for it; Greece is missing because the required HPI series is incomplete under the selected filters.
+
+This is not a full affordability index. It uses a mean salary, not a median buyer. It ignores mortgage rates. It ignores taxes, savings, deposits, rents, and household structure. But it captures the first brutal filter: did wages earn their way back into the market?
+
+They mostly did not.
+
+[JON](https://github.com/aljrico/jon-project/tree/main/metrics/housing-prices-vs-salaries-eu), my reproducible chart pipeline, has the source data, formula, and caveats.
