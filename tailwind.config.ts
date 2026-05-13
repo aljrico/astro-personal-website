@@ -4,7 +4,6 @@ import plugin from "tailwindcss/plugin";
 
 export default {
 	content: ["./src/**/*.{astro,html,js,jsx,md,svelte,ts,tsx,vue}"],
-	darkMode: "class",
 	corePlugins: {
 		// disable aspect ratio as per docs -> @tailwindcss/aspect-ratio
 		aspectRatio: false,
@@ -141,7 +140,7 @@ export default {
 		require("@tailwindcss/aspect-ratio"),
 		plugin(function ({ addComponents }) {
 			addComponents({
-								".title": {
+				".title": {
 					"@apply text-3xl font-serif font-bold text-accent-2": {},
 				},
 			});
