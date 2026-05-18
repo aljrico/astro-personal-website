@@ -85,6 +85,6 @@
 	}
 
 	html body {
-		@apply mx-auto flex min-h-screen max-w-3xl flex-col bg-[#F5F5F5] px-8 pt-16 font-sans text-sm font-normal text-textColor antialiased;
+		@apply mx-auto flex min-h-screen max-w-3xl flex-col bg-[#F7F7F4] px-8 pt-16 font-sans text-sm font-normal text-textColor antialiased;
 	}
 }

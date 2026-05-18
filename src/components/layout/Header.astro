@@ -1,5 +1,10 @@
 ---
+import wordmark from "@/assets/alejandro-rico.svg?raw";
+
 const url = new URL(Astro.request.url);
+const animatedWordmark = wordmark
+	.replace("<svg ", '<svg class="wordmark" aria-hidden="true" focusable="false" ')
+	.replaceAll('style="stroke: black; fill: black;"', 'class="wordmark-path"');
 ---
 
 <header
@@ -9,34 +14,114 @@ const url = new URL(Astro.request.url);
 >
 	<a
 		href="/"
-		class="group/logo inline-flex items-center gap-2 hover:opacity-80"
+		class="inline-flex items-center hover:opacity-80"
 		aria-current={url.pathname === "/" ? "page" : false}
 	>
-		<svg
-			class="h-6 w-6 transition-transform duration-700 group-hover/logo:rotate-[60deg]"
-			aria-hidden="true"
-			focusable="false"
-			xmlns="http://www.w3.org/2000/svg"
-			viewBox="0 0 100 100"
-		>
-			<title>Logo</title>
-			<path
-				d="M57 9
-					   L82 24
-					   Q89 28 89 36
-					   L89 64
-					   Q89 72 82 76
-					   L57 91
-					   Q50 95 43 91
-					   L18 76
-					   Q11 72 11 64
-					   L11 36
-					   Q11 28 18 24
-					   L43 9
-					   Q50 5 57 9
-					   Z"
-				class="fill-accent"></path>
-		</svg>
-		<span class="font-serif text-xl font-bold sm:text-2xl">Alejandro Rico</span>
+		<span class="sr-only">Alejandro Rico</span>
+		<span class="block h-8 w-[213px]" set:html={animatedWordmark} />
 	</a>
 </header>
+
+<style>
+	:global(.wordmark) {
+		display: block;
+		height: 100%;
+		width: 100%;
+		overflow: visible;
+	}
+
+	:global(.wordmark-path) {
+		fill: currentColor;
+		stroke: currentColor;
+		opacity: 0;
+		transform: translateY(0.18em);
+		animation: wordmark-reveal 520ms ease-out forwards;
+	}
+
+	:global(.wordmark-path:nth-child(1)) {
+		animation-delay: 20ms;
+	}
+
+	:global(.wordmark-path:nth-child(2)) {
+		animation-delay: 50ms;
+	}
+
+	:global(.wordmark-path:nth-child(3)) {
+		animation-delay: 80ms;
+	}
+
+	:global(.wordmark-path:nth-child(4)) {
+		animation-delay: 110ms;
+	}
+
+	:global(.wordmark-path:nth-child(5)) {
+		animation-delay: 140ms;
+	}
+
+	:global(.wordmark-path:nth-child(6)) {
+		animation-delay: 170ms;
+	}
+
+	:global(.wordmark-path:nth-child(7)) {
+		animation-delay: 200ms;
+	}
+
+	:global(.wordmark-path:nth-child(8)) {
+		animation-delay: 230ms;
+	}
+
+	:global(.wordmark-path:nth-child(9)) {
+		animation-delay: 260ms;
+	}
+
+	:global(.wordmark-path:nth-child(10)) {
+		animation-delay: 290ms;
+	}
+
+	:global(.wordmark-path:nth-child(11)) {
+		animation-delay: 320ms;
+	}
+
+	:global(.wordmark-path:nth-child(12)) {
+		animation-delay: 350ms;
+	}
+
+	:global(.wordmark-path:nth-child(13)) {
+		animation-delay: 380ms;
+	}
+
+	:global(.wordmark-path:nth-child(14)) {
+		animation-delay: 410ms;
+	}
+
+	:global(.wordmark-path:nth-child(15)) {
+		animation-delay: 440ms;
+	}
+
+	:global(.wordmark-path:nth-child(16)) {
+		animation-delay: 470ms;
+	}
+
+	:global(.wordmark-path:nth-child(17)) {
+		animation-delay: 500ms;
+	}
+
+	:global(.wordmark-path:nth-child(18)) {
+		animation-delay: 530ms;
+	}
+
+	@keyframes wordmark-reveal {
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:global(.wordmark-path) {
+			animation: none;
+			opacity: 1;
+			transform: none;
+		}
+	}
+</style>
