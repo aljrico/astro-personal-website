@@ -1,0 +1,64 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "Coffee Galley",
+	description:
+		"A Shiny app for Shopify stores to sell custom-label coffee products, manage catalogue items, and handle fulfilment workflows.",
+};
+
+const features = [
+	"Shopify app built with R and Shiny",
+	"Coffee catalogue with wholesale and retail pricing",
+	"Custom product flow for choosing blends and designing labels",
+	"Label designer with uploaded logos and generated mockups",
+	"Order handling tools for fulfilment workflows",
+	"Stripe payment integration experiments",
+	"Dropbox-backed product and mockup storage",
+];
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img src="/ship_logo.png" alt="Coffee Galley ship icon" class="h-20 w-20 rounded-2xl" />
+			<div>
+				<h1 class="title mb-1 text-3xl">Coffee Galley</h1>
+				<p class="text-gray-500">Shopify App</p>
+			</div>
+		</div>
+
+		<section class="mb-12">
+			<p class="mb-4">
+				Coffee Galley was a Shopify app I built with R and Shiny. The idea was simple: let merchants
+				add custom-label coffee products to their store without dealing with roasting, packaging,
+				labels, or fulfilment by hand.
+			</p>
+			<p>
+				It combined a product catalogue, custom label design, generated mockups, payment plumbing,
+				and order-handling tools into one merchant-facing dashboard. A tiny coffee logistics
+				machine, basically.
+			</p>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="title mb-4 text-xl">Features</h2>
+			<ul class="list-inside list-disc space-y-1">
+				{features.map((feature) => <li>{feature}</li>)}
+			</ul>
+		</section>
+
+		<section>
+			<h2 class="title mb-4 text-xl">Availability</h2>
+			<p class="mb-4">Coffee Galley is no longer available in the Shopify App Store.</p>
+			<a
+				href="#"
+				class="inline-flex cursor-default items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor opacity-60"
+			>
+				<Icon name="fa-brands:shopify" class="h-5 w-5" />
+				 Shopify App Store
+			</a>
+		</section>
+	</div>
+</PageLayout>

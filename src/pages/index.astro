@@ -36,8 +36,8 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 	},
 	{
 		title: "Coffee Galley",
-		desc: "Web App available in the Shopify App Store. Made with Shiny.",
-		href: "https://apps.shopify.com/coffee-merchantr",
+		desc: "A Shiny app for Shopify stores to sell custom-label coffee.",
+		href: "/apps/coffee-galley",
 	},
 	{
 		title: "harrypotter",
@@ -53,23 +53,26 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 ---
 
 <PageLayout meta={{ title: "Home" }}>
-	<script is:inline type="application/ld+json" set:html={JSON.stringify({
-		"@context": "https://schema.org",
-		"@type": "Person",
-		name: "Alejandro Rico",
-		url: "https://aljrico.com",
-		jobTitle: "Data Lead",
-		description: "Data lead at a gaming studio. Game developer. Based near Barcelona.",
-		sameAs: [
-			"https://github.com/aljrico",
-		],
-	})} />
+	<script
+		is:inline
+		type="application/ld+json"
+		set:html={JSON.stringify({
+			"@context": "https://schema.org",
+			"@type": "Person",
+			name: "Alejandro Rico",
+			url: "https://aljrico.com",
+			jobTitle: "Data Lead",
+			description: "Data lead at a gaming studio. Game developer. Based near Barcelona.",
+			sameAs: ["https://github.com/aljrico"],
+		})}
+	/>
 	<section>
 		<p class="mb-4">
-			Data lead at a gaming studio. I also like studying companies and the stock market. When I'm not doing either, I make my own games. Based near Barcelona.
+			Data lead at a gaming studio. I also like studying companies and the stock market. When I'm
+			not doing either, I make my own games. Based near Barcelona.
 		</p>
 	</section>
-	<section class="mt-16">
+	<section class="mt-10 sm:mt-12">
 		<h2 class="title mb-4 text-xl">Projects</h2>
 		<ul class="space-y-4 sm:space-y-2">
 			{
@@ -89,7 +92,7 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 			}
 		</ul>
 	</section>
-	<section aria-label="Blog post list" class="mt-16">
+	<section aria-label="Blog post list" class="mt-10 sm:mt-12">
 		<h2 class="title mb-4 text-xl">Posts</h2>
 		<ul class="space-y-4 sm:space-y-2">
 			{
@@ -101,7 +104,7 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 			}
 		</ul>
 	</section>
-	<section class="mt-16">
+	<section class="mt-10 sm:mt-12">
 		<SocialList />
 	</section>
 </PageLayout>
