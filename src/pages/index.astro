@@ -8,46 +8,54 @@ const MAX_POSTS = 10;
 const allPosts = await getAllPosts();
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
 
-const projects: Array<{ title: string; desc: string; href: string }> = [
+const projects: Array<{ title: string; date: string; href: string; icon: string }> = [
 	{
 		title: "Test DGT",
-		desc: "Spanish driving theory exam practice for Permiso B.",
+		date: "2026",
 		href: "/apps/test-dgt",
+		icon: "/testDgtIcon.png",
 	},
 	{
 		title: "Flama Coach",
-		desc: "Study app for Catalan public service entrance exams.",
+		date: "2026",
 		href: "/apps/flama-coach",
+		icon: "/flamaIcon.png",
 	},
 	{
 		title: "Match Tile: Mini",
-		desc: "A compact tile-matching puzzle game for iOS.",
+		date: "2023",
 		href: "/apps/match-tile-mini",
+		icon: "/miniMatchIcon.png",
 	},
 	{
 		title: "Cookie Empire",
-		desc: "An idle clicker iOS game made with SwiftUI.",
+		date: "2022",
 		href: "/apps/cookie-empire",
+		icon: "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5e/15/4a/5e154ae1-c4c9-0b05-187f-918de949abb3/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-85-220.png/128x128bb.jpg",
 	},
 	{
 		title: "Pizza Clicker",
-		desc: "An idle pizza game for iOS.",
+		date: "2022",
 		href: "/apps/pizza-clicker",
+		icon: "/pizzaClickerIcon.png",
 	},
 	{
 		title: "Coffee Galley",
-		desc: "A Shiny app for Shopify stores to sell custom-label coffee.",
+		date: "2020",
 		href: "/apps/coffee-galley",
-	},
-	{
-		title: "harrypotter",
-		desc: "R colour palettes inspired by Harry Potter.",
-		href: "/apps/harrypotter",
+		icon: "/ship_logo.png",
 	},
 	{
 		title: "gameofthrones",
-		desc: "R colour palettes inspired by Game of Thrones.",
+		date: "2018",
 		href: "/apps/gameofthrones",
+		icon: "/got_logo.png",
+	},
+	{
+		title: "harrypotter",
+		date: "2018",
+		href: "/apps/harrypotter",
+		icon: "/hp_logo.png",
 	},
 ];
 ---
@@ -73,20 +81,31 @@ const projects: Array<{ title: string; desc: string; href: string }> = [
 		</p>
 	</section>
 	<section class="mt-10 sm:mt-12">
-		<h2 class="title mb-4 text-xl">Projects</h2>
-		<ul class="space-y-4 sm:space-y-2">
+		<h2 class="title mb-4 text-xl">Side Projects</h2>
+		<ul class="grid max-w-2xl grid-cols-[repeat(auto-fit,minmax(13.5rem,1fr))] gap-3">
 			{
-				projects.map(({ href, title, desc }) => (
-					<li class="flex flex-col gap-x-2 sm:flex-row">
+				projects.map(({ href, title, date, icon }) => (
+					<li class="group/project relative">
+						<span
+							aria-hidden="true"
+							class="absolute inset-0 rounded-xl bg-textColor/25"
+						/>
 						<a
 							href={href}
 							target={href.startsWith("/") ? undefined : "_blank"}
 							rel={href.startsWith("/") ? undefined : "noopener noreferrer"}
-							class="min-w-[150px]"
+							class="relative z-10 flex -translate-y-0.5 items-center gap-3 overflow-hidden rounded-xl border-2 border-textColor/25 bg-bgColor p-2.5 transition-transform duration-150 active:translate-y-0"
 						>
-							<span class="cactus-link">{title}</span>
+							<span
+								aria-hidden="true"
+								class="pointer-events-none absolute inset-0 bg-accent opacity-0 transition-opacity duration-150 group-hover/project:opacity-[0.05]"
+							/>
+							<img src={icon} alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain" />
+							<span class="relative">
+								<span class="block font-semibold">{title}</span>
+								<span class="block text-gray-500">{date}</span>
+							</span>
 						</a>
-						<p class="text-gray-500">{desc}</p>
 					</li>
 				))
 			}
