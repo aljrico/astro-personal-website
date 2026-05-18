@@ -74,12 +74,13 @@ export default {
 							backgroundColor: "hsl(var(--theme-accent) / 0.15)",
 							padding: "0.15em 0.35em",
 							borderRadius: "4px",
-							fontSize: "1em",
+							fontSize: "0.92em",
 						},
 						"pre code": {
 							backgroundColor: "transparent",
 							padding: "0",
 							borderRadius: "0",
+							fontSize: "1em",
 							fontWeight: "600",
 						},
 						"code::before": {
@@ -127,8 +128,11 @@ export default {
 				sm: {
 					css: {
 						code: {
-							fontSize: "1em",
+							fontSize: "0.92em",
 							fontWeight: "500",
+						},
+						"pre code": {
+							fontSize: "1em",
 						},
 					},
 				},
