@@ -5,19 +5,8 @@ import { Icon } from "astro-icon";
 const meta = {
 	title: "Cookie Empire",
 	description:
-		"An idle clicker game with no exploitative mechanics. Built with love by one solo developer.",
+		"A SwiftUI idle clicker game that grew from a small exercise into a full mobile game with 100k downloads.",
 };
-
-const features = [
-	"50+ unique buildings with complex synergies",
-	"Offline progress — cookies bake while you sleep",
-	"Farming minigame with crop synergies",
-	"Stock market simulator",
-	"Mine exploration",
-	"Ascension mechanics with powerful prestige boosts",
-	"Descent to hell (yes, really)",
-	"No forced ads. No exploitative mechanics.",
-];
 ---
 
 <PageLayout meta={meta}>
@@ -30,29 +19,65 @@ const features = [
 			/>
 			<div>
 				<h1 class="title mb-1 text-3xl">Cookie Empire</h1>
-				<p class="text-gray-500">Idle Clicker</p>
+				<p class="text-gray-500">2022-present</p>
 			</div>
 		</div>
 
-		<section class="mb-12">
+		<section class="mb-8">
 			<p class="mb-4">
-				An idle clicker game I built to learn SwiftUI. It got out of hand and reached 100k
-				downloads. It now spawns 50+ unique buildings, a stock market simulator, a farming minigame,
-				server-verified purchases and achievements, a full-stack analytics pipeline, and a growing
-				Discord community.
+				After getting burned with React Native, I decided to go all-in on native development with
+				SwiftUI. Halfway through the classic <a
+					href="https://www.hackingwithswift.com/100/swiftui"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="project-link">100 Days of SwiftUI</a
+				>, while dumping another to-do app into the world, I started wondering: could I make a game
+				with this? What is the simplest game I can think of?
+			</p>
+			<p class="mb-4">
+				I considered <a
+					href="https://en.wikipedia.org/wiki/Pong"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="project-link">Pong</a
+				>, but the idea of something moving in real time sounded astronomically difficult to younger
+				me. So I decided to make a homage to the great <a
+					href="https://orteil.dashnet.org/cookieclicker/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="project-link">Cookie Clicker</a
+				>. There are a gazillion Cookie Clicker clones on the App Store. Why not one more? At least
+				I could try to make mine tasteful and somewhat original. So I started tinkering with it,
+				falling in love with Swift and agonising over the best shade of brown for the cookie.
+			</p>
+			<p class="mb-4">
+				Some folks started playing it and giving me feedback, so I kept making it better, polishing
+				it and adding new features. What started as a SwiftUI exercise gradually spiralled into a
+				fully-fledged idle mobile game, with proper IAPs and ads, persistence across Apple devices
+				(a nightmare of an implementation), and a complete analytics backend with robust
+				progress-recovery systems.
+			</p>
+			<p class="mb-4">
+				I started shipping updates maniacally. The game ended up with a realistic stock market
+				simulator where players can day-trade with cookie ingredients, a FarmVille-style farming
+				minigame, prestige mechanics with ascension to heaven, a descent to hell, cryptic lore about
+				yokai and Lovecraftian entities, a narrative-based horror mine exploration minigame full of
+				wandering grandmas, and <a href="/apps/match-tile-mini" class="project-link"
+					>a complete tile match-3 minigame that later spun off into its own separate game</a
+				>.
+			</p>
+			<p>
+				The game grew way beyond what I intended, reaching 100k downloads on the App Store and
+				creating a <a
+					href="https://discord.com/invite/thqU7G8hXt"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="project-link">Discord community</a
+				> of nearly 1,000 members.
 			</p>
 		</section>
 
-		<section class="mb-12">
-			<h2 class="title mb-4 text-xl">Features</h2>
-			<ul class="list-inside list-disc space-y-1">
-				{features.map((feature) => <li>{feature}</li>)}
-			</ul>
-		</section>
-
-		<section class="mb-12">
-			<h2 class="title mb-4 text-xl">Download</h2>
-			<p class="mb-4">Free on iOS, iPad, Mac (M1+), and Vision Pro.</p>
+		<div class="mb-12 flex flex-wrap gap-3">
 			<a
 				href="https://apps.apple.com/app/cookie-empire-idle-clicker/id6471402254"
 				target="_blank"
@@ -62,10 +87,6 @@ const features = [
 				<Icon name="fa-brands:apple" class="h-5 w-5" />
 				 App Store
 			</a>
-		</section>
-
-		<section class="mb-12">
-			<h2 class="title mb-4 text-xl">Community</h2>
 			<a
 				href="https://discord.gg/thqU7G8hXt"
 				target="_blank"
@@ -75,16 +96,16 @@ const features = [
 				<Icon name="fa-brands:discord" class="h-5 w-5" />
 				 Discord
 			</a>
-		</section>
+		</div>
 
 		<section>
 			<h2 class="title mb-4 text-xl">Links</h2>
 			<ul class="space-y-2">
 				<li>
-					<a href="/apps/cookie-empire/privacy" class="cactus-link">Privacy Policy</a>
+					<a href="/apps/cookie-empire/privacy" class="project-link">Privacy Policy</a>
 				</li>
 				<li>
-					<a href="/apps/cookie-empire/support" class="cactus-link">Support</a>
+					<a href="/apps/cookie-empire/support" class="project-link">Support</a>
 				</li>
 			</ul>
 		</section>

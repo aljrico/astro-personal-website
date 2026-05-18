@@ -7,15 +7,6 @@ const meta = {
 	description:
 		"Study app for Catalan public service entrance exams. Mossos d'Esquadra, Bombers de Catalunya, and more.",
 };
-
-const features = [
-	"8,800+ questions with source-anchored answers",
-	"Adaptive difficulty progression (5 levels)",
-	"Official exam simulation mode",
-	"Study guides and learning materials",
-	"Fully offline — all data stays on your device",
-	"Streak tracking to build study habits",
-];
 ---
 
 <PageLayout meta={meta}>
@@ -24,11 +15,11 @@ const features = [
 			<img src="/flamaIcon.png" alt="Flama Coach app icon" class="h-20 w-20 rounded-2xl" />
 			<div>
 				<h1 class="title mb-1 text-3xl">Flama Coach</h1>
-				<p class="text-gray-500">Oposicions</p>
+				<p class="text-gray-500">2026-present</p>
 			</div>
 		</div>
 
-		<section class="mb-12">
+		<section class="mb-8">
 			<p class="mb-4">
 				A study app for Catalan public service entrance exams (oposicions). Prep for Mossos
 				d'Esquadra, Bombers de Catalunya, and more — with thousands of questions, adaptive drilling,
@@ -36,16 +27,7 @@ const features = [
 			</p>
 		</section>
 
-		<section class="mb-12">
-			<h2 class="title mb-4 text-xl">Features</h2>
-			<ul class="list-inside list-disc space-y-1">
-				{features.map((feature) => <li>{feature}</li>)}
-			</ul>
-		</section>
-
-		<section class="mb-12">
-			<h2 class="title mb-4 text-xl">Download</h2>
-			<p class="mb-4">Available on iOS.</p>
+		<div class="mb-8 flex flex-wrap gap-3">
 			<a
 				href="#"
 				class="inline-flex cursor-default items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor opacity-60"
@@ -53,21 +35,12 @@ const features = [
 				<Icon name="fa-brands:apple" class="h-5 w-5" />
 				 Coming Soon
 			</a>
-		</section>
+		</div>
 
-		<section>
-			<h2 class="title mb-4 text-xl">Links</h2>
-			<ul class="space-y-2">
-				<li>
-					<a href="/apps/flama-coach/privacy" class="cactus-link">Privacy Policy</a>
-				</li>
-				<li>
-					<a href="/apps/flama-coach/terms" class="cactus-link">Terms of Use</a>
-				</li>
-				<li>
-					<a href="/apps/flama-coach/support" class="cactus-link">Support</a>
-				</li>
-			</ul>
-		</section>
+		<nav aria-label="Flama Coach links" class="flex flex-wrap gap-x-4 gap-y-2">
+			<a href="/apps/flama-coach/privacy" class="project-link">Privacy Policy</a>
+			<a href="/apps/flama-coach/terms" class="project-link">Terms of Use</a>
+			<a href="/apps/flama-coach/support" class="project-link">Support</a>
+		</nav>
 	</div>
 </PageLayout>

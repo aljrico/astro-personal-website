@@ -1,0 +1,41 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "harrypotter",
+	description: "An R package with Harry Potter-inspired colour palettes for base R and ggplot2.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img src="/hp_logo.png" alt="harrypotter R package logo" class="h-20 w-20 rounded-2xl" />
+			<div>
+				<h1 class="title mb-1 text-3xl">harrypotter</h1>
+				<p class="text-gray-500">2018-present</p>
+			</div>
+		</div>
+
+		<section class="mb-8">
+			<p class="mb-4">
+				An R package of Harry Potter-inspired colour palettes for plots. It turned fandom into a
+				small data-viz utility: palette functions for base R and ggplot2, with colours grouped by
+				movie and Hogwarts house.
+			</p>
+		</section>
+
+		<div class="mb-12 flex flex-wrap gap-3">
+			<a
+				href="https://github.com/aljrico/harrypotter"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="fa-brands:github" class="h-5 w-5" />
+				 GitHub
+			</a>
+		</div>
+	</div>
+</PageLayout>

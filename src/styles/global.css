@@ -52,6 +52,20 @@
 	.cactus-link:hover::after {
 		@apply w-full;
 	}
+
+	.project-link {
+		@apply font-normal text-accent no-underline transition-[background-size] duration-200;
+		-webkit-box-decoration-break: clone;
+		box-decoration-break: clone;
+		background-image: linear-gradient(currentColor, currentColor);
+		background-position: 0 100%;
+		background-repeat: no-repeat;
+		background-size: 0 2px;
+	}
+
+	.project-link:hover {
+		background-size: 100% 2px;
+	}
 }
 
 @layer base {

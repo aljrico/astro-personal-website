@@ -1,0 +1,39 @@
+---
+import PageLayout from "@/layouts/Base";
+
+const meta = {
+	title: "Pizza Clicker",
+	description:
+		"My first published game: a tiny idle clicker made with React Native and published for iOS.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img src="/pizzaClickerIcon.png" alt="Pizza Clicker app icon" class="h-20 w-20 rounded-2xl" />
+			<div>
+				<h1 class="title mb-1 text-3xl">Pizza Clicker</h1>
+				<p class="text-gray-500">Feb-Oct 2022</p>
+			</div>
+		</div>
+
+		<section>
+			<p class="mb-4">
+				My first published game. A tiny idle clicker with a small loop and a silly theme. Built in
+				React Native and published for iOS on the App Store.
+			</p>
+			<p class="mb-4">
+				Pizza Clicker taught me the boring parts of shipping: App Store metadata, icons,
+				screenshots, balancing, ads, retention, updates, and the many rabbit holes of game
+				development. It doesn't matter how simple a game may seem. There is always a lot of work in
+				it.
+			</p>
+			<p>
+				I eventually took it down to focus on <a href="/apps/cookie-empire" class="project-link"
+					>my next game</a
+				>.
+			</p>
+		</section>
+	</div>
+</PageLayout>

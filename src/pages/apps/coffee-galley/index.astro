@@ -7,16 +7,6 @@ const meta = {
 	description:
 		"A Shiny app for Shopify stores to sell custom-label coffee products, manage catalogue items, and handle fulfilment workflows.",
 };
-
-const features = [
-	"Shopify app built with R and Shiny",
-	"Coffee catalogue with wholesale and retail pricing",
-	"Custom product flow for choosing blends and designing labels",
-	"Label designer with uploaded logos and generated mockups",
-	"Order handling tools for fulfilment workflows",
-	"Stripe payment integration experiments",
-	"Dropbox-backed product and mockup storage",
-];
 ---
 
 <PageLayout meta={meta}>
@@ -25,33 +15,32 @@ const features = [
 			<img src="/ship_logo.png" alt="Coffee Galley ship icon" class="h-20 w-20 rounded-2xl" />
 			<div>
 				<h1 class="title mb-1 text-3xl">Coffee Galley</h1>
-				<p class="text-gray-500">Shopify App</p>
+				<p class="text-gray-500">2020-2022</p>
 			</div>
 		</div>
 
-		<section class="mb-12">
+		<section class="mb-8">
 			<p class="mb-4">
-				Coffee Galley was a Shopify app I built with R and Shiny. The idea was simple: let merchants
-				add custom-label coffee products to their store without dealing with roasting, packaging,
-				labels, or fulfilment by hand.
+				Coffee Galley was a Shopify app I made as my first real app project. The idea was to give
+				Shopify merchants an easy way to add custom-label coffee products to their stores without
+				dealing with roasting, packaging, labels, or fulfilment.
 			</p>
+			<p class="mb-4">
+				All they had to do was upload their logo. The app would create 3D renders of the packages,
+				create the Shopify products, and handle all communication with the roaster so fulfilment and
+				delivery happened without merchant intervention. Everything was fully automated.
+			</p>
+			<p class="mb-4">It basically provided dropshipping for coffee brands.</p>
 			<p>
-				It combined a product catalogue, custom label design, generated mockups, payment plumbing,
-				and order-handling tools into one merchant-facing dashboard. A tiny coffee logistics
-				machine, basically.
+				The front end was made with the Shiny framework, the backend was made with Plumber, and all
+				data management was handled with either SQL or .rds files. Which means everything was made
+				in pure R code. This gave me the excuse to present at a few conferences about the unexpected
+				use cases of R outside statistics. You can do anything with R. Should you, though? Probably
+				not. But you can.
 			</p>
 		</section>
 
-		<section class="mb-12">
-			<h2 class="title mb-4 text-xl">Features</h2>
-			<ul class="list-inside list-disc space-y-1">
-				{features.map((feature) => <li>{feature}</li>)}
-			</ul>
-		</section>
-
-		<section>
-			<h2 class="title mb-4 text-xl">Availability</h2>
-			<p class="mb-4">Coffee Galley is no longer available in the Shopify App Store.</p>
+		<div class="mb-12 flex flex-wrap gap-3">
 			<a
 				href="#"
 				class="inline-flex cursor-default items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor opacity-60"
@@ -59,6 +48,6 @@ const features = [
 				<Icon name="fa-brands:shopify" class="h-5 w-5" />
 				 Shopify App Store
 			</a>
-		</section>
+		</div>
 	</div>
 </PageLayout>

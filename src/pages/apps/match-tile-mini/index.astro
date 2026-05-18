@@ -1,0 +1,46 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "Match Tile: Mini",
+	description: "A compact tile-matching puzzle game for iOS, built with SwiftUI and SpriteKit.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img src="/miniMatchIcon.png" alt="Match Tile: Mini app icon" class="h-20 w-20 rounded-2xl" />
+			<div>
+				<h1 class="title mb-1 text-3xl">Match Tile: Mini</h1>
+				<p class="text-gray-500">2023-present</p>
+			</div>
+		</div>
+
+		<section class="mb-8">
+			<p class="mb-4">
+				A tiny tile-matching puzzle game for iOS. I kept the idea deliberately small: a bright icon,
+				a compact board, a level map, lives, coins, boosters, and enough state management to make
+				the simple thing behave like a real mobile game.
+			</p>
+			<p>
+				It was one of those projects where the game loop looks simple, then the invisible parts
+				start showing up. Persistence. Progression. Economy. All the little systems that make a toy
+				feel finished.
+			</p>
+		</section>
+
+		<div class="mb-12 flex flex-wrap gap-3">
+			<a
+				href="https://apps.apple.com/es/app/match-tile-mini-puzzle-game/id6473903061?l=en-GB"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="fa-brands:apple" class="h-5 w-5" />
+				 App Store
+			</a>
+		</div>
+	</div>
+</PageLayout>
