@@ -21,7 +21,7 @@ There's a complicated network of players that make all this possible, and all of
 
 ## The Six Layers of the AI Coding Stack
 
-Most people read "AI coding boom" and immediately think Cursor or Copilot. But that's only the visible layer. It's the one everyone knows about and manages to put a name on, but it's also where the least durable margin lives. The real money flows upstream — into compute, packaging, memory, networking, and power. If you only own the visible app, you're betting on the layer with the most competition, the thinnest moats, and the most price compression. It has *some* value, but it's not where all the value is. Let's walk down the stack, layer by layer.
+Most people read "AI coding boom" and immediately think Cursor or Copilot. But that's only the visible layer. It's the one everyone knows about and manages to put a name on, but it's also where the least durable margin lives. The real money flows upstream, into compute, packaging, memory, networking, and power. If you only own the visible app, you're betting on the layer with the most competition, the thinnest moats, and the most price compression. It has *some* value, but it's not where all the value is. Let's walk down the stack, layer by layer.
 
 ### Layer 1: The Application Layer
 
@@ -31,7 +31,7 @@ But here's the annoying bit: most of these companies are private, and the ones t
 
 ### Layer 2: The Model Makers
 
-Anthropic, OpenAI, Google DeepMind, Meta, xAI. This is where real pricing power is emerging. Anthropic pulled off one of the most violent margin flips in software history: from -94% gross margin in 2024 to ~50% in 2025, targeting ~77% by 2028 (per industry trackers). Read that again — from NEGATIVE 94% to positive aiming nearly 80%. OpenAI is annualizing ~$25B at ~33% gross margin.
+Anthropic, OpenAI, Google DeepMind, Meta, xAI. This is where real pricing power is emerging. Anthropic pulled off one of the most violent margin flips in software history: from -94% gross margin in 2024 to ~50% in 2025, targeting ~77% by 2028 (per industry trackers). Read that again. From NEGATIVE 94% to positive, aiming nearly 80%. OpenAI is annualizing ~$25B at ~33% gross margin.
 
 These aren't passive token vendors anymore. They're building enterprise distribution (Claude is at 1,000+ customers spending $1M+/year), locking in capacity (Anthropic committed $100B+ to AWS, OpenAI committed $1.15T+ across Oracle, Broadcom, Microsoft, Nvidia, AMD, AWS, CoreWeave through 2035), and starting to capture meaningful gross profit.
 
@@ -57,7 +57,7 @@ Broadcom is the strongest custom-silicon challenger. Q1 FY26 AI revenue $8.4B (+
 
 ### Layer 5: The Actual Silicon Manufacturers
 
-TSMC, SK Hynix, Micron, ASE/Amkor. This is the bottleneck layer — the true engineers, and the most undervalued part of the stack on a quality-adjusted basis. $TSM fabs every advanced-node AI chip on this good earth: Nvidia, Broadcom, AMD, Apple, Google TPU, AWS Trainium. Any half-decent chip that pretends to be leading edge is made in a TSMC facility. CoWoS advanced packaging — the technique that lets you stack HBM memory next to a compute die — is sold out through at least mid-2026 and doubling to 130k wafers/month by end of 2026.
+TSMC, SK Hynix, Micron, ASE/Amkor. This is the bottleneck layer. The true engineers, and the most undervalued part of the stack on a quality-adjusted basis. $TSM fabs every advanced-node AI chip on this good earth: Nvidia, Broadcom, AMD, Apple, Google TPU, AWS Trainium. Any half-decent chip that pretends to be leading edge is made in a TSMC facility. CoWoS advanced packaging, the technique that lets you stack HBM memory next to a compute die, is sold out through at least mid-2026 and doubling to 130k wafers/month by end of 2026.
 
 HBM memory is the second binding constraint: SK Hynix owns ~62% share, has sold out 2026 capacity, and is pushing HBM3E prices up ~20% year-over-year. For most retail investors, $MU is the practical HBM proxy because SK Hynix (000660.KS) trades in Seoul and most European brokers don't offer clean access.
 
@@ -67,7 +67,7 @@ The Korea ETF ($EWY) is not a substitute. It's a Korea index basket, too diluted
 
 The middle child. The forgotten layer. Vertiv, GE Vernova, Eaton, $SE, Arista Networks. By 2027, the binding constraint on AI buildout migrates from chips to electricity. McKinsey projects US AI data center power capacity needs to grow from 30 GW in 2025 to over 90 GW by 2030, and the grid is just not freaking ready for this.
 
-Vertiv reported Q4 2025 organic orders up 252% with a $15B backlog. Eaton's electrical backlog up 31%. GE Vernova Q1 2026 orders $18.3B (+71% organic). These businesses have zero glamour, they trade at lower multiples than the chip designers, and nobody proudly announces they've joined them on X. They're the unsung heroes of any heavy industrial development. Doesn't matter what we're producing — we need them. And they have arguably the more durable bottleneck economics.
+Vertiv reported Q4 2025 organic orders up 252% with a $15B backlog. Eaton's electrical backlog up 31%. GE Vernova Q1 2026 orders $18.3B (+71% organic). These businesses have zero glamour, they trade at lower multiples than the chip designers, and nobody proudly announces they've joined them on X. They're the unsung heroes of any heavy industrial development. Doesn't matter what we're producing. We need them. And they have arguably the more durable bottleneck economics.
 
 Arista is the networking pure-play. AI revenue ramping from $1.6B (2025) to $3.5B (2026 guided), with deferred revenue up 132% YoY.
 
@@ -91,7 +91,7 @@ By 2030, my best estimate:
 - model labs expand to 20–25% as they scale and integrate
 - the application layer creeps up to 5–8%
 
-That's why the cleanest public-market expression of "every developer uses AI" isn't to buy the coding app. It's to own the bottlenecks one or two layers upstream — the ones that benefit regardless of whether the winning coding assistant is Cursor or Copilot or Claude Code or something that doesn't exist yet.
+That's why the cleanest public-market expression of "every developer uses AI" isn't to buy the coding app. It's to own the bottlenecks one or two layers upstream. The ones that benefit regardless of whether the winning coding assistant is Cursor or Copilot or Claude Code or something that doesn't exist yet.
 
 ## The Risk That Breaks Everything
 
