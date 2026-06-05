@@ -1,0 +1,56 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "Tiny Crimes",
+	description:
+		"Murder Sudoku: Tiny Crimes — a cozy logic deduction puzzle. Read clues, place suspects, and reveal the killer. Pure logic, fully offline.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img src="/tinyCrimesIcon.png" alt="Tiny Crimes app icon" class="h-20 w-20 rounded-2xl" />
+			<div>
+				<h1 class="title mb-1 text-3xl">Tiny Crimes</h1>
+				<p class="text-gray-500">2026-present</p>
+			</div>
+		</div>
+
+		<section class="mb-8">
+			<p class="mb-4">
+				Murder Sudoku: Tiny Crimes turns whodunit mysteries into bite-sized logic puzzles. Every
+				case is a tiny crime scene — a grid of rooms, a victim, a handful of suspects, and a set of
+				clues. Read the clues, place the suspects, and reveal the killer using deduction alone.
+			</p>
+			<p class="mb-4">
+				The rules are simple, the cases are not. No two people can share a row or column, every clue
+				is true, and there is exactly one correct solution. When the board is solved, the mystery
+				resolves: the suspect left alone with the victim is your culprit. No guessing, no luck — just
+				clues, logic, and a quiet little crime waiting to be cracked.
+			</p>
+			<p>
+				Built with Flutter on top of a pure-Dart puzzle engine that generates and verifies every
+				case, so each one is guaranteed solvable by reasoning alone. Plays fully offline.
+			</p>
+		</section>
+
+		<div class="mb-8 flex flex-wrap gap-3">
+			<a
+				href="#"
+				class="inline-flex cursor-default items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor opacity-60"
+			>
+				<Icon name="fa-brands:google-play" class="h-5 w-5" />
+				 Coming Soon
+			</a>
+		</div>
+
+		<nav aria-label="Tiny Crimes links" class="flex flex-wrap gap-x-4 gap-y-2">
+			<a href="/apps/tiny-crimes/privacy" class="project-link">Privacy Policy</a>
+			<a href="/apps/tiny-crimes/terms" class="project-link">Terms of Use</a>
+			<a href="/apps/tiny-crimes/support" class="project-link">Support</a>
+		</nav>
+	</div>
+</PageLayout>
