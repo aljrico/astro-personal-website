@@ -14,7 +14,7 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
 
 ## Information Collection and Use
 
-For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information. The information that I request will be retained on your device and is not collected by me in any way.
+For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information. Any such personally identifiable information is retained on your device and is not collected by me, apart from the anonymous, aggregate analytics described in the Analytics section below (which does not identify you).
 
 The app does use third-party services that may collect information used to identify you.
 
@@ -22,6 +22,16 @@ Link to the privacy policy of third-party service providers used by the app
 
 - [Google Play Services](https://www.google.com/policies/privacy/)
 - [AdMob](https://support.google.com/admob/answer/6128543?hl=en)
+
+## Analytics
+
+The app collects anonymous, aggregate analytics to understand how the game is used and to run A/B experiments that help me improve it. No account or login is required, and I do not collect your name, email, contacts, photos, or precise location.
+
+No advertising identifier (IDFA or AAID) is used for analytics. Analytics is not used for cross-app tracking and is not linked to your identity. No persistent device identifier is transmitted: a random install identifier is generated and stored only on your device and is never sent. Only coarse, bucketed counts (ranges rather than exact values), a coarse country derived from your device language, and one-way hashed per-day tokens leave the device.
+
+This data is aggregated and k-anonymised on the server, meaning information is only retained for groups of at least five devices, so individuals cannot be singled out. Analytics data is not linked to purchases.
+
+You can opt out at any time in the app's Settings, which also deletes the analytics data stored on your device.
 
 ## Log Data
 
@@ -60,7 +70,7 @@ These Services do not address anyone under the age of 13. I do not knowingly col
 
 I may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy on this page.
 
-This policy is effective as of 2026-06-05
+This policy is effective as of 2026-06-17
 
 ## Contact Us
 
