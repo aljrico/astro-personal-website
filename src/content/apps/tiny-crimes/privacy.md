@@ -29,9 +29,9 @@ The app collects anonymous, aggregate analytics to understand how the game is us
 
 No advertising identifier (IDFA or AAID) is used for analytics. Analytics is not used for cross-app tracking and is not linked to your identity. No persistent device identifier is transmitted: a random install identifier is generated and stored only on your device and is never sent. Only coarse, bucketed counts (ranges rather than exact values), a coarse country derived from your device language, and one-way hashed per-day tokens leave the device.
 
-This data is aggregated and k-anonymised on the server, meaning information is only retained for groups of at least five devices, so individuals cannot be singled out. Analytics data is not linked to purchases.
+This data is aggregated and k-anonymised on the server: information is only retained for groups of devices, never for an individual, so no one can be singled out. Analytics data is not linked to purchases.
 
-You can opt out at any time in the app's Settings, which also deletes the analytics data stored on your device.
+Because this analytics is anonymous and is not linked to your identity, there is no personal information tied to you for me to access, export, or delete.
 
 ## Log Data
 
