@@ -40,13 +40,13 @@ The Daily Challenge leaderboard is optional. If you choose to take part by openi
 When you take part, the following is stored on my backend (provided by Supabase) and tied to an anonymous account created for your device:
 
 - a random anonymous account identifier (this is not your Apple or Google account, and not an advertising identifier);
-- a display name, which you can change at any time (it defaults to a generated name such as "Player 1234"; on platforms where you connect Game Center or Google Play Games, it may instead be your nickname there);
+- a display name (a generated nickname such as "SwiftOtter", or your Game Center or Google Play Games nickname on platforms where you connect one);
 - a coarse country (for example, derived from your device or platform), shown as a flag;
 - your Daily Challenge scores and solve times.
 
 Your display name, country flag, and score are shown publicly on the leaderboard to other players. This information is used solely to operate the leaderboard inside Tiny Crimes. It is not used for advertising, is not linked to any advertising identifier, is not used to track you across other apps, and is not sold or shared with third parties for their own purposes.
 
-You can change your display name in the app at any time. Because this information is tied to an account, you can also ask me to delete it: contact me using the details at the end of this policy and I will remove your leaderboard profile and entries.
+Because this information is tied to an account, you can ask me to delete it: contact me using the details at the end of this policy and I will remove your leaderboard profile and entries.
 
 ## Log Data
 
