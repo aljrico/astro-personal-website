@@ -14,7 +14,7 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
 
 ## Information Collection and Use
 
-For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information. Any such personally identifiable information is retained on your device and is not collected by me, apart from the anonymous, aggregate analytics described in the Analytics section below (which does not identify you).
+For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information. Any such personally identifiable information is retained on your device and is not collected by me, with two exceptions described below: the anonymous, aggregate analytics (which does not identify you), and the optional Daily Challenge leaderboard (which you join by choice and which stores a display name and scores tied to an anonymous account).
 
 The app does use third-party services that may collect information used to identify you.
 
@@ -32,6 +32,21 @@ No advertising identifier (IDFA or AAID) is used for analytics. Analytics is not
 This data is aggregated and k-anonymised on the server: information is only retained for groups of devices, never for an individual, so no one can be singled out. Analytics data is not linked to purchases.
 
 Because this analytics is anonymous and is not linked to your identity, there is no personal information tied to you for me to access, export, or delete.
+
+## Daily Challenge Leaderboard
+
+The Daily Challenge leaderboard is optional. If you choose to take part by opening the Daily Challenge, the app records your result on a leaderboard so you can compare it with other players. Until you open the Daily Challenge for the first time, none of the information in this section is collected.
+
+When you take part, the following is stored on my backend (provided by Supabase) and tied to an anonymous account created for your device:
+
+- a random anonymous account identifier (this is not your Apple or Google account, and not an advertising identifier);
+- a display name, which you can change at any time (it defaults to a generated name such as "Player 1234"; on platforms where you connect Game Center or Google Play Games, it may instead be your nickname there);
+- a coarse country (for example, derived from your device or platform), shown as a flag;
+- your Daily Challenge scores and solve times.
+
+Your display name, country flag, and score are shown publicly on the leaderboard to other players. This information is used solely to operate the leaderboard inside Tiny Crimes. It is not used for advertising, is not linked to any advertising identifier, is not used to track you across other apps, and is not sold or shared with third parties for their own purposes.
+
+You can change your display name in the app at any time. Because this information is tied to an account, you can also ask me to delete it: contact me using the details at the end of this policy and I will remove your leaderboard profile and entries.
 
 ## Log Data
 
@@ -70,7 +85,7 @@ These Services do not address anyone under the age of 13. I do not knowingly col
 
 I may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy on this page.
 
-This policy is effective as of 2026-06-17
+This policy is effective as of 2026-06-19
 
 ## Contact Us
 
