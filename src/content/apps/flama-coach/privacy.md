@@ -1,7 +1,7 @@
 ---
-title: "Flama Coach Privacy Policy"
-description: "Privacy Policy for Flama Coach"
-app: "Flama Coach"
+title: "Mossos Coach Privacy Policy"
+description: "Privacy Policy for Mossos Coach"
+app: "Mossos Coach"
 ---
 
 *Last updated: March 2026*
@@ -44,7 +44,7 @@ All your study progress is stored locally on your device. **We do not send your 
 
 ## Children's Privacy
 
-Flama Coach is not intended for children under 16. We do not knowingly collect personal information from children under 16.
+Mossos Coach is not intended for children under 16. We do not knowingly collect personal information from children under 16.
 
 ## Changes
 

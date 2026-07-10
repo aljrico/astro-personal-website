@@ -1,7 +1,7 @@
 ---
-title: "Flama Coach Support"
-description: "Support page for Flama Coach"
-app: "Flama Coach"
+title: "Mossos Coach Support"
+description: "Support page for Mossos Coach"
+app: "Mossos Coach"
 ---
 
 Have questions, suggestions, or found a bug? Get in touch using any of the methods below:

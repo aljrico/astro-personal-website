@@ -3,44 +3,50 @@ import PageLayout from "@/layouts/Base";
 import { Icon } from "astro-icon";
 
 const meta = {
-	title: "Flama Coach",
+	title: "Mossos Coach — Oposicions",
 	description:
-		"Study app for Catalan public service entrance exams. Mossos d'Esquadra, Bombers de Catalunya, and more.",
+		"Prepara les oposicions als Mossos d'Esquadra amb preguntes adaptatives, simulacres i explicacions detallades.",
 };
 ---
 
 <PageLayout meta={meta}>
 	<div class="max-w-2xl">
 		<div class="mb-8 flex items-center gap-4">
-			<img src="/flamaIcon.png" alt="Flama Coach app icon" class="h-20 w-20 rounded-2xl" />
+			<img src="/flamaIcon.png" alt="Icona de Mossos Coach" class="h-20 w-20 rounded-2xl" />
 			<div>
-				<h1 class="title mb-1 text-3xl">Flama Coach</h1>
-				<p class="text-gray-500">2026-present</p>
+				<h1 class="title mb-1 text-3xl">Mossos Coach</h1>
+				<p class="text-gray-500">Oposicions a Mossos d'Esquadra · Convocatòria 2026</p>
 			</div>
 		</div>
 
 		<section class="mb-8">
 			<p class="mb-4">
-				A study app for Catalan public service entrance exams (oposicions). Prep for Mossos
-				d'Esquadra, Bombers de Catalunya, and more — with thousands of questions, adaptive drilling,
-				and exam simulations. All offline, all local.
+				Prepara't per a les oposicions amb més de 3.500 preguntes, dificultat adaptativa,
+				simulacres amb el format oficial i explicacions vinculades a la legislació. Tot el
+				temari al teu iPhone, també sense connexió.
+			</p>
+			<p>
+				Comença gratis amb preguntes diàries i desbloqueja la preparació completa amb el pla
+				de convocatòria de 3 mesos.
 			</p>
 		</section>
 
 		<div class="mb-8 flex flex-wrap gap-3">
 			<a
-				href="#"
-				class="inline-flex cursor-default items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor opacity-60"
+				href="https://apps.apple.com/es/app/mossos-coach-oposicions/id6758277341"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor"
 			>
 				<Icon name="fa-brands:apple" class="h-5 w-5" />
-				 Coming Soon
+				Descarrega'l a l'App Store
 			</a>
 		</div>
 
-		<nav aria-label="Flama Coach links" class="flex flex-wrap gap-x-4 gap-y-2">
-			<a href="/apps/flama-coach/privacy" class="project-link">Privacy Policy</a>
-			<a href="/apps/flama-coach/terms" class="project-link">Terms of Use</a>
-			<a href="/apps/flama-coach/support" class="project-link">Support</a>
+		<nav aria-label="Enllaços de Mossos Coach" class="flex flex-wrap gap-x-4 gap-y-2">
+			<a href="/apps/flama-coach/privacy" class="project-link">Política de privacitat</a>
+			<a href="/apps/flama-coach/terms" class="project-link">Termes d'ús</a>
+			<a href="/apps/flama-coach/support" class="project-link">Suport</a>
 		</nav>
 	</div>
 </PageLayout>

@@ -1,24 +1,24 @@
 ---
-title: "Flama Coach Terms of Use"
-description: "Terms of Use for Flama Coach"
-app: "Flama Coach"
+title: "Mossos Coach Terms of Use"
+description: "Terms of Use for Mossos Coach"
+app: "Mossos Coach"
 ---
 
 *Last updated: March 2026*
 
 ## 1. Acceptance
 
-By downloading, installing, or using Flama Coach, you fully accept these terms and conditions. If you do not agree, do not use the app.
+By downloading, installing, or using Mossos Coach, you fully accept these terms and conditions. If you do not agree, do not use the app.
 
 ## 2. Nature of the Service
 
-Flama Coach is a supplementary study tool for preparing public service entrance exams (oposicions) in Catalonia. **We are not affiliated with any official body.** We do not guarantee passing any exam or obtaining any position.
+Mossos Coach is a supplementary study tool for preparing the Mossos d'Esquadra entrance exams. **We are not affiliated with any official body.** We do not guarantee passing any exam or obtaining any position.
 
 ## 3. Premium Subscriptions
 
 Subscriptions are managed entirely through the App Store. Payment is charged to your Apple ID account at the time of purchase confirmation.
 
-**To cancel:** go to **Settings > your name > Subscriptions** on your iPhone or iPad. Select Flama Coach and tap "Cancel Subscription".
+**To cancel:** go to **Settings > your name > Subscriptions** on your iPhone or iPad. Select Mossos Coach and tap "Cancel Subscription".
 
 Cancellation takes effect at the end of the current billing period. The subscription renews automatically unless you turn off auto-renewal at least 24 hours before the end of the current period.
 
@@ -34,7 +34,7 @@ All app content — including questions, explanations, study guides, designs, an
 
 ## 6. Limitation of Liability
 
-Flama Coach is provided "as is". We are not responsible for:
+Mossos Coach is provided "as is". We are not responsible for:
 
 - Academic or professional outcomes resulting from its use
 - Service interruptions or data loss
