@@ -259,6 +259,10 @@
 				gap: 12px;
 			}
 
+			.plot-grid.three {
+				grid-template-columns: repeat(3, 1fr);
+			}
+
 			.retention {
 				display: grid;
 				grid-template-columns: repeat(3, 1fr);
@@ -482,30 +486,51 @@
 				</section>
 
 				<div class="section-heading">
-					<h2>Last 30 days</h2>
-					<span>UTC · today is partial</span>
+					<h2>Audience</h2>
+					<span>last 30 days · UTC · today is partial</span>
 				</div>
 
 				<section class="panel">
 					<div class="panel-head">
-						<h3 class="panel-title">Audience</h3>
-						<p class="panel-note">active · new</p>
+						<h3 class="panel-title">Daily active players</h3>
+						<p class="panel-note">DAU</p>
 					</div>
-					<div class="plot" id="audience-plot"></div>
+					<div class="plot" id="dau-plot"></div>
 				</section>
 
 				<section class="panel">
 					<div class="panel-head">
-						<h3 class="panel-title">Platform mix</h3>
-						<p class="panel-note" id="platform-note">share of active players</p>
+						<h3 class="panel-title">New + existing players</h3>
+						<p class="panel-note">DAU composition</p>
+					</div>
+					<div class="plot" id="player-mix-plot"></div>
+				</section>
+
+				<section class="panel">
+					<div class="panel-head">
+						<h3 class="panel-title">Countries</h3>
+						<p class="panel-note" id="country-note">daily top 3 · others</p>
+					</div>
+					<div class="plot" id="country-plot"></div>
+				</section>
+
+				<section class="panel">
+					<div class="panel-head">
+						<h3 class="panel-title">Platforms</h3>
+						<p class="panel-note" id="platform-note">iOS · Android</p>
 					</div>
 					<div class="plot" id="platform-plot"></div>
 				</section>
 
+				<div class="section-heading">
+					<h2>Engagement</h2>
+					<span>per active player</span>
+				</div>
+
 				<div class="plot-grid">
 					<section class="panel">
 						<div class="panel-head">
-							<h3 class="panel-title">Cases per player</h3>
+							<h3 class="panel-title">Cases per user</h3>
 							<p class="panel-note">solves ÷ DAU</p>
 						</div>
 						<div class="plot" id="cases-plot"></div>
@@ -513,20 +538,67 @@
 
 					<section class="panel">
 						<div class="panel-head">
-							<h3 class="panel-title">Daily ritual</h3>
+							<h3 class="panel-title">Sessions per user</h3>
+							<p class="panel-note">sessions ÷ DAU</p>
+						</div>
+						<div class="plot" id="sessions-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Daily challenge</h3>
 							<p class="panel-note">comparable telemetry only</p>
 						</div>
 						<div class="plot" id="daily-plot"></div>
 					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">XP per player</h3>
+							<p class="panel-note">earned XP ÷ DAU</p>
+						</div>
+						<div class="plot" id="xp-plot"></div>
+					</section>
+				</div>
+
+				<div class="section-heading">
+					<h2>Monetisation</h2>
+					<span>gross USD estimate</span>
 				</div>
 
 				<section class="panel">
 					<div class="panel-head">
-						<h3 class="panel-title">IAP revenue</h3>
-						<p class="panel-note">RevenueCat · USD</p>
+						<h3 class="panel-title">Revenue</h3>
+						<p class="panel-note">IAP + ads</p>
 					</div>
 					<div class="plot" id="revenue-plot"></div>
 				</section>
+
+				<div class="plot-grid three">
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">ARPDAU</h3>
+							<p class="panel-note">revenue ÷ DAU</p>
+						</div>
+						<div class="plot" id="arpdau-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Conversion</h3>
+							<p class="panel-note">payers ÷ DAU</p>
+						</div>
+						<div class="plot" id="conversion-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Ads per DAU</h3>
+							<p class="panel-note">ads watched ÷ DAU</p>
+						</div>
+						<div class="plot" id="ads-plot"></div>
+					</section>
+				</div>
 
 				<ul class="footnotes" id="footnotes"></ul>
 			</section>
@@ -551,6 +623,12 @@
 				style: "currency",
 				currency: "USD",
 				maximumFractionDigits: 0,
+			});
+			const preciseMoney = new Intl.NumberFormat("en", {
+				style: "currency",
+				currency: "USD",
+				minimumFractionDigits: 3,
+				maximumFractionDigits: 3,
 			});
 			const shortDate = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" });
 			const access = document.querySelector("#access");
@@ -702,40 +780,68 @@
 			}
 
 			function renderPlots(data) {
-				const rows = data.series.map((row) => ({
-					...row,
-					date: new Date(`${row.day}T12:00:00Z`),
-					dau: Number(row.dau),
-					ios_dau: Number(row.ios_dau),
-					android_dau: Number(row.android_dau),
-					new_installs: Number(row.new_installs),
-					cases_per_player: Number(row.dau) ? Number(row.cases_solved) / Number(row.dau) : 0,
-					daily_pct:
-						row.daily_participation_pct == null ? null : Number(row.daily_participation_pct),
-					iap_revenue_usd: Number(row.iap_revenue_usd),
-				}));
-				const audience = rows.flatMap((row) => [
-					{ date: row.date, series: "Active", value: row.dau },
-					{ date: row.date, series: "New", value: row.new_installs },
+				const rows = data.series.map((row) => {
+					const dau = Number(row.dau);
+					const newPlayers = Math.min(dau, Number(row.new_installs));
+					const revenue = Number(row.revenue_usd);
+					return {
+						...row,
+						date: new Date(`${row.day}T12:00:00Z`),
+						dau,
+						ios_dau: Number(row.ios_dau),
+						android_dau: Number(row.android_dau),
+						new_players: newPlayers,
+						existing_players: Math.max(0, dau - newPlayers),
+						sessions_per_player: dau ? Number(row.sessions) / dau : 0,
+						cases_per_player: dau ? Number(row.cases_solved) / dau : 0,
+						daily_pct:
+							row.daily_participation_pct == null ? null : Number(row.daily_participation_pct),
+						xp_per_player: dau ? Number(row.xp_earned) / dau : 0,
+						revenue_usd: revenue,
+						arpdau_usd: dau ? revenue / dau : 0,
+						conversion_pct: dau ? (100 * Number(row.payers)) / dau : 0,
+						ads_per_dau: dau ? Number(row.ad_impressions) / dau : 0,
+						country_dau: Array.isArray(row.country_dau) ? row.country_dau : [],
+					};
+				});
+				const playerMix = rows.flatMap((row) => [
+					{ ...row, series: "Existing", value: row.existing_players },
+					{ ...row, series: "New", value: row.new_players },
 				]);
 				const platformDays = rows.filter((row) => row.ios_dau + row.android_dau > 0);
-				const platform = platformDays.flatMap((row) => [
-					{
-						date: row.date,
-						platform: "iOS",
-						value: row.ios_dau,
-						total: row.ios_dau + row.android_dau,
-					},
-					{
-						date: row.date,
-						platform: "Android",
-						value: row.android_dau,
-						total: row.ios_dau + row.android_dau,
-					},
-				]);
-				const dailyRows = rows.filter((row) => Number.isFinite(row.daily_pct));
-				const audienceNode = document.querySelector("#audience-plot");
-				const smallWidth = document.querySelector("#cases-plot").clientWidth || 320;
+				const platform = platformDays.flatMap((row) => {
+					const total = row.ios_dau + row.android_dau;
+					return [
+						{ ...row, series: "iOS", value: row.ios_dau, total },
+						{ ...row, series: "Android", value: row.android_dau, total },
+					];
+				});
+				const countries = rows.flatMap((row) =>
+					row.country_dau.map((country) => ({
+						...row,
+						series: country.country,
+						value: Number(country.dau),
+					})),
+				);
+				const countryDomain = [...new Set(countries.map((row) => row.series))].filter(
+					(country) => country !== "Others",
+				);
+				if (countries.some((row) => row.series === "Others")) countryDomain.push("Others");
+				const countryPalette = [
+					"#2a9d8f",
+					"#7b61a8",
+					"#e76f51",
+					"#3a86a8",
+					"#9c6644",
+					"#8f9f3a",
+					"#d65d9e",
+					"#4f772d",
+					"#6d597a",
+				];
+				const countryRange = countryDomain.map((country, index) =>
+					country === "Others" ? "#b8c0c7" : countryPalette[index % countryPalette.length],
+				);
+
 				const latestPlatform = platformDays[platformDays.length - 1];
 				if (latestPlatform) {
 					const total = latestPlatform.ios_dau + latestPlatform.android_dau;
@@ -743,161 +849,130 @@
 						`iOS ${((100 * latestPlatform.ios_dau) / total).toFixed(1)}% · ` +
 						`Android ${((100 * latestPlatform.android_dau) / total).toFixed(1)}%`;
 				}
+				const latestCountries = rows[rows.length - 1]?.country_dau
+					.filter((country) => country.country !== "Others")
+					.map((country) => country.country);
+				document.querySelector("#country-note").textContent = latestCountries?.length
+					? `today: ${latestCountries.join(" · ")} · others`
+					: "daily top 3 · others";
 
-				replacePlot(
-					"#audience-plot",
-					Plot.plot({
-						width: audienceNode.clientWidth || 700,
-						height: 190,
-						marginTop: 8,
-						marginRight: 12,
-						marginBottom: 28,
-						marginLeft: 43,
-						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
-						x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
-						y: {
-							label: null,
-							grid: true,
-							ticks: 4,
-							tickSize: 0,
-							tickFormat: (value) => compact.format(value),
-						},
-						color: {
-							domain: ["Active", "New"],
-							range: ["#234766", "hsl(351deg 66% 48%)"],
-							legend: true,
-						},
-						marks: [
-							Plot.ruleY([0], { stroke: "#dfe5e8" }),
-							Plot.lineY(audience, {
-								x: "date",
-								y: "value",
-								stroke: "series",
-								strokeWidth: 2.3,
-								curve: "monotone-x",
-								tip: true,
-							}),
-						],
-					}),
-				);
-
-				replacePlot(
-					"#platform-plot",
-					Plot.plot({
-						width: document.querySelector("#platform-plot").clientWidth || 700,
-						height: 190,
-						marginTop: 8,
-						marginRight: 12,
-						marginBottom: 28,
-						marginLeft: 43,
-						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
-						x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
-						y: {
-							label: null,
-							grid: true,
-							percent: true,
-							ticks: 5,
-							tickSize: 0,
-						},
-						color: {
-							domain: ["iOS", "Android"],
-							range: ["#234766", "hsl(351deg 66% 48%)"],
-							legend: true,
-						},
-						marks: [
-							Plot.areaY(
-								platform,
-								Plot.stackY(
-									{ offset: "normalize" },
-									{
-										x: "date",
-										y: "value",
-										z: "platform",
-										fill: "platform",
-										curve: "monotone-x",
-										tip: true,
-										title: (row) =>
-											`${row.platform}: ${number.format(row.value)} ` +
-											`(${((100 * row.value) / row.total).toFixed(1)}%)`,
-									},
+				const bars = (selector, source, options = {}) =>
+					replacePlot(
+						selector,
+						Plot.plot({
+							width: document.querySelector(selector).clientWidth || 700,
+							height: 190,
+							marginTop: options.legend ? 34 : 8,
+							marginRight: 12,
+							marginBottom: 28,
+							marginLeft: 43,
+							style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+							x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+							y: {
+								label: null,
+								grid: true,
+								zero: true,
+								ticks: 4,
+								tickSize: 0,
+								tickFormat: compact.format,
+							},
+							color: options.color,
+							marks: [
+								Plot.ruleY([0], { stroke: "#dfe5e8" }),
+								Plot.rectY(
+									source,
+									options.stacked
+										? Plot.stackY({
+												x: "date",
+												y: "value",
+												fill: "series",
+												interval: "day",
+												insetLeft: 1.2,
+												insetRight: 1.2,
+												tip: true,
+												title: options.title,
+										  })
+										: {
+												x: "date",
+												y: options.y,
+												interval: "day",
+												fill: options.fill,
+												insetLeft: 1.2,
+												insetRight: 1.2,
+												tip: true,
+												title: options.title,
+										  },
 								),
-							),
-							Plot.ruleY([0, 1], { stroke: "#dfe5e8" }),
-						],
-					}),
-				);
+							],
+						}),
+					);
 
-				replacePlot(
-					"#cases-plot",
-					basePlot(
-						smallWidth,
-						[
-							Plot.ruleY([0], { stroke: "#dfe5e8" }),
-							Plot.areaY(dailyRows, {
-								x: "date",
-								y: "cases_per_player",
-								fill: "hsl(351deg 66% 48%)",
-								fillOpacity: 0.1,
-								curve: "monotone-x",
-							}),
-							Plot.lineY(dailyRows, {
-								x: "date",
-								y: "cases_per_player",
-								stroke: "hsl(351deg 66% 48%)",
-								strokeWidth: 2.2,
-								curve: "monotone-x",
-								tip: true,
-							}),
-						],
-						{ zero: true, tickFormat: (value) => value.toFixed(1) },
-					),
-				);
+				bars("#dau-plot", rows, {
+					y: "dau",
+					fill: "#234766",
+					title: (row) => `${shortDate.format(row.date)}: ${number.format(row.dau)} DAU`,
+				});
+				bars("#player-mix-plot", playerMix, {
+					stacked: true,
+					legend: true,
+					color: { domain: ["Existing", "New"], range: ["#d89024", "#bd2d47"], legend: true },
+					title: (row) => `${row.series}: ${number.format(row.value)}`,
+				});
+				bars("#country-plot", countries, {
+					stacked: true,
+					legend: true,
+					color: { domain: countryDomain, range: countryRange, legend: true },
+					title: (row) => `${row.series}: ${number.format(row.value)}`,
+				});
+				bars("#platform-plot", platform, {
+					stacked: true,
+					legend: true,
+					color: { domain: ["iOS", "Android"], range: ["#5b7cfa", "#72b01d"], legend: true },
+					title: (row) =>
+						`${row.series}: ${number.format(row.value)} (${((100 * row.value) / row.total).toFixed(
+							1,
+						)}%)`,
+				});
 
-				replacePlot(
-					"#daily-plot",
-					basePlot(
-						document.querySelector("#daily-plot").clientWidth || smallWidth,
-						[
-							Plot.ruleY([0], { stroke: "#dfe5e8" }),
-							Plot.areaY(rows, {
-								x: "date",
-								y: "daily_pct",
-								fill: "#234766",
-								fillOpacity: 0.1,
-								curve: "monotone-x",
-							}),
-							Plot.lineY(rows, {
-								x: "date",
-								y: "daily_pct",
-								stroke: "#234766",
-								strokeWidth: 2.2,
-								curve: "monotone-x",
-								tip: true,
-							}),
-						],
-						{ zero: true, tickFormat: (value) => `${value.toFixed(0)}%` },
-					),
-				);
+				const line = (selector, field, color, tickFormat, source = rows) => {
+					const node = document.querySelector(selector);
+					const latest = source[source.length - 1];
+					replacePlot(
+						selector,
+						basePlot(
+							node.clientWidth || 320,
+							[
+								Plot.ruleY([0], { stroke: "#dfe5e8" }),
+								Plot.lineY(source, {
+									x: "date",
+									y: field,
+									stroke: color,
+									strokeWidth: 2.2,
+									curve: "monotone-x",
+									tip: true,
+									title: (row) => `${shortDate.format(row.date)}: ${tickFormat(row[field])}`,
+								}),
+								latest && Plot.dot([latest], { x: "date", y: field, fill: color, r: 3 }),
+							].filter(Boolean),
+							{ zero: true, tickFormat },
+						),
+					);
+				};
 
-				replacePlot(
-					"#revenue-plot",
-					basePlot(
-						document.querySelector("#revenue-plot").clientWidth || 700,
-						[
-							Plot.ruleY([0], { stroke: "#dfe5e8" }),
-							Plot.rectY(rows, {
-								x: "date",
-								y: "iap_revenue_usd",
-								interval: "day",
-								fill: "#d89024",
-								insetLeft: 1.5,
-								insetRight: 1.5,
-								tip: true,
-							}),
-						],
-						{ zero: true, tickFormat: (value) => money.format(value) },
-					),
-				);
+				line("#cases-plot", "cases_per_player", "#bd2d47", (value) => value.toFixed(1));
+				line("#sessions-plot", "sessions_per_player", "#3a6ea5", (value) => value.toFixed(1));
+				const dailyRows = rows.filter((row) => Number.isFinite(row.daily_pct));
+				line("#daily-plot", "daily_pct", "#d89024", (value) => `${value.toFixed(0)}%`, dailyRows);
+				line("#xp-plot", "xp_per_player", "#2a9d8f", (value) => compact.format(value));
+
+				bars("#revenue-plot", rows, {
+					y: "revenue_usd",
+					fill: "#14815d",
+					title: (row) => `${shortDate.format(row.date)}: ${money.format(row.revenue_usd)}`,
+				});
+				line("#arpdau-plot", "arpdau_usd", "#3a86a8", preciseMoney.format);
+				line("#conversion-plot", "conversion_pct", "#7b61a8", (value) => `${value.toFixed(1)}%`);
+				line("#ads-plot", "ads_per_dau", "#e76f51", (value) => value.toFixed(2));
 			}
 
 			function render(data) {
