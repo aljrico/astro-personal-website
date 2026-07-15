@@ -262,40 +262,18 @@
 			.retention {
 				display: grid;
 				grid-template-columns: repeat(3, 1fr);
-				gap: 1px;
+				gap: 12px;
 				margin-bottom: 32px;
-				border: 1px solid var(--line);
-				border-radius: 12px;
-				background: var(--line);
-				overflow: hidden;
 			}
 
-			.retention-cell {
-				padding: 16px 18px;
-				background: var(--card);
+			.retention .panel {
+				min-width: 0;
+				margin-bottom: 0;
+				padding-inline: 12px;
 			}
 
-			.retention-day {
-				display: block;
-				margin-bottom: 4px;
-				color: var(--muted);
-				font-size: 10px;
-				font-weight: 800;
-				letter-spacing: 0.06em;
-				text-transform: uppercase;
-			}
-
-			.retention-value {
-				font-family: "Tiempos Text", Georgia, serif;
-				font-size: 29px;
-				font-variant-numeric: tabular-nums;
-			}
-
-			.retention-base {
-				display: block;
-				margin-top: 3px;
-				color: var(--muted);
-				font-size: 9px;
+			.retention .plot {
+				min-height: 150px;
 			}
 
 			.footnotes {
@@ -412,12 +390,12 @@
 					grid-template-columns: 1fr;
 				}
 
-				.panel {
-					padding-inline: 14px;
+				.retention {
+					grid-template-columns: 1fr;
 				}
 
-				.retention-cell {
-					padding: 14px 12px;
+				.panel {
+					padding-inline: 14px;
 				}
 			}
 
@@ -477,9 +455,31 @@
 
 				<div class="section-heading">
 					<h2>Retention</h2>
-					<span>all mature cohorts</span>
+					<span>matured · n≥100 · by install date</span>
 				</div>
-				<section class="retention" id="retention" aria-label="Retention"></section>
+				<section class="retention" aria-label="Matured retention">
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">D1</h3>
+							<p class="panel-note" id="retention-d1-note">matured cohorts</p>
+						</div>
+						<div class="plot" id="retention-d1-plot"></div>
+					</section>
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">D3</h3>
+							<p class="panel-note" id="retention-d3-note">matured cohorts</p>
+						</div>
+						<div class="plot" id="retention-d3-plot"></div>
+					</section>
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">D7</h3>
+							<p class="panel-note" id="retention-d7-note">matured cohorts</p>
+						</div>
+						<div class="plot" id="retention-d7-plot"></div>
+					</section>
+				</section>
 
 				<div class="section-heading">
 					<h2>Last 30 days</h2>
@@ -552,6 +552,7 @@
 				currency: "USD",
 				maximumFractionDigits: 0,
 			});
+			const shortDate = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" });
 			const access = document.querySelector("#access");
 			const boot = document.querySelector("#boot");
 			const dashboard = document.querySelector("#dashboard");
@@ -599,19 +600,81 @@
 			}
 
 			function renderRetention(rows) {
-				document.querySelector("#retention").innerHTML = rows
-					.map(
-						(row) => `
-					<div class="retention-cell">
-						<span class="retention-day">Day ${row.day_n}</span>
-						<strong class="retention-value">${Number(row.retention_pct).toFixed(1)}%</strong>
-						<span class="retention-base">${number.format(row.returned)} of ${number.format(
-							row.cohort_size,
-						)}</span>
-					</div>
-				`,
-					)
-					.join("");
+				const parsed = rows.map((row) => ({
+					...row,
+					date: new Date(`${row.cohort_day}T12:00:00Z`),
+					day_n: Number(row.day_n),
+					cohort_size: Number(row.cohort_size),
+					returned: Number(row.returned),
+					retention_pct: Number(row.retention_pct),
+				}));
+				const maxRetention = Math.max(1, ...parsed.map((row) => row.retention_pct));
+				const yMax = Math.max(50, Math.ceil(maxRetention / 10) * 10);
+				const colors = { 1: "#234766", 3: "hsl(351deg 66% 48%)", 7: "#d89024" };
+
+				for (const dayN of [1, 3, 7]) {
+					const cohorts = parsed.filter((row) => row.day_n === dayN);
+					const latest = cohorts[cohorts.length - 1];
+					const plotNode = document.querySelector(`#retention-d${dayN}-plot`);
+					const noteNode = document.querySelector(`#retention-d${dayN}-note`);
+					if (!latest) {
+						noteNode.textContent = "not enough mature data";
+						plotNode.replaceChildren();
+						continue;
+					}
+					noteNode.textContent = `${latest.retention_pct.toFixed(1)}% · n=${compact.format(
+						latest.cohort_size,
+					)}`;
+					const color = colors[dayN];
+					replacePlot(
+						`#retention-d${dayN}-plot`,
+						Plot.plot({
+							width: plotNode.clientWidth || 220,
+							height: 150,
+							marginTop: 8,
+							marginRight: 10,
+							marginBottom: 28,
+							marginLeft: 38,
+							style: { background: "transparent", color: "#7d8a96", fontSize: "9px" },
+							x: { type: "utc", label: null, ticks: 3, tickFormat: "%b %-d", tickSize: 0 },
+							y: {
+								domain: [0, yMax],
+								label: null,
+								grid: true,
+								ticks: 4,
+								tickSize: 0,
+								tickFormat: (value) => `${value.toFixed(0)}%`,
+							},
+							marks: [
+								Plot.ruleY([0], { stroke: "#dfe5e8" }),
+								Plot.areaY(cohorts, {
+									x: "date",
+									y: "retention_pct",
+									fill: color,
+									fillOpacity: 0.1,
+									curve: "monotone-x",
+								}),
+								Plot.lineY(cohorts, {
+									x: "date",
+									y: "retention_pct",
+									stroke: color,
+									strokeWidth: 2.2,
+									curve: "monotone-x",
+									tip: true,
+									title: (row) =>
+										`${shortDate.format(row.date)}: ${row.retention_pct.toFixed(1)}% · ` +
+										`${number.format(row.returned)} of ${number.format(row.cohort_size)}`,
+								}),
+								Plot.dot([latest], {
+									x: "date",
+									y: "retention_pct",
+									fill: color,
+									r: 3,
+								}),
+							],
+						}),
+					);
+				}
 			}
 
 			function basePlot(width, marks, y = {}) {
@@ -907,8 +970,11 @@
 			});
 
 			new ResizeObserver(() => {
-				if (snapshot && Math.abs(document.body.clientWidth - lastRenderedWidth) > 30)
+				if (snapshot && Math.abs(document.body.clientWidth - lastRenderedWidth) > 30) {
+					renderRetention(snapshot.retention);
 					renderPlots(snapshot);
+					lastRenderedWidth = document.body.clientWidth;
+				}
 			}).observe(document.body);
 
 			const initialToken = tokenFromHash();
