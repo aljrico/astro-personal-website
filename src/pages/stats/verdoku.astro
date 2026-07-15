@@ -818,11 +818,13 @@
 						document.querySelector("#revenue-plot").clientWidth || 700,
 						[
 							Plot.ruleY([0], { stroke: "#dfe5e8" }),
-							Plot.barY(rows, {
+							Plot.rectY(rows, {
 								x: "date",
 								y: "iap_revenue_usd",
+								interval: "day",
 								fill: "#d89024",
-								rx: 2,
+								insetLeft: 1.5,
+								insetRight: 1.5,
 								tip: true,
 							}),
 						],
@@ -832,7 +834,6 @@
 			}
 
 			function render(data) {
-				snapshot = data;
 				renderSummary(data);
 				renderRetention(data.retention);
 				renderPlots(data);
@@ -845,11 +846,13 @@
 				}).format(-Math.max(0, Math.round((Date.now() - generated.getTime()) / 60000)), "minute")}`;
 				liveStatus.dataset.state = "live";
 				lastRenderedWidth = document.body.clientWidth;
+				snapshot = data;
 			}
 
 			async function load(token, { first = false } = {}) {
 				if (!token) return;
 				liveStatus.dataset.state = "loading";
+				let data;
 				try {
 					const response = await fetch(endpoint, {
 						headers: { Authorization: `Bearer ${token}` },
@@ -859,17 +862,7 @@
 						throw new Error(
 							response.status === 401 ? "Wrong access key." : "Dashboard is unavailable.",
 						);
-					const data = await response.json();
-					access.hidden = true;
-					boot.hidden = true;
-					document.documentElement.removeAttribute("data-has-key");
-					dashboard.hidden = false;
-					render(data);
-					errorMessage.textContent = "";
-					clearTimeout(refreshTimer);
-					refreshTimer = setTimeout(() => {
-						if (!document.hidden) load(tokenFromHash());
-					}, 60_000);
+					data = await response.json();
 				} catch (error) {
 					liveStatus.dataset.state = "error";
 					if (first || !snapshot) {
@@ -879,7 +872,25 @@
 						dashboard.hidden = true;
 						errorMessage.textContent = error.message;
 					}
+					return;
 				}
+
+				access.hidden = true;
+				boot.hidden = true;
+				document.documentElement.removeAttribute("data-has-key");
+				dashboard.hidden = false;
+				errorMessage.textContent = "";
+				try {
+					render(data);
+				} catch (error) {
+					liveStatus.dataset.state = "error";
+					updatedAt.textContent = "display error";
+					console.error("Dashboard render failed", error);
+				}
+				clearTimeout(refreshTimer);
+				refreshTimer = setTimeout(() => {
+					if (!document.hidden) load(tokenFromHash());
+				}, 60_000);
 			}
 
 			form.addEventListener("submit", (event) => {
