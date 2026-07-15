@@ -1,0 +1,786 @@
+---
+// Intentionally standalone: this private utility should not appear in the site
+// navigation, sitemap, or shared public layout.
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex, nofollow, noarchive" />
+		<meta name="referrer" content="no-referrer" />
+		<meta name="theme-color" content="#f7f7f4" />
+		<title>Verdoku live</title>
+		<style>
+			@font-face {
+				font-family: "Styrene B";
+				font-style: normal;
+				font-weight: 400;
+				font-display: swap;
+				src: url("/fonts/StyreneB-Regular.woff2") format("woff2");
+			}
+
+			@font-face {
+				font-family: "Styrene B";
+				font-style: normal;
+				font-weight: 600 800;
+				font-display: swap;
+				src: url("/fonts/StyreneB-Bold.woff2") format("woff2");
+			}
+
+			@font-face {
+				font-family: "Tiempos Text";
+				font-style: normal;
+				font-weight: 700;
+				font-display: swap;
+				src: url("/fonts/TiemposText-Bold.woff2") format("woff2");
+			}
+
+			:root {
+				color-scheme: light;
+				--paper: #f7f7f4;
+				--card: #ffffff;
+				--ink: #26323d;
+				--muted: #7d8a96;
+				--faint: #a5afb8;
+				--line: #e3e7e8;
+				--grid: #e9eef2;
+				--navy: #234766;
+				--red: hsl(351deg 66% 48%);
+				--green: #2abd88;
+				--amber: #d89024;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			html {
+				background: var(--paper);
+			}
+
+			body {
+				margin: 0;
+				min-width: 320px;
+				font-family:
+					"Styrene B",
+					ui-sans-serif,
+					system-ui,
+					-apple-system,
+					sans-serif;
+				color: var(--ink);
+				background: var(--paper);
+				-webkit-font-smoothing: antialiased;
+			}
+
+			button,
+			input {
+				font: inherit;
+			}
+
+			.shell {
+				width: min(100% - 32px, 760px);
+				margin: 0 auto;
+				padding: 34px 0 60px;
+			}
+
+			.topbar {
+				display: flex;
+				align-items: flex-start;
+				justify-content: space-between;
+				gap: 24px;
+				margin-bottom: 28px;
+			}
+
+			.eyebrow {
+				margin: 0 0 6px;
+				color: var(--red);
+				font-size: 11px;
+				font-weight: 800;
+				letter-spacing: 0.13em;
+				text-transform: uppercase;
+			}
+
+			h1,
+			h2 {
+				font-family: "Tiempos Text", Georgia, serif;
+			}
+
+			h1 {
+				margin: 0;
+				font-size: clamp(32px, 8vw, 48px);
+				line-height: 0.98;
+				letter-spacing: -0.02em;
+			}
+
+			.live-status {
+				display: flex;
+				align-items: center;
+				gap: 7px;
+				margin-top: 7px;
+				color: var(--muted);
+				font-size: 11px;
+				white-space: nowrap;
+			}
+
+			.status-dot {
+				width: 7px;
+				height: 7px;
+				border-radius: 999px;
+				background: var(--amber);
+				box-shadow: 0 0 0 4px color-mix(in srgb, var(--amber) 15%, transparent);
+			}
+
+			.live-status[data-state="live"] .status-dot {
+				background: var(--green);
+				box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 15%, transparent);
+			}
+
+			.summary {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 10px;
+				margin-bottom: 32px;
+			}
+
+			.metric,
+			.panel {
+				border: 1px solid var(--line);
+				background: color-mix(in srgb, var(--card) 82%, transparent);
+			}
+
+			.metric {
+				min-width: 0;
+				padding: 16px 14px 14px;
+				border-radius: 12px;
+			}
+
+			.metric-label {
+				display: block;
+				margin-bottom: 9px;
+				color: var(--muted);
+				font-size: 10px;
+				font-weight: 700;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+			}
+
+			.metric-value {
+				display: block;
+				font-family: "Tiempos Text", Georgia, serif;
+				font-size: clamp(25px, 5vw, 34px);
+				line-height: 1;
+				font-variant-numeric: tabular-nums;
+			}
+
+			.metric-change {
+				display: block;
+				margin-top: 8px;
+				color: var(--muted);
+				font-size: 10px;
+				font-variant-numeric: tabular-nums;
+			}
+
+			.metric-change[data-direction="up"] {
+				color: #14815d;
+			}
+
+			.metric-change[data-direction="down"] {
+				color: var(--red);
+			}
+
+			.section-heading {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 16px;
+				margin: 0 0 12px;
+			}
+
+			.section-heading h2 {
+				margin: 0;
+				font-size: 22px;
+			}
+
+			.section-heading span {
+				color: var(--muted);
+				font-size: 10px;
+			}
+
+			.panel {
+				margin-bottom: 12px;
+				padding: 18px 18px 14px;
+				border-radius: 12px;
+				overflow: hidden;
+			}
+
+			.panel-head {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 12px;
+				margin-bottom: 12px;
+			}
+
+			.panel-title {
+				margin: 0;
+				font-size: 12px;
+				font-weight: 800;
+			}
+
+			.panel-note {
+				margin: 0;
+				color: var(--muted);
+				font-size: 10px;
+			}
+
+			.plot {
+				width: 100%;
+				min-height: 170px;
+			}
+
+			.plot svg {
+				display: block;
+				max-width: 100%;
+				overflow: visible;
+				font-family: "Styrene B", ui-sans-serif, system-ui, sans-serif;
+			}
+
+			.plot-grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 12px;
+			}
+
+			.retention {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 1px;
+				margin-bottom: 32px;
+				border: 1px solid var(--line);
+				border-radius: 12px;
+				background: var(--line);
+				overflow: hidden;
+			}
+
+			.retention-cell {
+				padding: 16px 18px;
+				background: var(--card);
+			}
+
+			.retention-day {
+				display: block;
+				margin-bottom: 4px;
+				color: var(--muted);
+				font-size: 10px;
+				font-weight: 800;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+			}
+
+			.retention-value {
+				font-family: "Tiempos Text", Georgia, serif;
+				font-size: 29px;
+				font-variant-numeric: tabular-nums;
+			}
+
+			.retention-base {
+				display: block;
+				margin-top: 3px;
+				color: var(--muted);
+				font-size: 9px;
+			}
+
+			.footnotes {
+				margin: 20px 2px 0;
+				padding: 0;
+				list-style: none;
+				color: var(--muted);
+				font-size: 10px;
+				line-height: 1.55;
+			}
+
+			.footnotes li::before {
+				content: "— ";
+			}
+
+			.access {
+				display: grid;
+				min-height: 80vh;
+				place-items: center;
+			}
+
+			.access-card {
+				width: min(100%, 390px);
+				padding: 26px;
+				border: 1px solid var(--line);
+				border-radius: 14px;
+				background: var(--card);
+			}
+
+			.access-card h1 {
+				margin-bottom: 10px;
+				font-size: 34px;
+			}
+
+			.access-card p {
+				margin: 0 0 20px;
+				color: var(--muted);
+				font-size: 12px;
+				line-height: 1.5;
+			}
+
+			.access-form {
+				display: flex;
+				gap: 8px;
+			}
+
+			.access-form input {
+				min-width: 0;
+				flex: 1;
+				padding: 11px 12px;
+				border: 1px solid var(--line);
+				border-radius: 8px;
+				outline: none;
+				color: var(--ink);
+				background: var(--paper);
+			}
+
+			.access-form input:focus {
+				border-color: var(--red);
+				box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 12%, transparent);
+			}
+
+			.access-form button {
+				padding: 11px 15px;
+				border: 0;
+				border-radius: 8px;
+				color: white;
+				background: var(--red);
+				font-weight: 800;
+				cursor: pointer;
+			}
+
+			.access-error {
+				min-height: 17px;
+				margin: 10px 0 0 !important;
+				color: var(--red) !important;
+			}
+
+			[hidden] {
+				display: none !important;
+			}
+
+			@media (max-width: 620px) {
+				.shell {
+					width: min(100% - 24px, 760px);
+					padding-top: 24px;
+				}
+
+				.summary {
+					grid-template-columns: 1fr 1fr;
+				}
+
+				.plot-grid {
+					grid-template-columns: 1fr;
+				}
+
+				.panel {
+					padding-inline: 14px;
+				}
+
+				.retention-cell {
+					padding: 14px 12px;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				* {
+					scroll-behavior: auto !important;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main class="shell">
+			<section class="access" id="access">
+				<div class="access-card">
+					<p class="eyebrow">Private</p>
+					<h1>Verdoku live</h1>
+					<p>Paste the access key, or open the private link you were sent.</p>
+					<form class="access-form" id="access-form">
+						<input
+							id="access-key"
+							type="password"
+							autocomplete="current-password"
+							aria-label="Access key"
+						/>
+						<button type="submit">Open</button>
+					</form>
+					<p class="access-error" id="access-error" role="alert"></p>
+				</div>
+			</section>
+
+			<section id="dashboard" hidden>
+				<header class="topbar">
+					<div>
+						<p class="eyebrow">Verdoku</p>
+						<h1>The pulse.</h1>
+					</div>
+					<div class="live-status" id="live-status" data-state="loading">
+						<span class="status-dot"></span>
+						<span id="updated-at">Loading</span>
+					</div>
+				</header>
+
+				<section class="summary" aria-label="Today so far">
+					<div class="metric" data-metric="dau"></div>
+					<div class="metric" data-metric="new_installs"></div>
+					<div class="metric" data-metric="cases_solved"></div>
+					<div class="metric" data-metric="purchases"></div>
+				</section>
+
+				<div class="section-heading">
+					<h2>Retention</h2>
+					<span>all mature cohorts</span>
+				</div>
+				<section class="retention" id="retention" aria-label="Retention"></section>
+
+				<div class="section-heading">
+					<h2>Last 30 days</h2>
+					<span>UTC · today is partial</span>
+				</div>
+
+				<section class="panel">
+					<div class="panel-head">
+						<h3 class="panel-title">Audience</h3>
+						<p class="panel-note">active · new</p>
+					</div>
+					<div class="plot" id="audience-plot"></div>
+				</section>
+
+				<div class="plot-grid">
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Cases per player</h3>
+							<p class="panel-note">solves ÷ DAU</p>
+						</div>
+						<div class="plot" id="cases-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Daily ritual</h3>
+							<p class="panel-note">challenge players ÷ DAU</p>
+						</div>
+						<div class="plot" id="daily-plot"></div>
+					</section>
+				</div>
+
+				<section class="panel">
+					<div class="panel-head">
+						<h3 class="panel-title">IAP revenue</h3>
+						<p class="panel-note">RevenueCat · USD</p>
+					</div>
+					<div class="plot" id="revenue-plot"></div>
+				</section>
+
+				<ul class="footnotes" id="footnotes"></ul>
+			</section>
+		</main>
+
+		<script type="module" is:inline>
+			import * as Plot from "https://esm.sh/@observablehq/plot@0.6.17?bundle";
+
+			const endpoint = "https://lbitxwhhrohcjkbpbcrv.supabase.co/functions/v1/verdoku-dashboard";
+			const metricLabels = {
+				dau: "Active",
+				new_installs: "New installs",
+				cases_solved: "Cases solved",
+				purchases: "Purchases",
+			};
+			const number = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });
+			const compact = new Intl.NumberFormat("en", {
+				notation: "compact",
+				maximumFractionDigits: 1,
+			});
+			const money = new Intl.NumberFormat("en", {
+				style: "currency",
+				currency: "USD",
+				maximumFractionDigits: 0,
+			});
+			const access = document.querySelector("#access");
+			const dashboard = document.querySelector("#dashboard");
+			const form = document.querySelector("#access-form");
+			const keyInput = document.querySelector("#access-key");
+			const errorMessage = document.querySelector("#access-error");
+			const liveStatus = document.querySelector("#live-status");
+			const updatedAt = document.querySelector("#updated-at");
+			let snapshot;
+			let refreshTimer;
+			let lastRenderedWidth = 0;
+
+			const tokenFromHash = () => {
+				try {
+					return decodeURIComponent(location.hash.slice(1)).trim();
+				} catch {
+					return "";
+				}
+			};
+
+			function deltaCopy(current, previous) {
+				if (!Number.isFinite(current) || !Number.isFinite(previous) || previous === 0) {
+					return { copy: "no comparison", direction: "flat" };
+				}
+				const change = ((current - previous) / previous) * 100;
+				const sign = change > 0 ? "+" : "";
+				return {
+					copy: `${sign}${change.toFixed(0)}% vs yesterday`,
+					direction: change > 0 ? "up" : change < 0 ? "down" : "flat",
+				};
+			}
+
+			function renderSummary(data) {
+				for (const [key, label] of Object.entries(metricLabels)) {
+					const current = Number(data.today[key] ?? 0);
+					const previous = Number(data.yesterday_same_time[key] ?? 0);
+					const change = deltaCopy(current, previous);
+					const card = document.querySelector(`[data-metric="${key}"]`);
+					card.innerHTML = `
+						<span class="metric-label">${label}</span>
+						<strong class="metric-value">${compact.format(current)}</strong>
+						<span class="metric-change" data-direction="${change.direction}">${change.copy}</span>
+					`;
+				}
+			}
+
+			function renderRetention(rows) {
+				document.querySelector("#retention").innerHTML = rows
+					.map(
+						(row) => `
+					<div class="retention-cell">
+						<span class="retention-day">Day ${row.day_n}</span>
+						<strong class="retention-value">${Number(row.retention_pct).toFixed(1)}%</strong>
+						<span class="retention-base">${number.format(row.returned)} of ${number.format(
+							row.cohort_size,
+						)}</span>
+					</div>
+				`,
+					)
+					.join("");
+			}
+
+			function basePlot(width, marks, y = {}) {
+				return Plot.plot({
+					width,
+					height: 178,
+					marginTop: 8,
+					marginRight: 12,
+					marginBottom: 28,
+					marginLeft: 43,
+					style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+					x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+					y: { label: null, grid: true, ticks: 4, tickSize: 0, ...y },
+					marks,
+				});
+			}
+
+			function replacePlot(selector, plot) {
+				document.querySelector(selector).replaceChildren(plot);
+			}
+
+			function renderPlots(data) {
+				const rows = data.series.map((row) => ({
+					...row,
+					date: new Date(`${row.day}T12:00:00Z`),
+					dau: Number(row.dau),
+					new_installs: Number(row.new_installs),
+					cases_per_player: Number(row.dau) ? Number(row.cases_solved) / Number(row.dau) : 0,
+					daily_pct: Number(row.dau) ? (100 * Number(row.daily_players)) / Number(row.dau) : 0,
+					iap_revenue_usd: Number(row.iap_revenue_usd),
+				}));
+				const audience = rows.flatMap((row) => [
+					{ date: row.date, series: "Active", value: row.dau },
+					{ date: row.date, series: "New", value: row.new_installs },
+				]);
+				const audienceNode = document.querySelector("#audience-plot");
+				const smallWidth = document.querySelector("#cases-plot").clientWidth || 320;
+
+				replacePlot(
+					"#audience-plot",
+					Plot.plot({
+						width: audienceNode.clientWidth || 700,
+						height: 190,
+						marginTop: 8,
+						marginRight: 12,
+						marginBottom: 28,
+						marginLeft: 43,
+						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+						x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+						y: {
+							label: null,
+							grid: true,
+							ticks: 4,
+							tickSize: 0,
+							tickFormat: (value) => compact.format(value),
+						},
+						color: {
+							domain: ["Active", "New"],
+							range: ["#234766", "hsl(351deg 66% 48%)"],
+							legend: true,
+						},
+						marks: [
+							Plot.ruleY([0], { stroke: "#dfe5e8" }),
+							Plot.lineY(audience, {
+								x: "date",
+								y: "value",
+								stroke: "series",
+								strokeWidth: 2.3,
+								curve: "monotone-x",
+								tip: true,
+							}),
+						],
+					}),
+				);
+
+				replacePlot(
+					"#cases-plot",
+					basePlot(
+						smallWidth,
+						[
+							Plot.ruleY([0], { stroke: "#dfe5e8" }),
+							Plot.areaY(rows, {
+								x: "date",
+								y: "cases_per_player",
+								fill: "hsl(351deg 66% 48%)",
+								fillOpacity: 0.1,
+								curve: "monotone-x",
+							}),
+							Plot.lineY(rows, {
+								x: "date",
+								y: "cases_per_player",
+								stroke: "hsl(351deg 66% 48%)",
+								strokeWidth: 2.2,
+								curve: "monotone-x",
+								tip: true,
+							}),
+						],
+						{ zero: true, tickFormat: (value) => value.toFixed(1) },
+					),
+				);
+
+				replacePlot(
+					"#daily-plot",
+					basePlot(
+						document.querySelector("#daily-plot").clientWidth || smallWidth,
+						[
+							Plot.ruleY([0], { stroke: "#dfe5e8" }),
+							Plot.areaY(rows, {
+								x: "date",
+								y: "daily_pct",
+								fill: "#234766",
+								fillOpacity: 0.1,
+								curve: "monotone-x",
+							}),
+							Plot.lineY(rows, {
+								x: "date",
+								y: "daily_pct",
+								stroke: "#234766",
+								strokeWidth: 2.2,
+								curve: "monotone-x",
+								tip: true,
+							}),
+						],
+						{ zero: true, tickFormat: (value) => `${value.toFixed(0)}%` },
+					),
+				);
+
+				replacePlot(
+					"#revenue-plot",
+					basePlot(
+						document.querySelector("#revenue-plot").clientWidth || 700,
+						[
+							Plot.ruleY([0], { stroke: "#dfe5e8" }),
+							Plot.barY(rows, {
+								x: "date",
+								y: "iap_revenue_usd",
+								fill: "#d89024",
+								rx: 2,
+								tip: true,
+							}),
+						],
+						{ zero: true, tickFormat: (value) => money.format(value) },
+					),
+				);
+			}
+
+			function render(data) {
+				snapshot = data;
+				renderSummary(data);
+				renderRetention(data.retention);
+				renderPlots(data);
+				document.querySelector("#footnotes").innerHTML = data.notes
+					.map((note) => `<li>${note}</li>`)
+					.join("");
+				const generated = new Date(data.generated_at);
+				updatedAt.textContent = `updated ${new Intl.RelativeTimeFormat("en", {
+					numeric: "auto",
+				}).format(-Math.max(0, Math.round((Date.now() - generated.getTime()) / 60000)), "minute")}`;
+				liveStatus.dataset.state = "live";
+				lastRenderedWidth = document.body.clientWidth;
+			}
+
+			async function load(token, { first = false } = {}) {
+				if (!token) return;
+				liveStatus.dataset.state = "loading";
+				try {
+					const response = await fetch(endpoint, {
+						headers: { Authorization: `Bearer ${token}` },
+						cache: "no-store",
+					});
+					if (!response.ok)
+						throw new Error(
+							response.status === 401 ? "Wrong access key." : "Dashboard is unavailable.",
+						);
+					const data = await response.json();
+					access.hidden = true;
+					dashboard.hidden = false;
+					render(data);
+					errorMessage.textContent = "";
+					clearTimeout(refreshTimer);
+					refreshTimer = setTimeout(() => {
+						if (!document.hidden) load(tokenFromHash());
+					}, 60_000);
+				} catch (error) {
+					liveStatus.dataset.state = "error";
+					if (first || !snapshot) {
+						access.hidden = false;
+						dashboard.hidden = true;
+						errorMessage.textContent = error.message;
+					}
+				}
+			}
+
+			form.addEventListener("submit", (event) => {
+				event.preventDefault();
+				const token = keyInput.value.trim();
+				if (!token) return;
+				location.hash = encodeURIComponent(token);
+				load(token, { first: true });
+			});
+
+			document.addEventListener("visibilitychange", () => {
+				if (!document.hidden && tokenFromHash()) load(tokenFromHash());
+			});
+
+			new ResizeObserver(() => {
+				if (snapshot && Math.abs(document.body.clientWidth - lastRenderedWidth) > 30)
+					renderPlots(snapshot);
+			}).observe(document.body);
+
+			const initialToken = tokenFromHash();
+			if (initialToken) load(initialToken, { first: true });
+		</script>
+	</body>
+</html>
