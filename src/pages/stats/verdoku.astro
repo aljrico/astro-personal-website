@@ -11,7 +11,7 @@
 		<meta name="robots" content="noindex, nofollow, noarchive" />
 		<meta name="referrer" content="no-referrer" />
 		<meta name="theme-color" content="#f7f7f4" />
-		<title>Verdoku live</title>
+		<title>Murder Sudoku: Tiny Crimes · Live</title>
 		<script is:inline>
 			try {
 				if (decodeURIComponent(location.hash.slice(1)).trim())
@@ -432,7 +432,7 @@
 		<main class="shell">
 			<section class="boot" id="boot" hidden aria-live="polite">
 				<div>
-					<p class="eyebrow">Verdoku</p>
+					<p class="eyebrow">Murder Sudoku: Tiny Crimes</p>
 					<h1>Reading the room.</h1>
 					<p>Loading live numbers…</p>
 				</div>
@@ -441,7 +441,7 @@
 			<section class="access" id="access">
 				<div class="access-card">
 					<p class="eyebrow">Private</p>
-					<h1>Verdoku live</h1>
+					<h1>Murder Sudoku: Tiny Crimes</h1>
 					<p>Paste the access key, or open the private link you were sent.</p>
 					<form class="access-form" id="access-form">
 						<input
@@ -459,7 +459,7 @@
 			<section id="dashboard" hidden>
 				<header class="topbar">
 					<div>
-						<p class="eyebrow">Verdoku</p>
+						<p class="eyebrow">Murder Sudoku: Tiny Crimes</p>
 						<h1>The pulse.</h1>
 					</div>
 					<div class="live-status" id="live-status" data-state="loading">
@@ -494,6 +494,14 @@
 					<div class="plot" id="audience-plot"></div>
 				</section>
 
+				<section class="panel">
+					<div class="panel-head">
+						<h3 class="panel-title">Platform mix</h3>
+						<p class="panel-note" id="platform-note">share of active players</p>
+					</div>
+					<div class="plot" id="platform-plot"></div>
+				</section>
+
 				<div class="plot-grid">
 					<section class="panel">
 						<div class="panel-head">
@@ -506,7 +514,7 @@
 					<section class="panel">
 						<div class="panel-head">
 							<h3 class="panel-title">Daily ritual</h3>
-							<p class="panel-note">challenge players ÷ DAU</p>
+							<p class="panel-note">comparable telemetry only</p>
 						</div>
 						<div class="plot" id="daily-plot"></div>
 					</section>
@@ -630,17 +638,43 @@
 					...row,
 					date: new Date(`${row.day}T12:00:00Z`),
 					dau: Number(row.dau),
+					ios_dau: Number(row.ios_dau),
+					android_dau: Number(row.android_dau),
 					new_installs: Number(row.new_installs),
 					cases_per_player: Number(row.dau) ? Number(row.cases_solved) / Number(row.dau) : 0,
-					daily_pct: Number(row.dau) ? (100 * Number(row.daily_players)) / Number(row.dau) : 0,
+					daily_pct:
+						row.daily_participation_pct == null ? null : Number(row.daily_participation_pct),
 					iap_revenue_usd: Number(row.iap_revenue_usd),
 				}));
 				const audience = rows.flatMap((row) => [
 					{ date: row.date, series: "Active", value: row.dau },
 					{ date: row.date, series: "New", value: row.new_installs },
 				]);
+				const platformDays = rows.filter((row) => row.ios_dau + row.android_dau > 0);
+				const platform = platformDays.flatMap((row) => [
+					{
+						date: row.date,
+						platform: "iOS",
+						value: row.ios_dau,
+						total: row.ios_dau + row.android_dau,
+					},
+					{
+						date: row.date,
+						platform: "Android",
+						value: row.android_dau,
+						total: row.ios_dau + row.android_dau,
+					},
+				]);
+				const dailyRows = rows.filter((row) => Number.isFinite(row.daily_pct));
 				const audienceNode = document.querySelector("#audience-plot");
 				const smallWidth = document.querySelector("#cases-plot").clientWidth || 320;
+				const latestPlatform = platformDays[platformDays.length - 1];
+				if (latestPlatform) {
+					const total = latestPlatform.ios_dau + latestPlatform.android_dau;
+					document.querySelector("#platform-note").textContent =
+						`iOS ${((100 * latestPlatform.ios_dau) / total).toFixed(1)}% · ` +
+						`Android ${((100 * latestPlatform.android_dau) / total).toFixed(1)}%`;
+				}
 
 				replacePlot(
 					"#audience-plot",
@@ -680,19 +714,66 @@
 				);
 
 				replacePlot(
+					"#platform-plot",
+					Plot.plot({
+						width: document.querySelector("#platform-plot").clientWidth || 700,
+						height: 190,
+						marginTop: 8,
+						marginRight: 12,
+						marginBottom: 28,
+						marginLeft: 43,
+						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+						x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+						y: {
+							domain: [0, 1],
+							label: null,
+							grid: true,
+							percent: true,
+							ticks: 5,
+							tickSize: 0,
+						},
+						color: {
+							domain: ["iOS", "Android"],
+							range: ["#234766", "hsl(351deg 66% 48%)"],
+							legend: true,
+						},
+						marks: [
+							Plot.areaY(
+								platform,
+								Plot.stackY(
+									{ offset: "normalize" },
+									{
+										x: "date",
+										y: "value",
+										z: "platform",
+										fill: "platform",
+										curve: "monotone-x",
+										tip: true,
+										title: (row) =>
+											`${row.platform}: ${number.format(row.value)} ` +
+											`(${((100 * row.value) / row.total).toFixed(1)}%)`,
+									},
+								),
+							),
+							Plot.ruleY([0, 1], { stroke: "#dfe5e8" }),
+						],
+					}),
+				);
+
+				replacePlot(
 					"#cases-plot",
 					basePlot(
 						smallWidth,
 						[
 							Plot.ruleY([0], { stroke: "#dfe5e8" }),
-							Plot.areaY(rows, {
+							Plot.areaY(dailyRows, {
 								x: "date",
 								y: "cases_per_player",
 								fill: "hsl(351deg 66% 48%)",
 								fillOpacity: 0.1,
 								curve: "monotone-x",
 							}),
-							Plot.lineY(rows, {
+							Plot.lineY(dailyRows, {
 								x: "date",
 								y: "cases_per_player",
 								stroke: "hsl(351deg 66% 48%)",
