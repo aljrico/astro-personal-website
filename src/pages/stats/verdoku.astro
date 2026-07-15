@@ -12,6 +12,12 @@
 		<meta name="referrer" content="no-referrer" />
 		<meta name="theme-color" content="#f7f7f4" />
 		<title>Verdoku live</title>
+		<script is:inline>
+			try {
+				if (decodeURIComponent(location.hash.slice(1)).trim())
+					document.documentElement.dataset.hasKey = "";
+			} catch {}
+		</script>
 		<style>
 			@font-face {
 				font-family: "Styrene B";
@@ -305,10 +311,30 @@
 				content: "— ";
 			}
 
-			.access {
+			.access,
+			.boot {
 				display: grid;
 				min-height: 80vh;
 				place-items: center;
+			}
+
+			.boot {
+				display: none;
+				text-align: center;
+			}
+
+			.boot p:last-child {
+				margin: 10px 0 0;
+				color: var(--muted);
+				font-size: 12px;
+			}
+
+			html[data-has-key] .access {
+				display: none;
+			}
+
+			html[data-has-key] .boot {
+				display: grid !important;
 			}
 
 			.access-card {
@@ -404,6 +430,14 @@
 	</head>
 	<body>
 		<main class="shell">
+			<section class="boot" id="boot" hidden aria-live="polite">
+				<div>
+					<p class="eyebrow">Verdoku</p>
+					<h1>Reading the room.</h1>
+					<p>Loading live numbers…</p>
+				</div>
+			</section>
+
 			<section class="access" id="access">
 				<div class="access-card">
 					<p class="eyebrow">Private</p>
@@ -511,6 +545,7 @@
 				maximumFractionDigits: 0,
 			});
 			const access = document.querySelector("#access");
+			const boot = document.querySelector("#boot");
 			const dashboard = document.querySelector("#dashboard");
 			const form = document.querySelector("#access-form");
 			const keyInput = document.querySelector("#access-key");
@@ -745,6 +780,8 @@
 						);
 					const data = await response.json();
 					access.hidden = true;
+					boot.hidden = true;
+					document.documentElement.removeAttribute("data-has-key");
 					dashboard.hidden = false;
 					render(data);
 					errorMessage.textContent = "";
@@ -755,6 +792,8 @@
 				} catch (error) {
 					liveStatus.dataset.state = "error";
 					if (first || !snapshot) {
+						boot.hidden = true;
+						document.documentElement.removeAttribute("data-has-key");
 						access.hidden = false;
 						dashboard.hidden = true;
 						errorMessage.textContent = error.message;
@@ -767,6 +806,8 @@
 				const token = keyInput.value.trim();
 				if (!token) return;
 				location.hash = encodeURIComponent(token);
+				boot.hidden = false;
+				document.documentElement.dataset.hasKey = "";
 				load(token, { first: true });
 			});
 
