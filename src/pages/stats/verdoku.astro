@@ -566,13 +566,23 @@
 					<span>gross USD estimate</span>
 				</div>
 
-				<section class="panel">
-					<div class="panel-head">
-						<h3 class="panel-title">Revenue</h3>
-						<p class="panel-note">IAP + ads</p>
-					</div>
-					<div class="plot" id="revenue-plot"></div>
-				</section>
+				<div class="plot-grid">
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Revenue by source</h3>
+							<p class="panel-note">IAP · ads</p>
+						</div>
+						<div class="plot" id="revenue-source-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Revenue by platform</h3>
+							<p class="panel-note">iOS · Android</p>
+						</div>
+						<div class="plot" id="revenue-platform-plot"></div>
+					</section>
+				</div>
 
 				<div class="plot-grid three">
 					<section class="panel">
@@ -783,7 +793,11 @@
 				const rows = data.series.map((row) => {
 					const dau = Number(row.dau);
 					const newPlayers = Math.min(dau, Number(row.new_installs));
-					const revenue = Number(row.revenue_usd);
+					const iapRevenue = Number(row.iap_revenue_usd ?? 0);
+					const adRevenue = Number(row.ad_revenue_usd ?? 0);
+					const iosRevenue = Number(row.ios_revenue_usd ?? 0);
+					const androidRevenue = Number(row.android_revenue_usd ?? 0);
+					const revenue = Number(row.revenue_usd ?? iapRevenue + adRevenue);
 					return {
 						...row,
 						date: new Date(`${row.day}T12:00:00Z`),
@@ -797,6 +811,10 @@
 						daily_pct:
 							row.daily_participation_pct == null ? null : Number(row.daily_participation_pct),
 						xp_per_player: dau ? Number(row.xp_earned) / dau : 0,
+						iap_revenue_usd: iapRevenue,
+						ad_revenue_usd: adRevenue,
+						ios_revenue_usd: iosRevenue,
+						android_revenue_usd: androidRevenue,
 						revenue_usd: revenue,
 						arpdau_usd: dau ? revenue / dau : 0,
 						conversion_pct: dau ? (100 * Number(row.payers)) / dau : 0,
@@ -808,6 +826,17 @@
 					{ ...row, series: "Existing", value: row.existing_players },
 					{ ...row, series: "New", value: row.new_players },
 				]);
+				const revenueBySource = rows.flatMap((row) => [
+					{ ...row, series: "IAP", value: row.iap_revenue_usd, total: row.revenue_usd },
+					{ ...row, series: "Ads", value: row.ad_revenue_usd, total: row.revenue_usd },
+				]);
+				const revenueByPlatform = rows.flatMap((row) => {
+					const total = row.ios_revenue_usd + row.android_revenue_usd;
+					return [
+						{ ...row, series: "iOS", value: row.ios_revenue_usd, total },
+						{ ...row, series: "Android", value: row.android_revenue_usd, total },
+					];
+				});
 				const platformDays = rows.filter((row) => row.ios_dau + row.android_dau > 0);
 				const platform = platformDays.flatMap((row) => {
 					const total = row.ios_dau + row.android_dau;
@@ -874,7 +903,7 @@
 								zero: true,
 								ticks: 4,
 								tickSize: 0,
-								tickFormat: compact.format,
+								tickFormat: options.tickFormat ?? compact.format,
 							},
 							color: options.color,
 							marks: [
@@ -965,10 +994,23 @@
 				line("#daily-plot", "daily_pct", "#d89024", (value) => `${value.toFixed(0)}%`, dailyRows);
 				line("#xp-plot", "xp_per_player", "#2a9d8f", (value) => compact.format(value));
 
-				bars("#revenue-plot", rows, {
-					y: "revenue_usd",
-					fill: "#14815d",
-					title: (row) => `${shortDate.format(row.date)}: ${money.format(row.revenue_usd)}`,
+				bars("#revenue-source-plot", revenueBySource, {
+					stacked: true,
+					legend: true,
+					tickFormat: money.format,
+					color: { domain: ["IAP", "Ads"], range: ["#d89024", "#14815d"], legend: true },
+					title: (row) =>
+						`${shortDate.format(row.date)} · ${row.series}: ${money.format(row.value)} ` +
+						`of ${money.format(row.total)}`,
+				});
+				bars("#revenue-platform-plot", revenueByPlatform, {
+					stacked: true,
+					legend: true,
+					tickFormat: money.format,
+					color: { domain: ["iOS", "Android"], range: ["#5b7cfa", "#72b01d"], legend: true },
+					title: (row) =>
+						`${shortDate.format(row.date)} · ${row.series}: ${money.format(row.value)} ` +
+						`of ${money.format(row.total)}`,
 				});
 				line("#arpdau-plot", "arpdau_usd", "#3a86a8", preciseMoney.format);
 				line("#conversion-plot", "conversion_pct", "#7b61a8", (value) => `${value.toFixed(1)}%`);
