@@ -265,7 +265,7 @@
 
 			.retention {
 				display: grid;
-				grid-template-columns: repeat(3, 1fr);
+				grid-template-columns: repeat(2, 1fr);
 				gap: 12px;
 				margin-bottom: 32px;
 			}
@@ -483,7 +483,37 @@
 						</div>
 						<div class="plot" id="retention-d7-plot"></div>
 					</section>
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">D14</h3>
+							<p class="panel-note" id="retention-d14-note">matured cohorts</p>
+						</div>
+						<div class="plot" id="retention-d14-plot"></div>
+					</section>
 				</section>
+
+				<div class="section-heading">
+					<h2>Stickiness</h2>
+					<span>last 30 days · UTC · today is partial</span>
+				</div>
+
+				<div class="plot-grid">
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">DAU / WAU</h3>
+							<p class="panel-note" id="dau-wau-note">trailing 7 days</p>
+						</div>
+						<div class="plot" id="dau-wau-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">CURR</h3>
+							<p class="panel-note" id="curr-note">established players · D+1</p>
+						</div>
+						<div class="plot" id="curr-plot"></div>
+					</section>
+				</div>
 
 				<div class="section-heading">
 					<h2>Audience</h2>
@@ -687,6 +717,73 @@
 				}
 			}
 
+			function linePlot(source, field, color, tickFormat, options = {}) {
+				const values = source.map((row) => Number(row[field])).filter(Number.isFinite);
+				if (!values.length) return null;
+				const min = Math.min(...values);
+				const max = Math.max(...values);
+				const padding = Math.max(
+					(max - min) * 0.15,
+					Math.max(Math.abs(min), Math.abs(max), 1) * 0.04,
+				);
+				const yDomain = [
+					Math.max(options.floor ?? -Infinity, min - padding),
+					Math.min(options.ceiling ?? Infinity, max + padding),
+				];
+				const latest = source[source.length - 1];
+				return Plot.plot({
+					width: options.width,
+					height: options.height ?? 178,
+					marginTop: 8,
+					marginRight: 12,
+					marginBottom: 28,
+					marginLeft: options.marginLeft ?? 43,
+					style: {
+						background: "transparent",
+						color: "#7d8a96",
+						fontSize: options.fontSize ?? "10px",
+					},
+					x: {
+						type: "utc",
+						label: null,
+						ticks: options.xTicks ?? 5,
+						tickFormat: "%b %-d",
+						tickSize: 0,
+					},
+					y: {
+						domain: yDomain,
+						label: null,
+						grid: true,
+						nice: true,
+						ticks: 4,
+						tickSize: 0,
+						tickFormat,
+					},
+					marks: [
+						Plot.areaY(source, {
+							x: "date",
+							y1: yDomain[0],
+							y2: field,
+							fill: color,
+							fillOpacity: 0.1,
+							curve: "monotone-x",
+						}),
+						Plot.lineY(source, {
+							x: "date",
+							y: field,
+							stroke: color,
+							strokeWidth: 2.2,
+							curve: "monotone-x",
+							tip: true,
+							title:
+								options.title ??
+								((row) => `${shortDate.format(row.date)}: ${tickFormat(row[field])}`),
+						}),
+						Plot.dot([latest], { x: "date", y: field, fill: color, r: 3 }),
+					],
+				});
+			}
+
 			function renderRetention(rows) {
 				const parsed = rows.map((row) => ({
 					...row,
@@ -696,9 +793,14 @@
 					returned: Number(row.returned),
 					retention_pct: Number(row.retention_pct),
 				}));
-				const colors = { 1: "#234766", 3: "hsl(351deg 66% 48%)", 7: "#d89024" };
+				const colors = {
+					1: "#234766",
+					3: "hsl(351deg 66% 48%)",
+					7: "#d89024",
+					14: "#2a9d8f",
+				};
 
-				for (const dayN of [1, 3, 7]) {
+				for (const dayN of [1, 3, 7, 14]) {
 					const cohorts = parsed.filter((row) => row.day_n === dayN);
 					const latest = cohorts[cohorts.length - 1];
 					const plotNode = document.querySelector(`#retention-d${dayN}-plot`);
@@ -708,81 +810,24 @@
 						plotNode.replaceChildren();
 						continue;
 					}
-					const retentionValues = cohorts.map((row) => row.retention_pct);
-					const minRetention = Math.min(...retentionValues);
-					const maxRetention = Math.max(...retentionValues);
-					const padding = Math.max(1, (maxRetention - minRetention) * 0.15);
-					const yDomain = [
-						Math.max(0, minRetention - padding),
-						Math.min(100, maxRetention + padding),
-					];
 					noteNode.textContent = `${latest.retention_pct.toFixed(1)}%`;
 					const color = colors[dayN];
 					replacePlot(
 						`#retention-d${dayN}-plot`,
-						Plot.plot({
+						linePlot(cohorts, "retention_pct", color, (value) => `${value.toFixed(0)}%`, {
 							width: plotNode.clientWidth || 220,
 							height: 150,
-							marginTop: 8,
-							marginRight: 10,
-							marginBottom: 28,
 							marginLeft: 38,
-							style: { background: "transparent", color: "#7d8a96", fontSize: "9px" },
-							x: { type: "utc", label: null, ticks: 3, tickFormat: "%b %-d", tickSize: 0 },
-							y: {
-								domain: yDomain,
-								label: null,
-								grid: true,
-								nice: true,
-								ticks: 4,
-								tickSize: 0,
-								tickFormat: (value) => `${value.toFixed(0)}%`,
-							},
-							marks: [
-								Plot.areaY(cohorts, {
-									x: "date",
-									y1: yDomain[0],
-									y2: "retention_pct",
-									fill: color,
-									fillOpacity: 0.1,
-									curve: "monotone-x",
-								}),
-								Plot.lineY(cohorts, {
-									x: "date",
-									y: "retention_pct",
-									stroke: color,
-									strokeWidth: 2.2,
-									curve: "monotone-x",
-									tip: true,
-									title: (row) =>
-										`${shortDate.format(row.date)}: ${row.retention_pct.toFixed(1)}% · ` +
-										`${number.format(row.returned)} of ${number.format(row.cohort_size)}`,
-								}),
-								Plot.dot([latest], {
-									x: "date",
-									y: "retention_pct",
-									fill: color,
-									r: 3,
-								}),
-							],
+							fontSize: "9px",
+							xTicks: 3,
+							floor: 0,
+							ceiling: 100,
+							title: (row) =>
+								`${shortDate.format(row.date)}: ${row.retention_pct.toFixed(1)}% · ` +
+								`${number.format(row.returned)} of ${number.format(row.cohort_size)}`,
 						}),
 					);
 				}
-			}
-
-			function basePlot(width, marks, y = {}) {
-				return Plot.plot({
-					width,
-					height: 178,
-					marginTop: 8,
-					marginRight: 12,
-					marginBottom: 28,
-					marginLeft: 43,
-					style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
-					x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
-					y: { label: null, grid: true, ticks: 4, tickSize: 0, ...y },
-					marks,
-				});
 			}
 
 			function replacePlot(selector, plot) {
@@ -965,27 +1010,12 @@
 
 				const line = (selector, field, color, tickFormat, source = rows) => {
 					const node = document.querySelector(selector);
-					const latest = source[source.length - 1];
-					replacePlot(
-						selector,
-						basePlot(
-							node.clientWidth || 320,
-							[
-								Plot.ruleY([0], { stroke: "#dfe5e8" }),
-								Plot.lineY(source, {
-									x: "date",
-									y: field,
-									stroke: color,
-									strokeWidth: 2.2,
-									curve: "monotone-x",
-									tip: true,
-									title: (row) => `${shortDate.format(row.date)}: ${tickFormat(row[field])}`,
-								}),
-								latest && Plot.dot([latest], { x: "date", y: field, fill: color, r: 3 }),
-							].filter(Boolean),
-							{ zero: true, tickFormat },
-						),
-					);
+					const plot = linePlot(source, field, color, tickFormat, {
+						width: node.clientWidth || 320,
+						floor: 0,
+					});
+					if (plot) replacePlot(selector, plot);
+					else node.replaceChildren();
 				};
 
 				line("#cases-plot", "cases_per_player", "#bd2d47", (value) => value.toFixed(1));
@@ -1017,9 +1047,67 @@
 				line("#ads-plot", "ads_per_dau", "#e76f51", (value) => value.toFixed(2));
 			}
 
+			function renderStickiness(rows) {
+				const parsed = rows.map((row) => ({
+					...row,
+					date: new Date(`${row.day}T12:00:00Z`),
+					dau: Number(row.dau),
+					wau: Number(row.wau),
+					dau_wau_pct: row.dau_wau_pct == null ? null : Number(row.dau_wau_pct),
+					curr_eligible: row.curr_eligible == null ? null : Number(row.curr_eligible),
+					curr_returned: row.curr_returned == null ? null : Number(row.curr_returned),
+					curr_pct: row.curr_pct == null ? null : Number(row.curr_pct),
+				}));
+				const percentage = (value) => `${value.toFixed(0)}%`;
+				const renderMetric = (selector, noteSelector, field, color, source, title) => {
+					const node = document.querySelector(selector);
+					const latest = source[source.length - 1];
+					if (!latest) {
+						document.querySelector(noteSelector).textContent = "not enough mature data";
+						node.replaceChildren();
+						return;
+					}
+					document.querySelector(noteSelector).textContent = `${latest[field].toFixed(1)}%`;
+					replacePlot(
+						selector,
+						linePlot(source, field, color, percentage, {
+							width: node.clientWidth || 320,
+							floor: 0,
+							ceiling: 100,
+							title,
+						}),
+					);
+				};
+
+				const dauWau = parsed.filter((row) => Number.isFinite(row.dau_wau_pct));
+				renderMetric(
+					"#dau-wau-plot",
+					"#dau-wau-note",
+					"dau_wau_pct",
+					"#234766",
+					dauWau,
+					(row) =>
+						`${shortDate.format(row.date)}: ${row.dau_wau_pct.toFixed(1)}% · ` +
+						`${number.format(row.dau)} DAU / ${number.format(row.wau)} WAU`,
+				);
+
+				const curr = parsed.filter((row) => Number.isFinite(row.curr_pct));
+				renderMetric(
+					"#curr-plot",
+					"#curr-note",
+					"curr_pct",
+					"hsl(351deg 66% 48%)",
+					curr,
+					(row) =>
+						`${shortDate.format(row.date)}: ${row.curr_pct.toFixed(1)}% · ` +
+						`${number.format(row.curr_returned)} of ${number.format(row.curr_eligible)}`,
+				);
+			}
+
 			function render(data) {
 				renderSummary(data);
 				renderRetention(data.retention);
+				renderStickiness(data.stickiness ?? []);
 				renderPlots(data);
 				document.querySelector("#footnotes").innerHTML = data.notes
 					.map((note) => `<li>${note}</li>`)
@@ -1094,6 +1182,7 @@
 			new ResizeObserver(() => {
 				if (snapshot && Math.abs(document.body.clientWidth - lastRenderedWidth) > 30) {
 					renderRetention(snapshot.retention);
+					renderStickiness(snapshot.stickiness ?? []);
 					renderPlots(snapshot);
 					lastRenderedWidth = document.body.clientWidth;
 				}
