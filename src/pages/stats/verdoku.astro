@@ -528,13 +528,23 @@
 					<div class="plot" id="dau-plot"></div>
 				</section>
 
-				<section class="panel">
-					<div class="panel-head">
-						<h3 class="panel-title">New + existing players</h3>
-						<p class="panel-note">DAU composition</p>
-					</div>
-					<div class="plot" id="player-mix-plot"></div>
-				</section>
+				<div class="plot-grid">
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">New + existing players</h3>
+							<p class="panel-note">stacked</p>
+						</div>
+						<div class="plot" id="player-mix-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">New + existing players</h3>
+							<p class="panel-note">trend</p>
+						</div>
+						<div class="plot" id="player-mix-lines-plot"></div>
+					</section>
+				</div>
 
 				<section class="panel">
 					<div class="panel-head">
@@ -992,6 +1002,39 @@
 					color: { domain: ["Existing", "New"], range: ["#d89024", "#bd2d47"], legend: true },
 					title: (row) => `${row.series}: ${number.format(row.value)}`,
 				});
+				const playerMixLinesNode = document.querySelector("#player-mix-lines-plot");
+				replacePlot(
+					"#player-mix-lines-plot",
+					Plot.plot({
+						width: playerMixLinesNode.clientWidth || 320,
+						height: 190,
+						marginTop: 34,
+						marginRight: 12,
+						marginBottom: 28,
+						marginLeft: 43,
+						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+						x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+						y: { label: null, grid: true, zero: true, ticks: 4, tickSize: 0 },
+						color: {
+							domain: ["Existing", "New"],
+							range: ["#d89024", "#bd2d47"],
+							legend: true,
+						},
+						marks: [
+							Plot.ruleY([0], { stroke: "#dfe5e8" }),
+							Plot.lineY(playerMix, {
+								x: "date",
+								y: "value",
+								stroke: "series",
+								strokeWidth: 2.2,
+								curve: "monotone-x",
+								tip: true,
+								title: (row) =>
+									`${shortDate.format(row.date)} · ${row.series}: ${number.format(row.value)}`,
+							}),
+						],
+					}),
+				);
 				bars("#country-plot", countries, {
 					stacked: true,
 					legend: true,
