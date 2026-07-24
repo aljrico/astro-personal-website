@@ -1,0 +1,373 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "Tiny Crimes: Written by Hand",
+	description:
+		"How Murder Sudoku: Tiny Crimes is made: Spanish and Catalan written in-language rather than translated, three environments with three different clue vocabularies, and no AI-generated art.",
+};
+
+const stats = [
+	{
+		figure: "#1",
+		label:
+			"App Store result for the search “murder sudoku” in the US, UK, Canada, Australia, Germany, Ukraine and Brazil.",
+	},
+	{ figure: "4.8", label: "App Store rating." },
+	{
+		figure: "7",
+		label:
+			"languages ship complete: English, Spanish, Catalan, German, Dutch, Portuguese, Ukrainian. The first three are written by hand.",
+	},
+	{
+		figure: "1",
+		label: "person. Code, puzzle engine, art direction, copy, and both of the native languages.",
+	},
+];
+
+const examples = [
+	{
+		source: "Murder Next Door",
+		variant: "Casebook blurb, 1 of 4",
+		en: "A friendly little street with tidy gardens, curtain-twitchers on duty, and a body on the rug every other week. Time to put the neighbors in their place.",
+		lines: [
+			{
+				lang: "ES",
+				literal:
+					"A most agreeable street: tidy gardens, old women at the net curtain, and a body on the rug week yes, week no. Time to put each neighbour in his place.",
+				shipped:
+					"Una calle de lo más agradable: jardines cuidados, viejas en el visillo y un cadáver en la alfombra semana sí, semana no. Toca poner a cada vecino en su sitio.",
+				code: "es",
+			},
+			{
+				lang: "CA",
+				literal:
+					"A street of the most agreeable: trim gardens, grannies at the window, and a body on the rug week yes, week no. Time to put light into the dark, and each neighbour in his place.",
+				shipped:
+					"Un carrer d'allò més agradable: jardins polits, iaies a la finestra i un cadàver a la catifa setmana sí, setmana no. Toca posar llum a la foscor i cada veí al seu lloc.",
+				code: "ca",
+			},
+		],
+		note: "The Spanish is written in the register of a long-running neighbourhood sitcom, down to <em>viejas en el visillo</em>, the stock phrase for the woman who watches the street from behind her net curtain. The Catalan reaches instead for <em>posar llum a la foscor</em>, “to put light into the dark”, a turn of phrase that true-crime television made common there. Both keep the English pun: putting the neighbours in their place is also, literally, how you solve the board.",
+	},
+	{
+		source: "Dead Man’s Cove",
+		variant: "Casebook blurb, 2 of 4",
+		en: "The tide erased the trail, but not the lies. Every island keeps a secret.",
+		lines: [
+			{
+				lang: "ES",
+				literal:
+					"Postcard coves, bonfires at dusk, and footage nobody wants to see. Nobody comes out of this experience alive.",
+				shipped:
+					"Calas de postal, hogueras al atardecer e imágenes que nadie quiere ver. De esta experiencia uno no sale vivo.",
+				code: "es",
+			},
+			{
+				lang: "CA",
+				literal:
+					"Postcard coves, bonfires at dusk, and footage nobody wants to see. Not everyone comes out of this experience alive.",
+				shipped:
+					"Cales de postal, fogueres al capvespre i imatges que ningú vol veure. D'aquesta experiència no tothom en surt viu.",
+				code: "ca",
+			},
+		],
+		note: "Here the Spanish and Catalan throw the English line away and deadpan a reality dating show instead, <em>La isla de las tentaciones</em>: postcard coves, bonfires at dusk, footage nobody wants to see. The last sentence takes that format's solemn line about surviving the experience and makes it literal, because this time there is a corpse.",
+	},
+	{
+		source: "Dead Man’s Cove",
+		variant: "Casebook blurb, 3 of 4",
+		en: "Towels are folded, parasols are open, and someone never came back from the swim.",
+		lines: [
+			{
+				lang: "ES",
+				literal:
+					"The towels are folded, the parasols open, and somebody didn't come back from the swim.",
+				shipped:
+					"Las toallas están dobladas, las sombrillas abiertas y alguien no volvió del baño.",
+				code: "es",
+			},
+			{
+				lang: "CA",
+				literal:
+					"The towels folded, the parasols open, and somebody who hasn't come back from the swim. Let's begin.",
+				shipped:
+					"Les tovalloles plegades, els para-sols oberts i algú que no ha tornat del bany. Comencem.",
+				code: "ca",
+			},
+		],
+		note: "The Spanish stays close, because the English already works. The Catalan adds one word: <em>Comencem</em>, “let's begin”, is how the true-crime programme <em>Crims</em> opens an episode, so a Catalan reader hears the narrator's voice before the case has even started.",
+	},
+];
+
+const arbNote = `"casebookIslandsLore2": "The tide erased the trail, but not the lies. …",
+"@casebookIslandsLore2": {
+  "description": "… ES/CA intentionally diverge from the English: they
+   deadpan-parody the reality show 'La isla de las tentaciones' …
+   Keep locale-native humor; do not translate the English literally."
+}`;
+
+
+const environments = [
+	{
+		name: "Murder Next Door",
+		image: "/tiny-crimes/next-door.webp",
+		status: "Live",
+		blurb: "A house seen from above. Walls, doorways, furniture.",
+		clues: [
+			"was in the Kitchen",
+			"was with Elsie",
+			"was alone",
+			"was not beside any furniture",
+		],
+	},
+	{
+		name: "Dead Man’s Cove",
+		image: "/tiny-crimes/dead-mans-cove.webp",
+		status: "Live",
+		blurb: "An archipelago. No walls at all, so the water does the dividing.",
+		clues: [
+			"was on Sa Palma Island",
+			"was at the water’s edge",
+			"was on land",
+			"was in the eastern half of the map",
+		],
+	},
+	{
+		name: "Grove in Pink",
+		image: "/tiny-crimes/grove-in-pink.webp",
+		status: "Ships in 1.12.0, awaiting review",
+		blurb: "A wood around one clearing, with a golden chest to measure from.",
+		clues: [
+			"was in the clearing",
+			"was 2 rows north of the golden chest",
+			"was beside more trees than Elsie",
+			"was beside exactly 2 trees",
+		],
+	},
+];
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<p class="mb-3 font-mono text-xs uppercase tracking-widest text-gray-500">
+			<a href="/apps/tiny-crimes" class="project-link">Murder Sudoku: Tiny Crimes</a>
+		</p>
+		<h1 class="title mb-4 text-3xl">Written by hand, in seven languages</h1>
+		<p class="mb-10 text-base text-gray-600">
+			True crime became mainstream entertainment, and a genre of deduction puzzles grew up around
+			it. This is the part of one of them that a screenshot cannot show.
+		</p>
+
+		<section class="mb-12">
+			<p>
+				True crime went mainstream, and a shelf of deduction puzzle games grew up around it: a grid,
+				a cast, a handful of statements, the promise you can reason your way to the killer. Tiny
+				Crimes is one of them. What follows is the work underneath: the writing, the logic, and the
+				drawing.
+			</p>
+		</section>
+
+		<dl class="mb-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
+			{
+				stats.map((stat) => (
+					<div class="rounded-lg border border-black/10 bg-white/70 p-3">
+						<dt class="mb-1 font-serif text-2xl font-bold text-accent">{stat.figure}</dt>
+						<dd class="text-xs leading-snug text-gray-600">{stat.label}</dd>
+					</div>
+				))
+			}
+		</dl>
+		<p class="mb-14 text-xs text-gray-500">
+			Checked 24 July 2026 across twelve storefronts: first in seven, second or third in Spain,
+			France, Italy, the Netherlands and Portugal.
+		</p>
+
+		<section id="written-not-translated" class="mb-14 scroll-mt-8">
+			<h2 class="title mb-4 text-2xl">1. The Spanish and Catalan are not translations</h2>
+			<p class="mb-4">
+				Most games translate. English goes out, other languages come back, everything ships in the
+				same shape.
+			</p>
+			<p class="mb-4">
+				Tiny Crimes does not work that way in Spanish or Catalan. Both are native languages of the
+				person who makes the game, and he writes them himself, from scratch, as if the English did
+				not exist. Sometimes the result tracks the English closely. Sometimes it throws the English
+				out and writes a better joke for that audience. He hand-writes the English too. Those three
+				languages are written, not translated.
+			</p>
+			<p class="mb-6">
+				None of this is visible if you do not read the language. So here it is, shown: the English
+				line, a literal back-translation so you can see the mechanism, and the line that actually
+				ships.
+			</p>
+
+			<aside class="mb-8 rounded-lg border border-accent/30 bg-accent/5 p-4">
+				<p class="mb-2 font-mono text-xs uppercase tracking-widest text-accent">
+					On the references
+				</p>
+				<p class="text-xs leading-relaxed text-gray-600">
+					Comedy in Spanish and Catalan leans on shared television. A few phrases from popular shows
+					have drifted into ordinary speech, and this copy uses them the way any comedy writer uses
+					the culture around them. Those shows are named below only to explain the joke to a reader
+					who does not speak the language. Tiny Crimes has no affiliation with any of them, and none
+					of their names, logos or art appear anywhere in the app itself, only here, where the
+					reference is being explained.
+				</p>
+			</aside>
+
+			<div class="space-y-6">
+				{
+					examples.map((example) => (
+						<article class="rounded-lg border border-black/10 bg-white/70 p-4 sm:p-5">
+							<p class="mb-4 font-mono text-[11px] uppercase tracking-widest text-gray-500">
+								{example.source}
+								<span class="text-gray-400">
+									{" · "}
+									{example.variant}
+								</span>
+							</p>
+
+							<div class="mb-3">
+								<p class="mb-1 font-mono text-[11px] uppercase tracking-widest text-gray-400">
+									English
+								</p>
+								<p class="leading-relaxed">{example.en}</p>
+							</div>
+
+							{example.lines.map((line) => (
+								<div class="mt-4 border-t border-dashed border-black/10 pt-3">
+									<p class="mb-1 font-mono text-[11px] uppercase tracking-widest text-gray-400">
+										{line.lang}, literally
+									</p>
+									<p class="mb-3 leading-relaxed text-gray-500">{line.literal}</p>
+									<p class="mb-1 font-mono text-[11px] uppercase tracking-widest text-gray-400">
+										{line.lang}, as shipped
+									</p>
+									<p lang={line.code} class="leading-relaxed text-accent-2">
+										{line.shipped}
+									</p>
+								</div>
+							))}
+
+							<p
+								class="mt-4 border-t border-dashed border-black/10 pt-3 text-xs leading-relaxed text-gray-600"
+								set:html={example.note}
+							/>
+						</article>
+					))
+				}
+			</div>
+
+			<p class="mb-3 mt-8">
+				None of it is accidental. The intent is written into the source file, beside the string:
+			</p>
+			<pre
+				class="mb-4 overflow-x-auto rounded-lg border border-black/10 bg-white/70 p-4 font-mono text-[11px] leading-relaxed text-gray-600">{arbNote}</pre>
+			<p>
+				Murder Next Door and Dead Man's Cove each carry four of these blurbs and rotate one per
+				week, so the shelf reads a little different from one week to the next.
+			</p>
+		</section>
+
+		<section id="environments" class="mb-14 scroll-mt-8">
+			<h2 class="title mb-4 text-2xl">2. Each environment changes what a clue can say</h2>
+			<p class="mb-4">
+				In most puzzle games a new environment is a new palette. Here it is a new set of questions.
+			</p>
+			<p class="mb-6">
+				The rules never move: one suspect per row and column, every statement is true, and whoever
+				is left alone with the victim did it. What changes is what a statement is allowed to be
+				about.
+			</p>
+
+			<div class="grid gap-5 md:grid-cols-3">
+				{
+					environments.map((environment) => (
+						<div class="overflow-hidden rounded-lg border border-black/10 bg-white/70">
+							<img
+								src={environment.image}
+								alt={`${environment.name} board art`}
+								width="900"
+								height="507"
+								loading="lazy"
+								decoding="async"
+								class="aspect-[16/9] w-full object-cover"
+							/>
+							<div class="p-3">
+								<h3 class="font-serif text-base font-bold text-accent-2">{environment.name}</h3>
+								<p class="mb-2 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+									{environment.status}
+								</p>
+								<p class="mb-3 text-xs leading-snug text-gray-600">{environment.blurb}</p>
+								<ul class="space-y-1">
+									{environment.clues.map((clue) => (
+										<li class="font-mono text-[11px] leading-snug text-gray-600">“{clue}”</li>
+									))}
+								</ul>
+							</div>
+						</div>
+					))
+				}
+			</div>
+
+			<p class="mt-6">
+				Those lines are real clue text from the game. A player fluent in walls and doorways has to
+				relearn the board when the walls become water, and again when the map starts measuring
+				distances to a golden chest.
+			</p>
+			<p class="mt-4">
+				Underneath all three, the same guarantee. Every case is generated from a seed, then run
+				through the engine's own deduction rules. If it cannot be solved by reasoning alone, or if
+				more than one answer survives, it is thrown away and the generator tries again. There is
+				never a guess.
+			</p>
+		</section>
+
+		<section id="art" class="mb-12 scroll-mt-8">
+			<h2 class="title mb-4 text-2xl">3. None of the art is generated</h2>
+			<p class="mb-4">
+				The three images above are the real headers from the app. The suspects, the props and the
+				terrain are licensed from <a href="https://rhosgfx.itch.io" class="project-link">RhosGFX</a>,
+				an illustrator, with full commercial rights. The layouts, the autotiling, and the work of
+				keeping three environments in one style are done here. Not a pixel of it is AI-generated,
+				which is a choice, and an increasingly unusual one.
+			</p>
+			<p class="mb-4">
+				That is also why there are three environments and not thirty. Each one needs art, a layout
+				generator, its own clue vocabulary, and copy in seven languages that reads like it was
+				written there rather than imported.
+			</p>
+			<p>
+				The game grows at the speed of one person's taste. That is the constraint and the point.
+			</p>
+		</section>
+
+		<div class="mb-8 flex flex-wrap gap-3">
+			<a
+				href="https://apps.apple.com/app/id6776382837"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="fa-brands:apple" class="h-5 w-5" />
+				 App Store
+			</a>
+			<a
+				href="https://play.google.com/store/apps/details?id=com.aljrico.tinycrimes"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="fa-brands:google-play" class="h-5 w-5" />
+				 Google Play
+			</a>
+		</div>
+
+		<nav aria-label="Tiny Crimes links" class="flex flex-wrap gap-x-4 gap-y-2">
+			<a href="/apps/tiny-crimes" class="project-link">Back to Tiny Crimes</a>
+			<a href="/apps/tiny-crimes/support" class="project-link">Support</a>
+		</nav>
+	</div>
+</PageLayout>
