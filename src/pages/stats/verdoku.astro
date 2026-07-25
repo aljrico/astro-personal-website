@@ -14,7 +14,8 @@
 		<title>Murder Sudoku: Tiny Crimes · Live</title>
 		<script is:inline>
 			try {
-				if (decodeURIComponent(location.hash.slice(1)).trim())
+				const fromHash = decodeURIComponent(location.hash.slice(1)).trim();
+				if (fromHash || localStorage.getItem("verdoku-dashboard-key"))
 					document.documentElement.dataset.hasKey = "";
 			} catch {}
 		</script>
@@ -658,6 +659,11 @@
 			import * as Plot from "https://esm.sh/@observablehq/plot@0.6.17?bundle";
 
 			const endpoint = "https://lbitxwhhrohcjkbpbcrv.supabase.co/functions/v1/verdoku-dashboard";
+			// Telemetry before the 1.7.0 staged rollout completed is not trustworthy,
+			// so nothing earlier than this UTC day is ever plotted. Mirrors the floor
+			// in get_verdoku_dashboard_snapshot(); kept here so the page is correct
+			// even against an older snapshot.
+			const TRUSTED_FROM = "2026-07-01";
 			const metricLabels = {
 				dau: "Active",
 				new_installs: "New installs",
@@ -693,13 +699,42 @@
 			let refreshTimer;
 			let lastRenderedWidth = 0;
 
-			const tokenFromHash = () => {
+			// The access key used to live permanently in location.hash, which leaks it
+			// into browser history, screenshots and screen shares. Private links still
+			// work, but the hash is consumed once and stripped; the key lives in
+			// localStorage from then on.
+			const TOKEN_STORAGE_KEY = "verdoku-dashboard-key";
+
+			function storedToken() {
 				try {
-					return decodeURIComponent(location.hash.slice(1)).trim();
+					return localStorage.getItem(TOKEN_STORAGE_KEY) ?? "";
 				} catch {
 					return "";
 				}
-			};
+			}
+
+			function storeToken(token) {
+				try {
+					localStorage.setItem(TOKEN_STORAGE_KEY, token);
+				} catch {}
+			}
+
+			function forgetToken() {
+				try {
+					localStorage.removeItem(TOKEN_STORAGE_KEY);
+				} catch {}
+			}
+
+			function consumeTokenFromHash() {
+				let fromHash = "";
+				try {
+					fromHash = decodeURIComponent(location.hash.slice(1)).trim();
+				} catch {}
+				if (!fromHash) return "";
+				history.replaceState(null, "", location.pathname + location.search);
+				storeToken(fromHash);
+				return fromHash;
+			}
 
 			function deltaCopy(current, previous) {
 				if (!Number.isFinite(current) || !Number.isFinite(previous) || previous === 0) {
@@ -1147,7 +1182,19 @@
 				);
 			}
 
+			function applyTrustFloor(data) {
+				const trusted = (value) =>
+					typeof value === "string" && value.slice(0, 10) >= TRUSTED_FROM;
+				return {
+					...data,
+					series: (data.series ?? []).filter((row) => trusted(row.day)),
+					retention: (data.retention ?? []).filter((row) => trusted(row.cohort_day)),
+					stickiness: (data.stickiness ?? []).filter((row) => trusted(row.day)),
+				};
+			}
+
 			function render(data) {
+				data = applyTrustFloor(data);
 				renderSummary(data);
 				renderRetention(data.retention);
 				renderStickiness(data.stickiness ?? []);
@@ -1173,10 +1220,13 @@
 						headers: { Authorization: `Bearer ${token}` },
 						cache: "no-store",
 					});
-					if (!response.ok)
+					if (!response.ok) {
+						// Don't keep a rejected key around to fail again on every refresh.
+						if (response.status === 401) forgetToken();
 						throw new Error(
 							response.status === 401 ? "Wrong access key." : "Dashboard is unavailable.",
 						);
+					}
 					data = await response.json();
 				} catch (error) {
 					liveStatus.dataset.state = "error";
@@ -1204,7 +1254,7 @@
 				}
 				clearTimeout(refreshTimer);
 				refreshTimer = setTimeout(() => {
-					if (!document.hidden) load(tokenFromHash());
+					if (!document.hidden) load(storedToken());
 				}, 60_000);
 			}
 
@@ -1212,14 +1262,15 @@
 				event.preventDefault();
 				const token = keyInput.value.trim();
 				if (!token) return;
-				location.hash = encodeURIComponent(token);
+				storeToken(token);
+				keyInput.value = "";
 				boot.hidden = false;
 				document.documentElement.dataset.hasKey = "";
 				load(token, { first: true });
 			});
 
 			document.addEventListener("visibilitychange", () => {
-				if (!document.hidden && tokenFromHash()) load(tokenFromHash());
+				if (!document.hidden && storedToken()) load(storedToken());
 			});
 
 			new ResizeObserver(() => {
@@ -1231,7 +1282,7 @@
 				}
 			}).observe(document.body);
 
-			const initialToken = tokenFromHash();
+			const initialToken = consumeTokenFromHash() || storedToken();
 			if (initialToken) load(initialToken, { first: true });
 		</script>
 	</body>
