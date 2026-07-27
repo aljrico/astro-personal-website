@@ -264,61 +264,6 @@
 				grid-template-columns: repeat(3, 1fr);
 			}
 
-			.headline-row {
-				display: grid;
-				grid-template-columns: repeat(4, 1fr);
-				gap: 10px;
-			}
-
-			.headline-cell {
-				min-width: 0;
-			}
-
-			.headline-cell dt {
-				margin: 0 0 6px;
-				color: var(--muted);
-				font-size: 10px;
-				font-weight: 700;
-				letter-spacing: 0.06em;
-				text-transform: uppercase;
-			}
-
-			.headline-cell dd {
-				margin: 0;
-				font-family: "Tiempos Text", Georgia, serif;
-				font-size: clamp(20px, 4vw, 27px);
-				line-height: 1;
-				font-variant-numeric: tabular-nums;
-			}
-
-			.headline-cell small {
-				display: block;
-				margin-top: 6px;
-				color: var(--faint);
-				font-size: 10px;
-				font-variant-numeric: tabular-nums;
-			}
-
-			.badge {
-				display: inline-block;
-				margin-left: 7px;
-				padding: 2px 6px;
-				border-radius: 999px;
-				color: white;
-				background: var(--amber);
-				font-size: 9px;
-				font-weight: 800;
-				letter-spacing: 0.04em;
-				text-transform: uppercase;
-				vertical-align: 1px;
-			}
-
-			.headline-empty {
-				margin: 0;
-				color: var(--muted);
-				font-size: 12px;
-			}
-
 			.retention {
 				display: grid;
 				grid-template-columns: repeat(2, 1fr);
@@ -454,10 +399,6 @@
 					grid-template-columns: 1fr;
 				}
 
-				.headline-row {
-					grid-template-columns: 1fr 1fr;
-				}
-
 				.panel {
 					padding-inline: 14px;
 				}
@@ -521,17 +462,6 @@
 					<h2>Retention</h2>
 					<span>matured · n≥100 · by install date</span>
 				</div>
-
-				<section class="panel" id="headline-panel">
-					<div class="panel-head">
-						<h3 class="panel-title">
-							Survival curve<span class="badge" id="headline-badge" hidden>check window</span>
-						</h3>
-						<p class="panel-note" id="headline-window">one cohort window</p>
-					</div>
-					<dl class="headline-row" id="headline-row"></dl>
-					<p class="headline-empty" id="headline-empty" hidden>insufficient matured data</p>
-				</section>
 
 				<section class="retention" aria-label="Matured retention">
 					<section class="panel">
@@ -903,60 +833,6 @@
 			// "2026-07-12" -> "Jul 12", read as UTC so the label never slips a day.
 			function dayLabel(day) {
 				return typeof day === "string" ? shortDate.format(new Date(`${day}T12:00:00Z`)) : "";
-			}
-
-			// The backend pools D1/D3/D7/D14 over ONE cohort window that is fully
-			// matured for D14. The flat `retention` rows mix a different window per
-			// day_n, so they must never be read side by side as a survival curve.
-			function renderHeadline(headline, inconsistent) {
-				const row = document.querySelector("#headline-row");
-				const empty = document.querySelector("#headline-empty");
-				const windowNote = document.querySelector("#headline-window");
-				const badge = document.querySelector("#headline-badge");
-				badge.hidden = !inconsistent;
-				badge.title = inconsistent
-					? "Retention rises across checkpoints, which a survival curve cannot do. The window is suspect."
-					: "";
-				if (!headline) {
-					row.replaceChildren();
-					row.hidden = true;
-					empty.hidden = false;
-					windowNote.textContent = "one cohort window";
-					windowNote.title = "";
-					return;
-				}
-				row.hidden = false;
-				empty.hidden = true;
-				const span = `${dayLabel(headline.cohort_from)} – ${dayLabel(headline.cohort_to)}`;
-				const cohortSize = Number(headline.cohort_size);
-				windowNote.textContent = Number.isFinite(cohortSize)
-					? `${span} · n=${number.format(cohortSize)}`
-					: span;
-				windowNote.title =
-					`One anchored cohort window: installs from ${headline.cohort_from} to ` +
-					`${headline.cohort_to} (${number.format(Number(headline.cohort_days))} cohort days, ` +
-					`min ${number.format(Number(headline.min_cohort_size))} per day), fully matured for ` +
-					`D${headline.matured_for_day_n}. All four checkpoints describe the same installs.`;
-				row.replaceChildren(
-					...[1, 3, 7, 14].map((dayN) => {
-						const point = headline.checkpoints?.[`d${dayN}`] ?? {};
-						const pct = Number(headline[`d${dayN}_pct`]);
-						const returned = Number(point.returned);
-						const size = Number(point.cohort_size);
-						const cell = document.createElement("div");
-						cell.className = "headline-cell";
-						cell.innerHTML = `
-							<dt>D${dayN}</dt>
-							<dd>${Number.isFinite(pct) ? `${pct.toFixed(1)}%` : "—"}</dd>
-							<small>${
-								Number.isFinite(returned) && Number.isFinite(size)
-									? `${number.format(returned)} of ${number.format(size)}`
-									: "&nbsp;"
-							}</small>
-						`;
-						return cell;
-					}),
-				);
 			}
 
 			// Authoritative peak over every trusted complete day, not the max of the
@@ -1362,7 +1238,6 @@
 			function render(data) {
 				data = applyTrustFloor(data);
 				renderSummary(data);
-				renderHeadline(data.headline ?? null, data.headline_inconsistent === true);
 				renderPeak(data.peak_dau);
 				renderRetention(data.retention, data.retention_series);
 				renderStickiness(data.stickiness ?? []);
