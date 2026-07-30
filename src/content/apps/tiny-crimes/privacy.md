@@ -14,7 +14,7 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
 
 ## Information Collection and Use
 
-For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information. Any such personally identifiable information is retained on your device and is not collected by me, with two exceptions described below: the anonymous, aggregate analytics (which does not identify you), and the optional Daily Challenge leaderboard (which you join by choice and which stores a display name and scores tied to an anonymous account).
+For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information. Any such personally identifiable information is retained on your device and is not collected by me, except as described below for consent-based advertising attribution, anonymous aggregate analytics, and the optional Daily Challenge leaderboard.
 
 The app does use third-party services that may collect information used to identify you.
 
@@ -22,6 +22,14 @@ Link to the privacy policy of third-party service providers used by the app
 
 - [Google Play Services](https://www.google.com/policies/privacy/)
 - [AdMob](https://support.google.com/admob/answer/6128543?hl=en)
+- [Meta](https://www.facebook.com/privacy/policy/)
+- [Adjust](https://www.adjust.com/terms/privacy-policy/)
+
+## Advertising Attribution
+
+If you consent through the privacy prompt, Tiny Crimes uses Meta and Adjust to measure advertising campaigns, installs, and in-app progression. These services may process advertising or device identifiers, IP address, device information, app activity, and campaign attribution data. Lion Studios, our partner for this publishing test, may access the resulting campaign and test reports.
+
+Declining or withdrawing consent disables Meta and Adjust attribution. You can still play the game. Attribution data is kept separate from the anonymous product analytics described below and is not linked to its daily tokens.
 
 ## Analytics
 
@@ -85,7 +93,7 @@ These Services do not address anyone under the age of 13. I do not knowingly col
 
 I may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy on this page.
 
-This policy is effective as of 2026-06-19
+This policy is effective as of 2026-07-30
 
 ## Contact Us
 
