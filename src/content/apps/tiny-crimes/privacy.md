@@ -22,6 +22,8 @@ Link to the privacy policy of third-party service providers used by the app
 
 - [Google Play Services](https://www.google.com/policies/privacy/)
 - [AdMob](https://support.google.com/admob/answer/6128543?hl=en)
+- [RevenueCat](https://www.revenuecat.com/privacy/)
+- [Supabase](https://supabase.com/privacy)
 - [Meta](https://www.facebook.com/privacy/policy/)
 - [Adjust](https://www.adjust.com/terms/privacy-policy/)
 
@@ -29,17 +31,21 @@ Link to the privacy policy of third-party service providers used by the app
 
 If you consent through the privacy prompt, Tiny Crimes uses Meta and Adjust to measure advertising campaigns, installs, and in-app progression. These services may process advertising or device identifiers, IP address, device information, app activity, and campaign attribution data. Lion Studios, our partner for this publishing test, may access the resulting campaign and test reports.
 
-Declining or withdrawing consent disables Meta and Adjust attribution. You can still play the game. Attribution data is kept separate from the anonymous product analytics described below and is not linked to its daily tokens.
+Successful purchase and ad-impression events may also be reported for campaign measurement. Declining or withdrawing consent disables Meta and Adjust attribution. You can still play the game. Attribution data is kept separate from the product analytics described below.
+
+## Advertising
+
+Tiny Crimes uses AdMob to show ads. The Google Mobile Ads SDK may automatically collect and share an IP address, app interactions, diagnostic information, and device or app identifiers for advertising, analytics, and fraud prevention. Depending on your region and consent choice, ads may be personalised or limited.
 
 ## Analytics
 
-The app collects anonymous, aggregate analytics to understand how the game is used and to run A/B experiments that help me improve it. No account or login is required, and I do not collect your name, email, contacts, photos, or precise location.
+The app collects pseudonymous product analytics to understand how the game is used and to run A/B experiments that help me improve it. This includes app interactions, session timestamps, app and platform version, a coarse country derived from your device language, and a random identifier created for this app installation. No account or login is required, and this analytics does not collect your name, email, contacts, photos, precise location, or Android advertising ID.
 
-No advertising identifier (IDFA or AAID) is used for analytics. Analytics is not used for cross-app tracking and is not linked to your identity. No persistent device identifier is transmitted: a random install identifier is generated and stored only on your device and is never sent. Only coarse, bucketed counts (ranges rather than exact values), a coarse country derived from your device language, and one-way hashed per-day tokens leave the device.
+Analytics events and the app-scoped install identifier are sent over an encrypted connection to my backend, provided by Supabase. They are used only for product analytics and experiments. They are not used for cross-app tracking, are not joined to advertising identifiers or purchases, and are not shared with advertising partners.
 
-This data is aggregated and k-anonymised on the server: information is only retained for groups of devices, never for an individual, so no one can be singled out. Analytics data is not linked to purchases.
+## Purchases
 
-Because this analytics is anonymous and is not linked to your identity, there is no personal information tied to you for me to access, export, or delete.
+RevenueCat processes an anonymous app user identifier and purchase history to validate purchases, restore entitlements, prevent fraud, and provide purchase analytics. If you consent to advertising attribution, successful purchase events may also be sent to Adjust and Meta for campaign measurement.
 
 ## Daily Challenge Leaderboard
 
@@ -54,7 +60,7 @@ When you take part, the following is stored on my backend (provided by Supabase)
 
 Your display name, country flag, and score are shown publicly on the leaderboard to other players. This information is used solely to operate the leaderboard inside Tiny Crimes. It is not used for advertising, is not linked to any advertising identifier, is not used to track you across other apps, and is not sold or shared with third parties for their own purposes.
 
-Because this information is tied to an account, you can ask me to delete it: contact me using the details at the end of this policy and I will remove your leaderboard profile and entries.
+Because this information is tied to an account, you can ask me to delete it: email me using the address at the end of this policy and I will remove the identifiable leaderboard profile and entries.
 
 ## Log Data
 
@@ -97,4 +103,4 @@ This policy is effective as of 2026-07-30
 
 ## Contact Us
 
-If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me [here](https://twitter.com/aljrico)
+For questions or data deletion requests, email [aljrico@gmail.com](mailto:aljrico@gmail.com).
