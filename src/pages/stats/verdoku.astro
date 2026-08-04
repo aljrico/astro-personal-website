@@ -82,8 +82,34 @@
 			}
 
 			button,
-			input {
+			input,
+			select {
 				font: inherit;
+			}
+
+			select {
+				min-width: 112px;
+				padding: 7px 30px 7px 10px;
+				border: 1px solid var(--line);
+				border-radius: 8px;
+				color: var(--ink);
+				background: var(--card);
+				font-size: 10px;
+				font-weight: 700;
+			}
+
+			.panel-controls {
+				display: flex;
+				align-items: center;
+				gap: 7px;
+				flex-wrap: wrap;
+				justify-content: flex-end;
+			}
+
+			.aso-status {
+				margin: 4px 0 0;
+				color: var(--muted);
+				font-size: 10px;
 			}
 
 			.shell {
@@ -565,6 +591,45 @@
 				</section>
 
 				<div class="section-heading">
+					<h2>App Store</h2>
+					<span id="aso-updated">daily positioning</span>
+				</div>
+
+				<div class="plot-grid">
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Daily new ratings</h3>
+							<div class="panel-controls">
+								<select id="rating-country" aria-label="Ratings country"></select>
+							</div>
+						</div>
+						<div class="plot" id="new-ratings-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Total ratings</h3>
+							<p class="panel-note" id="total-ratings-note">public count</p>
+						</div>
+						<div class="plot" id="total-ratings-plot"></div>
+					</section>
+				</div>
+
+				<section class="panel">
+					<div class="panel-head">
+						<div>
+							<h3 class="panel-title">Keyword position</h3>
+							<p class="aso-status" id="keyword-rank-note">organic App Store rank</p>
+						</div>
+						<div class="panel-controls">
+							<select id="keyword-name" aria-label="Keyword"></select>
+							<select id="keyword-country" aria-label="Keyword country"></select>
+						</div>
+					</div>
+					<div class="plot" id="keyword-rank-plot"></div>
+				</section>
+
+				<div class="section-heading">
 					<h2>Engagement</h2>
 					<span>per active player</span>
 				</div>
@@ -697,8 +762,14 @@
 			const liveStatus = document.querySelector("#live-status");
 			const updatedAt = document.querySelector("#updated-at");
 			let snapshot;
+			let ratingSnapshot;
+			let keywordSnapshot;
 			let refreshTimer;
 			let lastRenderedWidth = 0;
+			const asoCache = new Map();
+			const ratingCountry = document.querySelector("#rating-country");
+			const keywordCountry = document.querySelector("#keyword-country");
+			const keywordName = document.querySelector("#keyword-name");
 
 			// The access key used to live permanently in location.hash, which leaks it
 			// into browser history, screenshots and screen shares. Private links still
@@ -912,6 +983,177 @@
 
 			function replacePlot(selector, plot) {
 				document.querySelector(selector).replaceChildren(plot);
+			}
+
+			function setOptions(select, values, selected) {
+				select.replaceChildren(
+					...values.map((value) => {
+						const option = document.createElement("option");
+						option.value = value;
+						option.textContent = value;
+						option.selected = value === selected;
+						return option;
+					}),
+				);
+			}
+
+			function renderRatings(data) {
+				ratingSnapshot = data;
+				const rows = (data.ratings ?? []).map((row) => ({
+					...row,
+					date: new Date(`${row.day}T12:00:00Z`),
+					rating: Number(row.rating),
+					rating_count: Number(row.rating_count),
+					new_ratings: row.new_ratings == null ? null : Number(row.new_ratings),
+				}));
+				const changes = rows.filter((row) => Number.isFinite(row.new_ratings));
+				const newNode = document.querySelector("#new-ratings-plot");
+				if (changes.length) {
+					replacePlot(
+						"#new-ratings-plot",
+						Plot.plot({
+							width: newNode.clientWidth || 320,
+							height: 178,
+							marginTop: 8,
+							marginRight: 12,
+							marginBottom: 28,
+							marginLeft: 43,
+							style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+							x: { type: "utc", label: null, ticks: 4, tickFormat: "%b %-d", tickSize: 0 },
+							y: { label: null, grid: true, ticks: 4, tickSize: 0 },
+							marks: [
+								Plot.ruleY([0], { stroke: "#cbd3d8" }),
+								Plot.rectY(changes, {
+									x: "date",
+									y: "new_ratings",
+									interval: "day",
+									fill: (row) => (row.new_ratings < 0 ? "#bd2d47" : "#2abd88"),
+									insetLeft: 1.2,
+									insetRight: 1.2,
+									tip: true,
+									title: (row) =>
+										`${shortDate.format(row.date)}: ${row.new_ratings > 0 ? "+" : ""}${number.format(row.new_ratings)}`,
+								}),
+							],
+						}),
+					);
+				} else newNode.replaceChildren();
+
+				const totalNode = document.querySelector("#total-ratings-plot");
+				const totalPlot = linePlot(rows, "rating_count", "#234766", number.format, {
+					width: totalNode.clientWidth || 320,
+					floor: 0,
+					title: (row) =>
+						`${shortDate.format(row.date)}: ${number.format(row.rating_count)} ratings · ${row.rating.toFixed(2)}★`,
+				});
+				if (totalPlot) replacePlot("#total-ratings-plot", totalPlot);
+				else totalNode.replaceChildren();
+				const latest = rows[rows.length - 1];
+				document.querySelector("#total-ratings-note").textContent = latest
+					? `${number.format(latest.rating_count)} · ${latest.rating.toFixed(2)}★`
+					: "no data";
+			}
+
+			function renderKeywordRank(data) {
+				keywordSnapshot = data;
+				const rows = (data.rankings ?? []).map((row) => {
+					const searchLimit = Number(row.search_limit ?? data.search_limit ?? 200);
+					const rank = row.rank == null ? null : Number(row.rank);
+					return {
+						...row,
+						date: new Date(`${row.day}T12:00:00Z`),
+						rank,
+						search_limit: searchLimit,
+						plot_rank: rank ?? searchLimit + 1,
+					};
+				});
+				const node = document.querySelector("#keyword-rank-plot");
+				if (!rows.length) {
+					node.replaceChildren();
+					document.querySelector("#keyword-rank-note").textContent = "no observations";
+					return;
+				}
+				const limit = Math.max(...rows.map((row) => row.search_limit));
+				replacePlot(
+					"#keyword-rank-plot",
+					Plot.plot({
+						width: node.clientWidth || 700,
+						height: 210,
+						marginTop: 10,
+						marginRight: 12,
+						marginBottom: 28,
+						marginLeft: 48,
+						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+						x: { type: "utc", label: null, ticks: 6, tickFormat: "%b %-d", tickSize: 0 },
+						y: {
+							domain: [limit + 1, 1],
+							label: null,
+							grid: true,
+							ticks: 6,
+							tickSize: 0,
+							tickFormat: (value) => (value > limit ? `${limit}+` : `#${value}`),
+						},
+						marks: [
+							Plot.ruleY([10, 25, 50].filter((value) => value <= limit), {
+								stroke: "#d9dfe2",
+								strokeDasharray: "3,3",
+							}),
+							Plot.lineY(rows, {
+								x: "date",
+								y: "plot_rank",
+								stroke: "#bd2d47",
+								strokeWidth: 2.2,
+								curve: "monotone-x",
+								tip: true,
+								title: (row) =>
+									`${shortDate.format(row.date)}: ${row.rank == null ? `${row.search_limit}+` : `#${row.rank}`}`,
+							}),
+							Plot.dot(rows, {
+								x: "date",
+								y: "plot_rank",
+								fill: (row) => (row.rank == null ? "#ffffff" : "#bd2d47"),
+								stroke: "#bd2d47",
+								r: 2.5,
+							}),
+						],
+					}),
+				);
+				const latest = rows[rows.length - 1];
+				document.querySelector("#keyword-rank-note").textContent =
+					`${data.keyword} · ${data.country} · ${latest.rank == null ? `${latest.search_limit}+` : `#${latest.rank}`}`;
+			}
+
+			async function fetchAso(token, country, keyword) {
+				const cacheKey = `${country}\u0000${keyword}`;
+				if (asoCache.has(cacheKey)) return asoCache.get(cacheKey);
+				const url = new URL(endpoint);
+				url.searchParams.set("view", "aso");
+				url.searchParams.set("country", country);
+				url.searchParams.set("keyword", keyword);
+				const response = await fetch(url, {
+					headers: { Authorization: `Bearer ${token}` },
+					cache: "no-store",
+				});
+				if (!response.ok) throw new Error("App Store history is unavailable.");
+				const data = await response.json();
+				asoCache.set(cacheKey, data);
+				return data;
+			}
+
+			async function loadInitialAso(token) {
+				try {
+					const data = await fetchAso(token, "US", "sudoku");
+					setOptions(ratingCountry, data.countries, data.country);
+					setOptions(keywordCountry, data.countries, data.country);
+					setOptions(keywordName, data.keywords, data.keyword);
+					renderRatings(data);
+					renderKeywordRank(data);
+					const generated = new Date(data.generated_at);
+					document.querySelector("#aso-updated").textContent =
+						`collected ${shortDate.format(generated)}`;
+				} catch (error) {
+					document.querySelector("#aso-updated").textContent = error.message;
+				}
 			}
 
 			function renderPlots(data) {
@@ -1290,6 +1532,7 @@
 				errorMessage.textContent = "";
 				try {
 					render(data);
+					if (!ratingSnapshot) void loadInitialAso(token);
 				} catch (error) {
 					liveStatus.dataset.state = "error";
 					updatedAt.textContent = "display error";
@@ -1312,6 +1555,27 @@
 				load(token, { first: true });
 			});
 
+			ratingCountry.addEventListener("change", async () => {
+				try {
+					const data = await fetchAso(storedToken(), ratingCountry.value, keywordName.value);
+					renderRatings(data);
+				} catch (error) {
+					document.querySelector("#aso-updated").textContent = error.message;
+				}
+			});
+
+			async function refreshKeywordSelection() {
+				try {
+					const data = await fetchAso(storedToken(), keywordCountry.value, keywordName.value);
+					renderKeywordRank(data);
+				} catch (error) {
+					document.querySelector("#keyword-rank-note").textContent = error.message;
+				}
+			}
+
+			keywordCountry.addEventListener("change", refreshKeywordSelection);
+			keywordName.addEventListener("change", refreshKeywordSelection);
+
 			document.addEventListener("visibilitychange", () => {
 				if (!document.hidden && storedToken()) load(storedToken());
 			});
@@ -1321,6 +1585,8 @@
 					renderRetention(snapshot.retention, snapshot.retention_series);
 					renderStickiness(snapshot.stickiness ?? []);
 					renderPlots(snapshot);
+					if (ratingSnapshot) renderRatings(ratingSnapshot);
+					if (keywordSnapshot) renderKeywordRank(keywordSnapshot);
 					lastRenderedWidth = document.body.clientWidth;
 				}
 			}).observe(document.body);
