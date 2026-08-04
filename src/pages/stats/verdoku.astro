@@ -1064,7 +1064,6 @@
 						date: new Date(`${row.day}T12:00:00Z`),
 						rank,
 						search_limit: searchLimit,
-						plot_rank: rank ?? searchLimit + 1,
 					};
 				});
 				const node = document.querySelector("#keyword-rank-plot");
@@ -1074,6 +1073,19 @@
 					return;
 				}
 				const limit = Math.max(...rows.map((row) => row.search_limit));
+				const rankedRows = rows.filter((row) => Number.isFinite(row.rank));
+				const unrankedCount = rows.length - rankedRows.length;
+				if (!rankedRows.length) {
+					node.replaceChildren();
+					document.querySelector("#keyword-rank-note").textContent =
+						`${data.keyword} · ${data.country} · outside top ${limit} in every observation`;
+					return;
+				}
+				const bestRank = Math.min(...rankedRows.map((row) => row.rank));
+				const worstRank = Math.max(...rankedRows.map((row) => row.rank));
+				const padding = Math.max(2, Math.ceil((worstRank - bestRank) * 0.15));
+				const domainBest = Math.max(1, bestRank - padding);
+				const domainWorst = Math.min(limit, worstRank + padding);
 				replacePlot(
 					"#keyword-rank-plot",
 					Plot.plot({
@@ -1086,33 +1098,33 @@
 						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
 						x: { type: "utc", label: null, ticks: 6, tickFormat: "%b %-d", tickSize: 0 },
 						y: {
-							domain: [limit + 1, 1],
+							domain: [domainWorst, domainBest],
 							label: null,
 							grid: true,
 							ticks: 6,
 							tickSize: 0,
-							tickFormat: (value) => (value > limit ? `${limit}+` : `#${value}`),
+							tickFormat: (value) => `#${Math.round(value)}`,
 						},
 						marks: [
-							Plot.ruleY([10, 25, 50].filter((value) => value <= limit), {
+							Plot.ruleY([10, 25, 50].filter(
+								(value) => value >= domainBest && value <= domainWorst,
+							), {
 								stroke: "#d9dfe2",
 								strokeDasharray: "3,3",
 							}),
 							Plot.lineY(rows, {
 								x: "date",
-								y: "plot_rank",
+								y: "rank",
 								stroke: "#bd2d47",
 								strokeWidth: 2.2,
 								curve: "monotone-x",
 								tip: true,
-								title: (row) =>
-									`${shortDate.format(row.date)}: ${row.rank == null ? `${row.search_limit}+` : `#${row.rank}`}`,
+								title: (row) => `${shortDate.format(row.date)}: #${row.rank}`,
 							}),
-							Plot.dot(rows, {
+							Plot.dot(rankedRows, {
 								x: "date",
-								y: "plot_rank",
-								fill: (row) => (row.rank == null ? "#ffffff" : "#bd2d47"),
-								stroke: "#bd2d47",
+								y: "rank",
+								fill: "#bd2d47",
 								r: 2.5,
 							}),
 						],
@@ -1120,7 +1132,8 @@
 				);
 				const latest = rows[rows.length - 1];
 				document.querySelector("#keyword-rank-note").textContent =
-					`${data.keyword} · ${data.country} · ${latest.rank == null ? `${latest.search_limit}+` : `#${latest.rank}`}`;
+					`${data.keyword} · ${data.country} · ${latest.rank == null ? `${latest.search_limit}+` : `#${latest.rank}`}` +
+					(unrankedCount ? ` · ${unrankedCount} outside top ${limit}` : "");
 			}
 
 			async function fetchAso(token, country, keyword) {
