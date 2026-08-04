@@ -592,16 +592,16 @@
 
 				<div class="section-heading">
 					<h2>App Store</h2>
-					<span id="aso-updated">daily positioning</span>
+					<div class="panel-controls">
+						<span id="aso-updated">daily positioning</span>
+						<select id="app-store-country" aria-label="App Store country"></select>
+					</div>
 				</div>
 
 				<div class="plot-grid">
 					<section class="panel">
 						<div class="panel-head">
 							<h3 class="panel-title">Daily new ratings</h3>
-							<div class="panel-controls">
-								<select id="rating-country" aria-label="Ratings country"></select>
-							</div>
 						</div>
 						<div class="plot" id="new-ratings-plot"></div>
 					</section>
@@ -623,7 +623,6 @@
 						</div>
 						<div class="panel-controls">
 							<select id="keyword-name" aria-label="Keyword"></select>
-							<select id="keyword-country" aria-label="Keyword country"></select>
 						</div>
 					</div>
 					<div class="plot" id="keyword-rank-plot"></div>
@@ -767,8 +766,7 @@
 			let refreshTimer;
 			let lastRenderedWidth = 0;
 			const asoCache = new Map();
-			const ratingCountry = document.querySelector("#rating-country");
-			const keywordCountry = document.querySelector("#keyword-country");
+			const appStoreCountry = document.querySelector("#app-store-country");
 			const keywordName = document.querySelector("#keyword-name");
 
 			// The access key used to live permanently in location.hash, which leaks it
@@ -1156,8 +1154,7 @@
 			async function loadInitialAso(token) {
 				try {
 					const data = await fetchAso(token, "US", "sudoku");
-					setOptions(ratingCountry, data.countries, data.country);
-					setOptions(keywordCountry, data.countries, data.country);
+					setOptions(appStoreCountry, data.countries, data.country);
 					setOptions(keywordName, data.keywords, data.keyword);
 					renderRatings(data);
 					renderKeywordRank(data);
@@ -1568,26 +1565,23 @@
 				load(token, { first: true });
 			});
 
-			ratingCountry.addEventListener("change", async () => {
+			async function refreshAsoSelection({ includeRatings = false } = {}) {
 				try {
-					const data = await fetchAso(storedToken(), ratingCountry.value, keywordName.value);
-					renderRatings(data);
+					const data = await fetchAso(storedToken(), appStoreCountry.value, keywordName.value);
+					if (includeRatings) renderRatings(data);
+					renderKeywordRank(data);
+					const generated = new Date(data.generated_at);
+					document.querySelector("#aso-updated").textContent =
+						`collected ${shortDate.format(generated)}`;
 				} catch (error) {
 					document.querySelector("#aso-updated").textContent = error.message;
 				}
-			});
-
-			async function refreshKeywordSelection() {
-				try {
-					const data = await fetchAso(storedToken(), keywordCountry.value, keywordName.value);
-					renderKeywordRank(data);
-				} catch (error) {
-					document.querySelector("#keyword-rank-note").textContent = error.message;
-				}
 			}
 
-			keywordCountry.addEventListener("change", refreshKeywordSelection);
-			keywordName.addEventListener("change", refreshKeywordSelection);
+			appStoreCountry.addEventListener("change", () => {
+				void refreshAsoSelection({ includeRatings: true });
+			});
+			keywordName.addEventListener("change", () => void refreshAsoSelection());
 
 			document.addEventListener("visibilitychange", () => {
 				if (!document.hidden && storedToken()) load(storedToken());
