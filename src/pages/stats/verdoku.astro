@@ -106,6 +106,49 @@
 				justify-content: flex-end;
 			}
 
+			.competitor-picker {
+				min-width: 148px;
+				font-size: 10px;
+			}
+
+			.competitor-picker summary {
+				padding: 7px 10px;
+				border: 1px solid var(--line);
+				border-radius: 8px;
+				list-style: none;
+				color: var(--ink);
+				background: var(--card);
+				font-weight: 700;
+				cursor: pointer;
+			}
+
+			.competitor-picker summary::-webkit-details-marker {
+				display: none;
+			}
+
+			.competitor-options {
+				display: grid;
+				gap: 7px;
+				margin-top: 6px;
+				padding: 9px 10px;
+				border: 1px solid var(--line);
+				border-radius: 8px;
+				background: var(--card);
+			}
+
+			.competitor-option {
+				display: flex;
+				align-items: center;
+				gap: 7px;
+				white-space: nowrap;
+				cursor: pointer;
+			}
+
+			.competitor-option input {
+				margin: 0;
+				accent-color: var(--red);
+			}
+
 			.aso-status {
 				margin: 4px 0 0;
 				color: var(--muted);
@@ -623,6 +666,10 @@
 						</div>
 						<div class="panel-controls">
 							<select id="keyword-name" aria-label="Keyword"></select>
+							<details class="competitor-picker" id="competitor-picker">
+								<summary id="competitor-summary">Competitors</summary>
+								<div class="competitor-options" id="competitor-options"></div>
+							</details>
 						</div>
 					</div>
 					<div class="plot" id="keyword-rank-plot"></div>
@@ -768,6 +815,13 @@
 			const asoCache = new Map();
 			const appStoreCountry = document.querySelector("#app-store-country");
 			const keywordName = document.querySelector("#keyword-name");
+			const competitorOptions = document.querySelector("#competitor-options");
+			const competitorSummary = document.querySelector("#competitor-summary");
+			const PRIMARY_APP_KEY = "murder_sudoku";
+			const selectedCompetitorKeys = new Set(["enigmic"]);
+			const competitorColors = ["#234766", "#2abd88", "#8d6bb1", "#d18a28", "#5b7894", "#8b5e3c"];
+			let competitorApps = [];
+			let competitorSignature = "";
 
 			// The access key used to live permanently in location.hash, which leaks it
 			// into browser history, screenshots and screen shares. Private links still
@@ -995,6 +1049,46 @@
 				);
 			}
 
+			function updateCompetitorSummary() {
+				const selected = competitorApps.filter((app) => selectedCompetitorKeys.has(app.app_key));
+				competitorSummary.textContent = selected.length === 0
+					? "Competitors"
+					: selected.length === 1
+						? selected[0].app_label
+						: `${selected.length} competitors`;
+			}
+
+			function setCompetitorOptions(apps) {
+				const competitors = (apps ?? []).filter((app) => app.app_key !== PRIMARY_APP_KEY);
+				const signature = competitors.map((app) => `${app.app_key}\u0000${app.app_label}`).join("\u0001");
+				if (signature === competitorSignature) return;
+				competitorSignature = signature;
+				competitorApps = competitors;
+				const availableKeys = new Set(competitors.map((app) => app.app_key));
+				for (const key of selectedCompetitorKeys) {
+					if (!availableKeys.has(key)) selectedCompetitorKeys.delete(key);
+				}
+				competitorOptions.replaceChildren(
+					...competitors.map((app) => {
+						const label = document.createElement("label");
+						label.className = "competitor-option";
+						const input = document.createElement("input");
+						input.type = "checkbox";
+						input.value = app.app_key;
+						input.checked = selectedCompetitorKeys.has(app.app_key);
+						input.addEventListener("change", () => {
+							if (input.checked) selectedCompetitorKeys.add(app.app_key);
+							else selectedCompetitorKeys.delete(app.app_key);
+							updateCompetitorSummary();
+							if (keywordSnapshot) renderKeywordRank(keywordSnapshot);
+						});
+						label.append(input, document.createTextNode(app.app_label));
+						return label;
+					}),
+				);
+				updateCompetitorSummary();
+			}
+
 			function renderRatings(data) {
 				ratingSnapshot = data;
 				const rows = (data.ratings ?? []).map((row) => ({
@@ -1054,11 +1148,14 @@
 
 			function renderKeywordRank(data) {
 				keywordSnapshot = data;
+				setCompetitorOptions(data.apps);
 				const rows = (data.rankings ?? []).map((row) => {
 					const searchLimit = Number(row.search_limit ?? data.search_limit ?? 200);
 					const rank = row.rank == null ? null : Number(row.rank);
 					return {
 						...row,
+						app_key: row.app_key ?? PRIMARY_APP_KEY,
+						app_label: row.app_label ?? "Murder Sudoku",
 						date: new Date(`${row.day}T12:00:00Z`),
 						rank,
 						search_limit: searchLimit,
@@ -1070,13 +1167,16 @@
 					document.querySelector("#keyword-rank-note").textContent = "no observations";
 					return;
 				}
-				const limit = Math.max(...rows.map((row) => row.search_limit));
-				const rankedRows = rows.filter((row) => Number.isFinite(row.rank));
-				const unrankedCount = rows.length - rankedRows.length;
+				const visibleKeys = new Set([PRIMARY_APP_KEY, ...selectedCompetitorKeys]);
+				const visibleRows = rows.filter((row) => visibleKeys.has(row.app_key));
+				const selectedApps = (data.apps ?? [{ app_key: PRIMARY_APP_KEY, app_label: "Murder Sudoku" }])
+					.filter((app) => visibleKeys.has(app.app_key));
+				const limit = Math.max(...visibleRows.map((row) => row.search_limit));
+				const rankedRows = visibleRows.filter((row) => Number.isFinite(row.rank));
 				if (!rankedRows.length) {
 					node.replaceChildren();
 					document.querySelector("#keyword-rank-note").textContent =
-						`${data.keyword} · ${data.country} · outside top ${limit} in every observation`;
+						`${data.keyword} · ${data.country} · selected apps outside top ${limit}`;
 					return;
 				}
 				const bestRank = Math.min(...rankedRows.map((row) => row.rank));
@@ -1095,6 +1195,13 @@
 						marginLeft: 48,
 						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
 						x: { type: "utc", label: null, ticks: 6, tickFormat: "%b %-d", tickSize: 0 },
+						color: {
+							domain: selectedApps.map((app) => app.app_label),
+							range: selectedApps.map((app, index) =>
+								app.app_key === PRIMARY_APP_KEY ? "#bd2d47" : competitorColors[index - 1] ?? "#7d8a96"
+							),
+							legend: true,
+						},
 						y: {
 							domain: [domainWorst, domainBest],
 							label: null,
@@ -1110,28 +1217,29 @@
 								stroke: "#d9dfe2",
 								strokeDasharray: "3,3",
 							}),
-							Plot.lineY(rows, {
+							Plot.lineY(visibleRows, {
 								x: "date",
 								y: "rank",
-								stroke: "#bd2d47",
+								z: "app_key",
+								stroke: "app_label",
 								strokeWidth: 2.2,
 								curve: "monotone-x",
 								tip: true,
-								title: (row) => `${shortDate.format(row.date)}: #${row.rank}`,
+								title: (row) => `${row.app_label} · ${shortDate.format(row.date)}: #${row.rank}`,
 							}),
 							Plot.dot(rankedRows, {
 								x: "date",
 								y: "rank",
-								fill: "#bd2d47",
+								fill: "app_label",
 								r: 2.5,
 							}),
 						],
 					}),
 				);
-				const latest = rows[rows.length - 1];
+				const primaryRows = rows.filter((row) => row.app_key === PRIMARY_APP_KEY);
+				const latest = primaryRows[primaryRows.length - 1];
 				document.querySelector("#keyword-rank-note").textContent =
-					`${data.keyword} · ${data.country} · ${latest.rank == null ? `${latest.search_limit}+` : `#${latest.rank}`}` +
-					(unrankedCount ? ` · ${unrankedCount} outside top ${limit}` : "");
+					`${data.keyword} · ${data.country} · Murder Sudoku ${latest?.rank == null ? `${latest?.search_limit ?? limit}+` : `#${latest.rank}`}`;
 			}
 
 			async function fetchAso(token, country, keyword) {
