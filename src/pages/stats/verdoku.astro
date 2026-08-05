@@ -136,7 +136,7 @@
 				background: var(--card);
 			}
 
-			.competitor-option {
+			:global(.competitor-option) {
 				display: flex;
 				align-items: center;
 				gap: 7px;
@@ -144,7 +144,7 @@
 				cursor: pointer;
 			}
 
-			.competitor-option input {
+			:global(.competitor-option input) {
 				margin: 0;
 				accent-color: var(--red);
 			}
@@ -244,19 +244,52 @@
 				margin-bottom: 12px;
 			}
 
-			.experiment-metric-panel {
+			:global(.experiment-metric-panel) {
 				margin-bottom: 0;
+				padding: 18px 18px 14px;
+				border: 1px solid var(--line);
+				border-radius: 12px;
+				overflow: hidden;
+				background: color-mix(in srgb, var(--card) 82%, transparent);
 			}
 
-			.experiment-metric-panel .plot {
+			:global(.experiment-metric-panel .panel-head) {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				gap: 12px;
+				margin-bottom: 12px;
+			}
+
+			:global(.experiment-metric-panel .panel-title) {
+				margin: 0;
+				font-size: 12px;
+				font-weight: 800;
+			}
+
+			:global(.experiment-metric-panel .panel-note) {
+				margin: 0;
+				color: var(--muted);
+				font-size: 10px;
+			}
+
+			:global(.experiment-metric-panel .plot) {
+				width: 100%;
 				min-height: 170px;
+			}
+
+			:global(.experiment-metric-panel .plot svg) {
+				display: block;
+				max-width: 100%;
+				overflow: visible;
+				font-family: "Styrene B", ui-sans-serif, system-ui, sans-serif;
 			}
 
 			.plot-grid > :only-child {
 				grid-column: 1 / -1;
 			}
 
-			.health-chip {
+			:global(.health-chip) {
 				padding: 5px 7px;
 				border: 1px solid color-mix(in srgb, var(--green) 28%, var(--line));
 				border-radius: 7px;
@@ -266,13 +299,13 @@
 				font-weight: 700;
 			}
 
-			.health-chip[data-state="warn"] {
+			:global(.health-chip[data-state="warn"]) {
 				border-color: color-mix(in srgb, var(--amber) 35%, var(--line));
 				color: #9b6514;
 				background: color-mix(in srgb, var(--amber) 7%, transparent);
 			}
 
-			.health-chip[data-state="bad"] {
+			:global(.health-chip[data-state="bad"]) {
 				border-color: color-mix(in srgb, var(--red) 30%, var(--line));
 				color: var(--red);
 				background: color-mix(in srgb, var(--red) 6%, transparent);
