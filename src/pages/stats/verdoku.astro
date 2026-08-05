@@ -239,12 +239,17 @@
 
 			.experiment-metrics-grid {
 				display: grid;
-				grid-template-columns: repeat(3, minmax(0, 1fr));
+				grid-template-columns: repeat(2, minmax(0, 1fr));
 				gap: 12px;
+				margin-bottom: 12px;
+			}
+
+			.experiment-metric-panel {
+				margin-bottom: 0;
 			}
 
 			.experiment-metric-panel .plot {
-				min-height: 150px;
+				min-height: 170px;
 			}
 
 			.plot-grid > :only-child {
@@ -1734,94 +1739,104 @@
 					ci_high: row.ci_high == null ? null : Number(row.ci_high),
 					index: row.arm === experiment.control_arm ? 0 : 1,
 				}));
-				metricGrid.replaceChildren(
-					...metricOrder.map((metric) => {
-						const rows = metricRows.filter((row) => row.metric === metric);
-						if (!rows.length) return document.createDocumentFragment();
-						const section = document.createElement("section");
-						section.className = "panel experiment-metric-panel";
-						const head = document.createElement("div");
-						head.className = "panel-head";
-						const title = document.createElement("h3");
-						title.className = "panel-title";
-						title.textContent = rows[0].label;
-						const note = document.createElement("p");
-						note.className = "panel-note";
-						const mature = rows.reduce((sum, row) => sum + row.mature_n, 0);
-						const observed = rows.reduce((sum, row) => sum + row.n, 0);
-						note.textContent = ["current", "d0"].includes(rows[0].horizon)
-							? `${rows[0].horizon} · observed to date`
-							: mature < observed
-							? `${rows[0].horizon} · preliminary · ${number.format(mature)}/${number.format(
-									observed,
-							  )} mature`
-							: `${rows[0].horizon} · ${number.format(mature)} mature`;
-						head.append(title, note);
-						const plotNode = document.createElement("div");
-						plotNode.className = "plot";
-						section.append(head, plotNode);
-						const values = rows.filter(
-							(row) =>
-								Number.isFinite(row.value) &&
-								Number.isFinite(row.ci_low) &&
-								Number.isFinite(row.ci_high),
-						);
-						if (values.length) {
-							const formatNumber = (value, unit) =>
-								unit === "percent"
-									? `${value.toFixed(1)}%`
-									: unit === "usd"
-									? `$${value.toFixed(3)}`
-									: `${value.toFixed(1)} min`;
-							plotNode.append(
-								Plot.plot({
-									width: 320,
-									height: 150,
-									marginTop: 8,
-									marginRight: 12,
-									marginBottom: 28,
-									marginLeft: 85,
-									style: experimentPlotStyle(),
-									x: {
-										label: null,
-										grid: true,
-										tickSize: 0,
-										tickFormat: (value) =>
-											rows[0].unit === "percent"
-												? `${value}%`
-												: rows[0].unit === "usd"
-												? `$${value}`
-												: `${value}m`,
-									},
-									y: { label: null, tickSize: 0 },
-									marks: [
-										Plot.ruleY(values, {
-											y: "arm",
-											x1: "ci_low",
-											x2: "ci_high",
-											stroke: (row) => experimentColor(row.arm, row.index),
-											strokeWidth: 2,
-										}),
-										Plot.dot(values, {
-											x: "value",
-											y: "arm",
-											fill: (row) => experimentColor(row.arm, row.index),
-											r: 5,
-											tip: true,
-											title: (row) =>
-												`${row.arm}: ${formatNumber(row.value, row.unit)} · ` +
-												`95% CI ${formatNumber(row.ci_low, row.unit)}–${formatNumber(
-													row.ci_high,
-													row.unit,
-												)} · n=${number.format(row.n)}`,
-										}),
-									],
+				const metricPlots = [];
+				const metricPanels = metricOrder.map((metric) => {
+					const rows = metricRows.filter((row) => row.metric === metric);
+					if (!rows.length) return document.createDocumentFragment();
+					const section = document.createElement("section");
+					section.className = "panel experiment-metric-panel";
+					const head = document.createElement("div");
+					head.className = "panel-head";
+					const title = document.createElement("h3");
+					title.className = "panel-title";
+					title.textContent = rows[0].label;
+					head.append(title);
+					const plotNode = document.createElement("div");
+					plotNode.className = "plot";
+					section.append(head, plotNode);
+					const values = rows.filter(
+						(row) =>
+							Number.isFinite(row.value) &&
+							Number.isFinite(row.ci_low) &&
+							Number.isFinite(row.ci_high),
+					);
+					if (values.length) metricPlots.push({ plotNode, rows, values });
+					else {
+						const empty = document.createElement("p");
+						empty.className = "panel-note";
+						empty.textContent = "No observed cohort yet";
+						plotNode.append(empty);
+					}
+					return section;
+				});
+				metricGrid.replaceChildren(...metricPanels);
+				metricPlots.forEach(({ plotNode, rows, values }) => {
+					const formatNumber = (value, unit) =>
+						unit === "percent"
+							? `${value.toFixed(1)}%`
+							: unit === "usd"
+							? `$${value.toFixed(3)}`
+							: `${value.toFixed(1)} min`;
+					plotNode.append(
+						Plot.plot({
+							width: plotNode.clientWidth || 320,
+							height: 170,
+							marginTop: 14,
+							marginRight: 14,
+							marginBottom: 30,
+							marginLeft: 92,
+							style: experimentPlotStyle(),
+							x: {
+								label: null,
+								grid: true,
+								ticks: 4,
+								tickSize: 0,
+								tickFormat: (value) =>
+									rows[0].unit === "percent"
+										? `${value}%`
+										: rows[0].unit === "usd"
+										? `$${value}`
+										: `${value}m`,
+							},
+							y: { label: null, tickSize: 0 },
+							marks: [
+								Plot.ruleY(values, {
+									y: "arm",
+									x1: "ci_low",
+									x2: "ci_high",
+									stroke: (row) => experimentColor(row.arm, row.index),
+									strokeWidth: 2.4,
 								}),
-							);
-						} else note.textContent = `${rows[0].horizon} · no observed cohort yet`;
-						return section;
-					}),
-				);
+								Plot.tickX(values, {
+									x: "ci_low",
+									y: "arm",
+									stroke: (row) => experimentColor(row.arm, row.index),
+									strokeWidth: 1.5,
+								}),
+								Plot.tickX(values, {
+									x: "ci_high",
+									y: "arm",
+									stroke: (row) => experimentColor(row.arm, row.index),
+									strokeWidth: 1.5,
+								}),
+								Plot.dot(values, {
+									x: "value",
+									y: "arm",
+									fill: (row) => experimentColor(row.arm, row.index),
+									symbol: (row) => (row.index === 0 ? "circle" : "diamond"),
+									r: 5.5,
+									tip: true,
+									title: (row) =>
+										`${row.arm}: ${formatNumber(row.value, row.unit)} · ` +
+										`95% CI ${formatNumber(row.ci_low, row.unit)}–${formatNumber(
+											row.ci_high,
+											row.unit,
+										)} · n=${number.format(row.n)}`,
+								}),
+							],
+						}),
+					);
+				});
 
 				const series = (data.series ?? [])
 					.map((row) => ({
