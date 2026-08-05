@@ -155,6 +155,110 @@
 				font-size: 10px;
 			}
 
+			.experiment-hero {
+				padding-bottom: 18px;
+			}
+
+			.experiment-title-row {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				flex-wrap: wrap;
+			}
+
+			.experiment-title-row h3 {
+				margin: 0;
+				font-family: "Tiempos Text", Georgia, serif;
+				font-size: 22px;
+			}
+
+			.phase-pill {
+				padding: 4px 7px 3px;
+				border-radius: 999px;
+				color: var(--navy);
+				background: color-mix(in srgb, var(--navy) 10%, transparent);
+				font-size: 9px;
+				font-weight: 800;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+			}
+
+			.phase-pill[data-phase="running"] {
+				color: #14815d;
+				background: color-mix(in srgb, var(--green) 13%, transparent);
+			}
+
+			.phase-pill[data-phase="winner_rollout"] {
+				color: #9b6514;
+				background: color-mix(in srgb, var(--amber) 15%, transparent);
+			}
+
+			.experiment-metric-copy {
+				margin: 7px 0 0;
+				color: var(--muted);
+				font-size: 10px;
+				line-height: 1.5;
+			}
+
+			.experiment-summary {
+				display: grid;
+				grid-template-columns: repeat(4, 1fr);
+				gap: 8px;
+				margin-top: 18px;
+			}
+
+			.experiment-stat {
+				min-width: 0;
+				padding-top: 12px;
+				border-top: 1px solid var(--line);
+			}
+
+			.experiment-stat span {
+				display: block;
+				color: var(--muted);
+				font-size: 9px;
+				font-weight: 700;
+				letter-spacing: 0.04em;
+				text-transform: uppercase;
+			}
+
+			.experiment-stat strong {
+				display: block;
+				margin-top: 5px;
+				font-family: "Tiempos Text", Georgia, serif;
+				font-size: 21px;
+				font-variant-numeric: tabular-nums;
+			}
+
+			.experiment-health {
+				display: flex;
+				gap: 6px;
+				margin-top: 14px;
+				flex-wrap: wrap;
+			}
+
+			.health-chip {
+				padding: 5px 7px;
+				border: 1px solid color-mix(in srgb, var(--green) 28%, var(--line));
+				border-radius: 7px;
+				color: #14815d;
+				background: color-mix(in srgb, var(--green) 6%, transparent);
+				font-size: 9px;
+				font-weight: 700;
+			}
+
+			.health-chip[data-state="warn"] {
+				border-color: color-mix(in srgb, var(--amber) 35%, var(--line));
+				color: #9b6514;
+				background: color-mix(in srgb, var(--amber) 7%, transparent);
+			}
+
+			.health-chip[data-state="bad"] {
+				border-color: color-mix(in srgb, var(--red) 30%, var(--line));
+				color: var(--red);
+				background: color-mix(in srgb, var(--red) 6%, transparent);
+			}
+
 			.shell {
 				width: min(100% - 32px, 760px);
 				margin: 0 auto;
@@ -460,6 +564,10 @@
 					grid-template-columns: 1fr 1fr;
 				}
 
+				.experiment-summary {
+					grid-template-columns: 1fr 1fr;
+				}
+
 				.plot-grid {
 					grid-template-columns: 1fr;
 				}
@@ -676,6 +784,87 @@
 				</section>
 
 				<div class="section-heading">
+					<h2>Experiments</h2>
+					<div class="panel-controls">
+						<span id="experiment-updated">assignment + exposure</span>
+						<select id="experiment-name" aria-label="Experiment"></select>
+						<select id="experiment-platform" aria-label="Experiment platform"></select>
+						<select id="experiment-country" aria-label="Experiment country"></select>
+					</div>
+				</div>
+
+				<section class="panel experiment-hero">
+					<div class="experiment-title-row">
+						<h3 id="experiment-title">Loading experiments…</h3>
+						<span class="phase-pill" id="experiment-phase">loading</span>
+					</div>
+					<p class="experiment-metric-copy" id="experiment-metric-copy"></p>
+					<div class="experiment-summary">
+						<div class="experiment-stat">
+							<span>Interim effect</span>
+							<strong id="experiment-effect">—</strong>
+						</div>
+						<div class="experiment-stat">
+							<span>Exposed</span>
+							<strong id="experiment-exposed">—</strong>
+						</div>
+						<div class="experiment-stat">
+							<span>Active assigned</span>
+							<strong id="experiment-assigned">—</strong>
+						</div>
+						<div class="experiment-stat">
+							<span>D30 mature</span>
+							<strong id="experiment-mature">—</strong>
+						</div>
+					</div>
+					<div class="experiment-health" id="experiment-health"></div>
+				</section>
+
+				<div class="plot-grid">
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Assignment and exposure</h3>
+							<p class="panel-note" id="experiment-allocation-note">active vs experiment-to-date</p>
+						</div>
+						<div class="plot" id="experiment-allocation-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">24-hour outcome</h3>
+							<p class="panel-note" id="experiment-outcome-note">mature players only</p>
+						</div>
+						<div class="plot" id="experiment-outcome-plot"></div>
+					</section>
+				</div>
+
+				<section class="panel">
+					<div class="panel-head">
+						<h3 class="panel-title">Cumulative interim outcome</h3>
+						<p class="panel-note">complete 24-hour cohorts · not a stopping rule</p>
+					</div>
+					<div class="plot" id="experiment-series-plot"></div>
+				</section>
+
+				<div class="plot-grid">
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Funnel</h3>
+							<p class="panel-note">players after first exposure</p>
+						</div>
+						<div class="plot" id="experiment-funnel-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Guardrails</h3>
+							<p class="panel-note">retention · failures · cancellations</p>
+						</div>
+						<div class="plot" id="experiment-guardrail-plot"></div>
+					</section>
+				</div>
+
+				<div class="section-heading">
 					<h2>Engagement</h2>
 					<span>per active player</span>
 				</div>
@@ -810,11 +999,15 @@
 			let snapshot;
 			let ratingSnapshot;
 			let keywordSnapshot;
+			let experimentSnapshot;
 			let refreshTimer;
 			let lastRenderedWidth = 0;
 			const asoCache = new Map();
 			const appStoreCountry = document.querySelector("#app-store-country");
 			const keywordName = document.querySelector("#keyword-name");
+			const experimentName = document.querySelector("#experiment-name");
+			const experimentPlatform = document.querySelector("#experiment-platform");
+			const experimentCountry = document.querySelector("#experiment-country");
 			const competitorOptions = document.querySelector("#competitor-options");
 			const competitorSummary = document.querySelector("#competitor-summary");
 			const PRIMARY_APP_KEY = "murder_sudoku";
@@ -822,6 +1015,9 @@
 			const competitorColors = ["#234766", "#2abd88", "#8d6bb1", "#d18a28", "#5b7894", "#8b5e3c"];
 			let competitorApps = [];
 			let competitorSignature = "";
+			let experimentRosterSignature = "";
+			let experimentCountrySignature = "";
+			const experimentColors = new Map();
 
 			// The access key used to live permanently in location.hash, which leaks it
 			// into browser history, screenshots and screen shares. Private links still
@@ -1051,16 +1247,19 @@
 
 			function updateCompetitorSummary() {
 				const selected = competitorApps.filter((app) => selectedCompetitorKeys.has(app.app_key));
-				competitorSummary.textContent = selected.length === 0
-					? "Competitors"
-					: selected.length === 1
+				competitorSummary.textContent =
+					selected.length === 0
+						? "Competitors"
+						: selected.length === 1
 						? selected[0].app_label
 						: `${selected.length} competitors`;
 			}
 
 			function setCompetitorOptions(apps) {
 				const competitors = (apps ?? []).filter((app) => app.app_key !== PRIMARY_APP_KEY);
-				const signature = competitors.map((app) => `${app.app_key}\u0000${app.app_label}`).join("\u0001");
+				const signature = competitors
+					.map((app) => `${app.app_key}\u0000${app.app_label}`)
+					.join("\u0001");
 				if (signature === competitorSignature) return;
 				competitorSignature = signature;
 				competitorApps = competitors;
@@ -1124,7 +1323,9 @@
 									insetRight: 1.2,
 									tip: true,
 									title: (row) =>
-										`${shortDate.format(row.date)}: ${row.new_ratings > 0 ? "+" : ""}${number.format(row.new_ratings)}`,
+										`${shortDate.format(row.date)}: ${
+											row.new_ratings > 0 ? "+" : ""
+										}${number.format(row.new_ratings)}`,
 								}),
 							],
 						}),
@@ -1136,7 +1337,9 @@
 					width: totalNode.clientWidth || 320,
 					floor: 0,
 					title: (row) =>
-						`${shortDate.format(row.date)}: ${number.format(row.rating_count)} ratings · ${row.rating.toFixed(2)}★`,
+						`${shortDate.format(row.date)}: ${number.format(
+							row.rating_count,
+						)} ratings · ${row.rating.toFixed(2)}★`,
 				});
 				if (totalPlot) replacePlot("#total-ratings-plot", totalPlot);
 				else totalNode.replaceChildren();
@@ -1169,14 +1372,16 @@
 				}
 				const visibleKeys = new Set([PRIMARY_APP_KEY, ...selectedCompetitorKeys]);
 				const visibleRows = rows.filter((row) => visibleKeys.has(row.app_key));
-				const selectedApps = (data.apps ?? [{ app_key: PRIMARY_APP_KEY, app_label: "Murder Sudoku" }])
-					.filter((app) => visibleKeys.has(app.app_key));
+				const selectedApps = (
+					data.apps ?? [{ app_key: PRIMARY_APP_KEY, app_label: "Murder Sudoku" }]
+				).filter((app) => visibleKeys.has(app.app_key));
 				const limit = Math.max(...visibleRows.map((row) => row.search_limit));
 				const rankedRows = visibleRows.filter((row) => Number.isFinite(row.rank));
 				if (!rankedRows.length) {
 					node.replaceChildren();
-					document.querySelector("#keyword-rank-note").textContent =
-						`${data.keyword} · ${data.country} · selected apps outside top ${limit}`;
+					document.querySelector(
+						"#keyword-rank-note",
+					).textContent = `${data.keyword} · ${data.country} · selected apps outside top ${limit}`;
 					return;
 				}
 				const bestRank = Math.min(...rankedRows.map((row) => row.rank));
@@ -1198,7 +1403,9 @@
 						color: {
 							domain: selectedApps.map((app) => app.app_label),
 							range: selectedApps.map((app, index) =>
-								app.app_key === PRIMARY_APP_KEY ? "#bd2d47" : competitorColors[index - 1] ?? "#7d8a96"
+								app.app_key === PRIMARY_APP_KEY
+									? "#bd2d47"
+									: competitorColors[index - 1] ?? "#7d8a96",
 							),
 							legend: true,
 						},
@@ -1211,12 +1418,13 @@
 							tickFormat: (value) => `#${Math.round(value)}`,
 						},
 						marks: [
-							Plot.ruleY([10, 25, 50].filter(
-								(value) => value >= domainBest && value <= domainWorst,
-							), {
-								stroke: "#d9dfe2",
-								strokeDasharray: "3,3",
-							}),
+							Plot.ruleY(
+								[10, 25, 50].filter((value) => value >= domainBest && value <= domainWorst),
+								{
+									stroke: "#d9dfe2",
+									strokeDasharray: "3,3",
+								},
+							),
 							Plot.lineY(visibleRows, {
 								x: "date",
 								y: "rank",
@@ -1238,8 +1446,11 @@
 				);
 				const primaryRows = rows.filter((row) => row.app_key === PRIMARY_APP_KEY);
 				const latest = primaryRows[primaryRows.length - 1];
-				document.querySelector("#keyword-rank-note").textContent =
-					`${data.keyword} · ${data.country} · Murder Sudoku ${latest?.rank == null ? `${latest?.search_limit ?? limit}+` : `#${latest.rank}`}`;
+				document.querySelector("#keyword-rank-note").textContent = `${data.keyword} · ${
+					data.country
+				} · Murder Sudoku ${
+					latest?.rank == null ? `${latest?.search_limit ?? limit}+` : `#${latest.rank}`
+				}`;
 			}
 
 			async function fetchAso(token, country, keyword) {
@@ -1267,10 +1478,459 @@
 					renderRatings(data);
 					renderKeywordRank(data);
 					const generated = new Date(data.generated_at);
-					document.querySelector("#aso-updated").textContent =
-						`collected ${shortDate.format(generated)}`;
+					document.querySelector("#aso-updated").textContent = `collected ${shortDate.format(
+						generated,
+					)}`;
 				} catch (error) {
 					document.querySelector("#aso-updated").textContent = error.message;
+				}
+			}
+
+			function labeledOptions(select, values, selected) {
+				select.replaceChildren(
+					...values.map(({ value, label }) => {
+						const option = document.createElement("option");
+						option.value = value;
+						option.textContent = label;
+						option.selected = value === selected;
+						return option;
+					}),
+				);
+			}
+
+			function phaseLabel(phase) {
+				return (
+					{
+						running: "Running",
+						winner_rollout: "Winner rollout",
+						stopped: "Stopped",
+						draft: "Draft",
+					}[phase] ?? phase
+				);
+			}
+
+			function experimentColor(arm, index = 0) {
+				if (!experimentColors.has(arm)) {
+					experimentColors.set(arm, ["#234766", "hsl(351deg 66% 48%)"][index % 2]);
+				}
+				return experimentColors.get(arm);
+			}
+
+			function setExperimentControls(data) {
+				const roster = data.roster ?? [];
+				const rosterSignature = roster
+					.map((row) => `${row.experiment_key}\u0000${row.title}\u0000${row.phase}`)
+					.join("\u0001");
+				if (rosterSignature !== experimentRosterSignature) {
+					experimentRosterSignature = rosterSignature;
+					labeledOptions(
+						experimentName,
+						roster.map((row) => ({
+							value: row.experiment_key,
+							label: `${row.title} · ${phaseLabel(row.phase)}`,
+						})),
+						data.experiment.experiment_key,
+					);
+				} else {
+					experimentName.value = data.experiment.experiment_key;
+				}
+
+				if (!experimentPlatform.options.length) {
+					labeledOptions(
+						experimentPlatform,
+						[
+							{ value: "all", label: "All platforms" },
+							{ value: "ios", label: "iOS" },
+							{ value: "android", label: "Android" },
+						],
+						data.filters.platform,
+					);
+				} else experimentPlatform.value = data.filters.platform;
+
+				const countries = ["all", ...(data.filters.countries ?? [])];
+				const countrySignature = countries.join("\u0000");
+				if (countrySignature !== experimentCountrySignature) {
+					experimentCountrySignature = countrySignature;
+					labeledOptions(
+						experimentCountry,
+						countries.map((country) => ({
+							value: country,
+							label: country === "all" ? "All countries" : country,
+						})),
+						data.filters.country,
+					);
+				} else experimentCountry.value = data.filters.country;
+			}
+
+			function experimentPlotStyle() {
+				return { background: "transparent", color: "#7d8a96", fontSize: "10px" };
+			}
+
+			function renderExperimentHealth(data) {
+				const chips = [];
+				const rosterEntry = (data.roster ?? []).find(
+					(row) => row.experiment_key === data.experiment.experiment_key,
+				);
+				if (rosterEntry?.config_health === "ok") chips.push(["Config matches lifecycle", "ok"]);
+				else if (rosterEntry?.config_health === "not_installed")
+					chips.push(["Not installed", "warn"]);
+				else chips.push([`Config: ${rosterEntry?.config_health ?? "unknown"}`, "bad"]);
+
+				const mismatches = Number(data.health?.mismatched_exposure_events ?? 0);
+				chips.push(
+					mismatches === 0
+						? ["Exposure arms match", "ok"]
+						: [`${number.format(mismatches)} arm mismatches`, "bad"],
+				);
+
+				const assignment = data.assignment ?? [];
+				const assigned = assignment.reduce((sum, row) => sum + Number(row.assigned), 0);
+				const deviation = assignment.reduce((max, row) => {
+					const observed = assigned ? (100 * Number(row.assigned)) / assigned : 0;
+					return Math.max(max, Math.abs(observed - Number(row.expected_pct)));
+				}, 0);
+				if (assigned) {
+					chips.push([
+						deviation <= 2 ? "Allocation balanced" : `Allocation off ${deviation.toFixed(1)}pp`,
+						deviation <= 2 ? "ok" : "warn",
+					]);
+				}
+
+				if (!data.health?.refreshed_at && data.experiment.phase !== "draft") {
+					chips.push(["Initial backfill pending", "warn"]);
+				}
+
+				const node = document.querySelector("#experiment-health");
+				node.replaceChildren(
+					...chips.map(([label, state]) => {
+						const chip = document.createElement("span");
+						chip.className = "health-chip";
+						chip.dataset.state = state;
+						chip.textContent = label;
+						return chip;
+					}),
+				);
+			}
+
+			function renderExperiment(data) {
+				experimentSnapshot = data;
+				experimentColors.clear();
+				setExperimentControls(data);
+
+				const experiment = data.experiment;
+				document.querySelector("#experiment-title").textContent = experiment.title;
+				const phase = document.querySelector("#experiment-phase");
+				phase.textContent = phaseLabel(experiment.phase);
+				phase.dataset.phase = experiment.phase;
+				document.querySelector("#experiment-metric-copy").textContent =
+					`Decision metric: ${experiment.primary_metric}. Interim: ${experiment.interim_metric}.` +
+					(experiment.winner_arm ? ` Winner: ${experiment.winner_arm}.` : "");
+
+				const assignment = (data.assignment ?? []).map((row, index) => ({
+					...row,
+					index,
+					assigned: Number(row.assigned),
+					exposed: Number(row.exposed),
+					expected_pct: Number(row.expected_pct),
+				}));
+				const totalAssigned = assignment.reduce((sum, row) => sum + row.assigned, 0);
+				const totalExposed = assignment.reduce((sum, row) => sum + row.exposed, 0);
+				const totalMature = (data.maturity ?? []).reduce(
+					(sum, row) => sum + Number(row.mature_d30),
+					0,
+				);
+				const effect = Number(data.effect?.difference_pp);
+				const effectNode = document.querySelector("#experiment-effect");
+				effectNode.textContent = Number.isFinite(effect)
+					? `${effect > 0 ? "+" : ""}${effect.toFixed(1)} pp`
+					: "pending";
+				effectNode.title = Number.isFinite(Number(data.effect?.ci_low_pp))
+					? `Treatment − control, 95% CI ${Number(data.effect.ci_low_pp).toFixed(1)} to ${Number(
+							data.effect.ci_high_pp,
+					  ).toFixed(1)} percentage points.`
+					: "No complete 24-hour cohort yet.";
+				document.querySelector("#experiment-exposed").textContent = compact.format(totalExposed);
+				document.querySelector("#experiment-assigned").textContent = compact.format(totalAssigned);
+				document.querySelector("#experiment-mature").textContent = compact.format(totalMature);
+				renderExperimentHealth(data);
+
+				const allocationRows = assignment.flatMap((row) => [
+					{
+						arm: row.arm,
+						label: `${row.arm} · assigned`,
+						measure: "Assigned",
+						value: row.assigned,
+					},
+					{ arm: row.arm, label: `${row.arm} · exposed`, measure: "Exposed", value: row.exposed },
+				]);
+				const allocationNode = document.querySelector("#experiment-allocation-plot");
+				if (allocationRows.some((row) => row.value > 0)) {
+					replacePlot(
+						"#experiment-allocation-plot",
+						Plot.plot({
+							width: allocationNode.clientWidth || 320,
+							height: 178,
+							marginTop: 8,
+							marginRight: 10,
+							marginBottom: 28,
+							marginLeft: 126,
+							style: experimentPlotStyle(),
+							x: { label: null, grid: true, ticks: 4, tickSize: 0 },
+							y: { label: null, tickSize: 0 },
+							color: {
+								domain: ["Assigned", "Exposed"],
+								range: ["#aab5bd", "#234766"],
+								legend: true,
+							},
+							marks: [
+								Plot.barX(allocationRows, {
+									x: "value",
+									y: "label",
+									fill: "measure",
+									tip: true,
+									title: (row) => `${row.label}: ${number.format(row.value)}`,
+								}),
+							],
+						}),
+					);
+				} else allocationNode.replaceChildren();
+				document.querySelector("#experiment-allocation-note").textContent =
+					"assigned: active 3d · exposed: experiment-to-date";
+
+				const outcomes = (data.outcome ?? [])
+					.map((row, index) => ({
+						...row,
+						index,
+						n: Number(row.n),
+						rate_pct: row.rate_pct == null ? null : Number(row.rate_pct),
+						ci_low_pct: row.ci_low_pct == null ? null : Number(row.ci_low_pct),
+						ci_high_pct: row.ci_high_pct == null ? null : Number(row.ci_high_pct),
+					}))
+					.filter((row) => Number.isFinite(row.rate_pct));
+				const outcomeNode = document.querySelector("#experiment-outcome-plot");
+				if (outcomes.length) {
+					replacePlot(
+						"#experiment-outcome-plot",
+						Plot.plot({
+							width: outcomeNode.clientWidth || 320,
+							height: 178,
+							marginTop: 15,
+							marginRight: 12,
+							marginBottom: 30,
+							marginLeft: 90,
+							style: experimentPlotStyle(),
+							x: { label: null, grid: true, tickFormat: (value) => `${value}%`, tickSize: 0 },
+							y: { label: null, tickSize: 0 },
+							marks: [
+								Plot.ruleY(outcomes, {
+									y: "arm",
+									x1: "ci_low_pct",
+									x2: "ci_high_pct",
+									stroke: (row) => experimentColor(row.arm, row.index),
+									strokeWidth: 2,
+								}),
+								Plot.dot(outcomes, {
+									x: "rate_pct",
+									y: "arm",
+									fill: (row) => experimentColor(row.arm, row.index),
+									r: 5,
+									tip: true,
+									title: (row) =>
+										`${row.arm}: ${row.rate_pct.toFixed(1)}% · ` +
+										`95% CI ${row.ci_low_pct.toFixed(1)}–${row.ci_high_pct.toFixed(
+											1,
+										)} · n=${number.format(row.n)}`,
+								}),
+							],
+						}),
+					);
+					document.querySelector("#experiment-outcome-note").textContent =
+						experiment.interim_metric;
+				} else {
+					outcomeNode.replaceChildren();
+					document.querySelector("#experiment-outcome-note").textContent =
+						"waiting for 24-hour maturity";
+				}
+
+				const series = (data.series ?? [])
+					.map((row) => ({
+						...row,
+						date: new Date(`${row.day}T12:00:00Z`),
+						n: Number(row.n),
+						rate_pct: row.rate_pct == null ? null : Number(row.rate_pct),
+					}))
+					.filter((row) => Number.isFinite(row.rate_pct));
+				const seriesNode = document.querySelector("#experiment-series-plot");
+				if (series.length) {
+					const arms = assignment.map((row) => row.arm);
+					replacePlot(
+						"#experiment-series-plot",
+						Plot.plot({
+							width: seriesNode.clientWidth || 680,
+							height: 210,
+							marginTop: 8,
+							marginRight: 14,
+							marginBottom: 30,
+							marginLeft: 43,
+							style: experimentPlotStyle(),
+							x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+							y: { label: null, grid: true, tickFormat: (value) => `${value}%`, tickSize: 0 },
+							color: {
+								domain: arms,
+								range: arms.map((arm, index) => experimentColor(arm, index)),
+								legend: true,
+							},
+							marks: [
+								Plot.lineY(series, {
+									x: "date",
+									y: "rate_pct",
+									stroke: "arm",
+									curve: "monotone-x",
+									strokeWidth: 2.2,
+									tip: true,
+									title: (row) =>
+										`${row.arm} · ${shortDate.format(row.date)}: ${row.rate_pct.toFixed(
+											1,
+										)}% · n=${number.format(row.n)}`,
+								}),
+							],
+						}),
+					);
+				} else seriesNode.replaceChildren();
+
+				const funnel = (data.funnel ?? []).flatMap((armRow, index) =>
+					(armRow.stages ?? []).map((stage) => ({
+						...stage,
+						arm: armRow.arm,
+						index,
+						label: `${stage.label} · ${armRow.arm}`,
+						count: Number(stage.count),
+						rate_pct: stage.rate_pct == null ? 0 : Number(stage.rate_pct),
+					})),
+				);
+				const funnelNode = document.querySelector("#experiment-funnel-plot");
+				if (funnel.some((row) => row.count > 0)) {
+					replacePlot(
+						"#experiment-funnel-plot",
+						Plot.plot({
+							width: funnelNode.clientWidth || 320,
+							height: Math.max(190, funnel.length * 25 + 35),
+							marginTop: 8,
+							marginRight: 12,
+							marginBottom: 28,
+							marginLeft: 160,
+							style: experimentPlotStyle(),
+							x: {
+								domain: [0, 100],
+								label: null,
+								grid: true,
+								tickFormat: (value) => `${value}%`,
+								tickSize: 0,
+							},
+							y: { label: null, tickSize: 0 },
+							marks: [
+								Plot.barX(funnel, {
+									x: "rate_pct",
+									y: "label",
+									fill: (row) => experimentColor(row.arm, row.index),
+									tip: true,
+									title: (row) =>
+										`${row.label}: ${row.rate_pct.toFixed(1)}% · ${number.format(
+											row.count,
+										)} players`,
+								}),
+							],
+						}),
+					);
+				} else funnelNode.replaceChildren();
+
+				const guardrails = (data.guardrails ?? [])
+					.map((row) => ({
+						...row,
+						metric:
+							experiment.experiment_key === "hint_offer_choice" &&
+							row.metric === "Cancellation rate"
+								? "Dismissal / cancellation"
+								: row.metric,
+						n: Number(row.n),
+						rate_pct: row.rate_pct == null ? null : Number(row.rate_pct),
+						index: row.arm === experiment.control_arm ? 0 : 1,
+					}))
+					.filter((row) => Number.isFinite(row.rate_pct));
+				const guardrailNode = document.querySelector("#experiment-guardrail-plot");
+				if (guardrails.length) {
+					replacePlot(
+						"#experiment-guardrail-plot",
+						Plot.plot({
+							width: guardrailNode.clientWidth || 320,
+							height: 230,
+							marginTop: 12,
+							marginRight: 12,
+							marginBottom: 30,
+							marginLeft: 105,
+							style: experimentPlotStyle(),
+							x: { label: null, grid: true, tickFormat: (value) => `${value}%`, tickSize: 0 },
+							y: { label: null, tickSize: 0 },
+							marks: [
+								Plot.dot(guardrails, {
+									x: "rate_pct",
+									y: "metric",
+									fill: (row) => experimentColor(row.arm, row.index),
+									symbol: (row) => (row.index === 0 ? "circle" : "diamond"),
+									r: 5,
+									tip: true,
+									title: (row) =>
+										`${row.metric} · ${row.arm}: ${row.rate_pct.toFixed(1)}% · n=${number.format(
+											row.n,
+										)}`,
+								}),
+							],
+						}),
+					);
+				} else guardrailNode.replaceChildren();
+
+				const refreshed = data.health?.refreshed_at ?? data.generated_at;
+				document.querySelector("#experiment-updated").textContent = data.health?.refreshed_at
+					? `facts ${shortDate.format(new Date(refreshed))}`
+					: "backfill pending";
+			}
+
+			async function fetchExperiment(token, experiment, platform, country) {
+				const url = new URL(endpoint);
+				url.searchParams.set("view", "experiments");
+				url.searchParams.set("experiment", experiment);
+				url.searchParams.set("platform", platform);
+				url.searchParams.set("country", country);
+				const response = await fetch(url, {
+					headers: { Authorization: `Bearer ${token}` },
+					cache: "no-store",
+				});
+				if (!response.ok) throw new Error("Experiment results are unavailable.");
+				return response.json();
+			}
+
+			async function loadInitialExperiments(token) {
+				try {
+					const data = await fetchExperiment(token, "hint_offer_choice", "all", "all");
+					renderExperiment(data);
+				} catch (error) {
+					document.querySelector("#experiment-updated").textContent = error.message;
+				}
+			}
+
+			async function refreshExperimentSelection() {
+				if (!experimentName.value) return;
+				try {
+					document.querySelector("#experiment-updated").textContent = "loading…";
+					const data = await fetchExperiment(
+						storedToken(),
+						experimentName.value,
+						experimentPlatform.value || "all",
+						experimentCountry.value || "all",
+					);
+					renderExperiment(data);
+				} catch (error) {
+					document.querySelector("#experiment-updated").textContent = error.message;
 				}
 			}
 
@@ -1651,6 +2311,7 @@
 				try {
 					render(data);
 					if (!ratingSnapshot) void loadInitialAso(token);
+					if (!experimentSnapshot) void loadInitialExperiments(token);
 				} catch (error) {
 					liveStatus.dataset.state = "error";
 					updatedAt.textContent = "display error";
@@ -1679,8 +2340,9 @@
 					if (includeRatings) renderRatings(data);
 					renderKeywordRank(data);
 					const generated = new Date(data.generated_at);
-					document.querySelector("#aso-updated").textContent =
-						`collected ${shortDate.format(generated)}`;
+					document.querySelector("#aso-updated").textContent = `collected ${shortDate.format(
+						generated,
+					)}`;
 				} catch (error) {
 					document.querySelector("#aso-updated").textContent = error.message;
 				}
@@ -1690,9 +2352,23 @@
 				void refreshAsoSelection({ includeRatings: true });
 			});
 			keywordName.addEventListener("change", () => void refreshAsoSelection());
+			experimentName.addEventListener("change", () => {
+				experimentCountrySignature = "";
+				experimentCountry.value = "all";
+				void refreshExperimentSelection();
+			});
+			experimentPlatform.addEventListener("change", () => {
+				experimentCountrySignature = "";
+				experimentCountry.value = "all";
+				void refreshExperimentSelection();
+			});
+			experimentCountry.addEventListener("change", () => void refreshExperimentSelection());
 
 			document.addEventListener("visibilitychange", () => {
-				if (!document.hidden && storedToken()) load(storedToken());
+				if (!document.hidden && storedToken()) {
+					load(storedToken());
+					if (experimentSnapshot) void refreshExperimentSelection();
+				}
 			});
 
 			new ResizeObserver(() => {
@@ -1702,6 +2378,7 @@
 					renderPlots(snapshot);
 					if (ratingSnapshot) renderRatings(ratingSnapshot);
 					if (keywordSnapshot) renderKeywordRank(keywordSnapshot);
+					if (experimentSnapshot) renderExperiment(experimentSnapshot);
 					lastRenderedWidth = document.body.clientWidth;
 				}
 			}).observe(document.body);
