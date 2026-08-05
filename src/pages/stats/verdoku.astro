@@ -1728,6 +1728,7 @@
 				const metricRows = (data.metrics ?? []).map((row) => ({
 					...row,
 					n: Number(row.n),
+					mature_n: Number(row.mature_n),
 					value: row.value == null ? null : Number(row.value),
 					index: row.arm === experiment.control_arm ? 0 : 1,
 				}));
@@ -1744,7 +1745,15 @@
 						title.textContent = rows[0].label;
 						const note = document.createElement("p");
 						note.className = "panel-note";
-						note.textContent = `${rows[0].horizon} · mature cohort only`;
+						const mature = rows.reduce((sum, row) => sum + row.mature_n, 0);
+						const observed = rows.reduce((sum, row) => sum + row.n, 0);
+						note.textContent = ["current", "d0"].includes(rows[0].horizon)
+							? `${rows[0].horizon} · observed to date`
+							: mature < observed
+							? `${rows[0].horizon} · preliminary · ${number.format(mature)}/${number.format(
+									observed,
+							  )} mature`
+							: `${rows[0].horizon} · ${number.format(mature)} mature`;
 						head.append(title, note);
 						const plotNode = document.createElement("div");
 						plotNode.className = "plot";
@@ -1779,7 +1788,7 @@
 									],
 								}),
 							);
-						} else note.textContent = `${rows[0].horizon} · waiting for maturity`;
+						} else note.textContent = `${rows[0].horizon} · no observed cohort yet`;
 						return section;
 					}),
 				);
