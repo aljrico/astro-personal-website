@@ -237,6 +237,20 @@
 				flex-wrap: wrap;
 			}
 
+			.experiment-metrics-grid {
+				display: grid;
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+				gap: 12px;
+			}
+
+			.experiment-metric-panel .plot {
+				min-height: 150px;
+			}
+
+			.plot-grid > :only-child {
+				grid-column: 1 / -1;
+			}
+
 			.health-chip {
 				padding: 5px 7px;
 				border: 1px solid color-mix(in srgb, var(--green) 28%, var(--line));
@@ -568,6 +582,10 @@
 					grid-template-columns: 1fr 1fr;
 				}
 
+				.experiment-metrics-grid {
+					grid-template-columns: 1fr;
+				}
+
 				.plot-grid {
 					grid-template-columns: 1fr;
 				}
@@ -813,7 +831,7 @@
 							<strong id="experiment-assigned">—</strong>
 						</div>
 						<div class="experiment-stat">
-							<span>D30 mature</span>
+							<span>D14 mature</span>
 							<strong id="experiment-mature">—</strong>
 						</div>
 					</div>
@@ -828,15 +846,9 @@
 						</div>
 						<div class="plot" id="experiment-allocation-plot"></div>
 					</section>
-
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">24-hour outcome</h3>
-							<p class="panel-note" id="experiment-outcome-note">mature players only</p>
-						</div>
-						<div class="plot" id="experiment-outcome-plot"></div>
-					</section>
 				</div>
+
+				<div class="experiment-metrics-grid" id="experiment-metrics-grid"></div>
 
 				<section class="panel">
 					<div class="panel-head">
@@ -1636,7 +1648,7 @@
 				const totalAssigned = assignment.reduce((sum, row) => sum + row.assigned, 0);
 				const totalExposed = assignment.reduce((sum, row) => sum + row.exposed, 0);
 				const totalMature = (data.maturity ?? []).reduce(
-					(sum, row) => sum + Number(row.mature_d30),
+					(sum, row) => sum + Number(row.mature_d14),
 					0,
 				);
 				const effect = Number(data.effect?.difference_pp);
@@ -1697,60 +1709,80 @@
 				document.querySelector("#experiment-allocation-note").textContent =
 					"assigned: active 3d · exposed: experiment-to-date";
 
-				const outcomes = (data.outcome ?? [])
-					.map((row, index) => ({
-						...row,
-						index,
-						n: Number(row.n),
-						rate_pct: row.rate_pct == null ? null : Number(row.rate_pct),
-						ci_low_pct: row.ci_low_pct == null ? null : Number(row.ci_low_pct),
-						ci_high_pct: row.ci_high_pct == null ? null : Number(row.ci_high_pct),
-					}))
-					.filter((row) => Number.isFinite(row.rate_pct));
-				const outcomeNode = document.querySelector("#experiment-outcome-plot");
-				if (outcomes.length) {
-					replacePlot(
-						"#experiment-outcome-plot",
-						Plot.plot({
-							width: outcomeNode.clientWidth || 320,
-							height: 178,
-							marginTop: 15,
-							marginRight: 12,
-							marginBottom: 30,
-							marginLeft: 90,
-							style: experimentPlotStyle(),
-							x: { label: null, grid: true, tickFormat: (value) => `${value}%`, tickSize: 0 },
-							y: { label: null, tickSize: 0 },
-							marks: [
-								Plot.ruleY(outcomes, {
-									y: "arm",
-									x1: "ci_low_pct",
-									x2: "ci_high_pct",
-									stroke: (row) => experimentColor(row.arm, row.index),
-									strokeWidth: 2,
+				const metricOrder = [
+					"d1_retention",
+					"d3_retention",
+					"d7_retention",
+					"d14_retention",
+					"arpdau",
+					"conversion",
+					"arppu",
+					"d0_arpdau",
+					"d7_ltv",
+					"d7_playtime",
+					"d14_ltv",
+					"d14_playtime",
+					"current_ltv",
+				];
+				const metricGrid = document.querySelector("#experiment-metrics-grid");
+				const metricRows = (data.metrics ?? []).map((row) => ({
+					...row,
+					n: Number(row.n),
+					value: row.value == null ? null : Number(row.value),
+					index: row.arm === experiment.control_arm ? 0 : 1,
+				}));
+				metricGrid.replaceChildren(
+					...metricOrder.map((metric) => {
+						const rows = metricRows.filter((row) => row.metric === metric);
+						if (!rows.length) return document.createDocumentFragment();
+						const section = document.createElement("section");
+						section.className = "panel experiment-metric-panel";
+						const head = document.createElement("div");
+						head.className = "panel-head";
+						const title = document.createElement("h3");
+						title.className = "panel-title";
+						title.textContent = rows[0].label;
+						const note = document.createElement("p");
+						note.className = "panel-note";
+						note.textContent = `${rows[0].horizon} · mature cohort only`;
+						head.append(title, note);
+						const plotNode = document.createElement("div");
+						plotNode.className = "plot";
+						section.append(head, plotNode);
+						const values = rows.filter((row) => Number.isFinite(row.value));
+						if (values.length) {
+							const formatValue = (row) =>
+								row.unit === "percent"
+									? `${row.value.toFixed(1)}%`
+									: row.unit === "usd"
+									? `$${row.value.toFixed(3)}`
+									: `${row.value.toFixed(1)} min`;
+							plotNode.append(
+								Plot.plot({
+									width: 320,
+									height: 150,
+									marginTop: 8,
+									marginRight: 12,
+									marginBottom: 28,
+									marginLeft: 85,
+									style: experimentPlotStyle(),
+									x: { label: null, grid: true, tickSize: 0 },
+									y: { label: null, tickSize: 0 },
+									marks: [
+										Plot.barX(values, {
+											x: "value",
+											y: "arm",
+											fill: (row) => experimentColor(row.arm, row.index),
+											tip: true,
+											title: (row) => `${row.arm}: ${formatValue(row)} · n=${number.format(row.n)}`,
+										}),
+									],
 								}),
-								Plot.dot(outcomes, {
-									x: "rate_pct",
-									y: "arm",
-									fill: (row) => experimentColor(row.arm, row.index),
-									r: 5,
-									tip: true,
-									title: (row) =>
-										`${row.arm}: ${row.rate_pct.toFixed(1)}% · ` +
-										`95% CI ${row.ci_low_pct.toFixed(1)}–${row.ci_high_pct.toFixed(
-											1,
-										)} · n=${number.format(row.n)}`,
-								}),
-							],
-						}),
-					);
-					document.querySelector("#experiment-outcome-note").textContent =
-						experiment.interim_metric;
-				} else {
-					outcomeNode.replaceChildren();
-					document.querySelector("#experiment-outcome-note").textContent =
-						"waiting for 24-hour maturity";
-				}
+							);
+						} else note.textContent = `${rows[0].horizon} · waiting for maturity`;
+						return section;
+					}),
+				);
 
 				const series = (data.series ?? [])
 					.map((row) => ({
