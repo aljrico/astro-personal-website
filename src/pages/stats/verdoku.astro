@@ -1730,6 +1730,8 @@
 					n: Number(row.n),
 					mature_n: Number(row.mature_n),
 					value: row.value == null ? null : Number(row.value),
+					ci_low: row.ci_low == null ? null : Number(row.ci_low),
+					ci_high: row.ci_high == null ? null : Number(row.ci_high),
 					index: row.arm === experiment.control_arm ? 0 : 1,
 				}));
 				metricGrid.replaceChildren(
@@ -1758,14 +1760,19 @@
 						const plotNode = document.createElement("div");
 						plotNode.className = "plot";
 						section.append(head, plotNode);
-						const values = rows.filter((row) => Number.isFinite(row.value));
+						const values = rows.filter(
+							(row) =>
+								Number.isFinite(row.value) &&
+								Number.isFinite(row.ci_low) &&
+								Number.isFinite(row.ci_high),
+						);
 						if (values.length) {
-							const formatValue = (row) =>
-								row.unit === "percent"
-									? `${row.value.toFixed(1)}%`
-									: row.unit === "usd"
-									? `$${row.value.toFixed(3)}`
-									: `${row.value.toFixed(1)} min`;
+							const formatNumber = (value, unit) =>
+								unit === "percent"
+									? `${value.toFixed(1)}%`
+									: unit === "usd"
+									? `$${value.toFixed(3)}`
+									: `${value.toFixed(1)} min`;
 							plotNode.append(
 								Plot.plot({
 									width: 320,
@@ -1775,15 +1782,38 @@
 									marginBottom: 28,
 									marginLeft: 85,
 									style: experimentPlotStyle(),
-									x: { label: null, grid: true, tickSize: 0 },
+									x: {
+										label: null,
+										grid: true,
+										tickSize: 0,
+										tickFormat: (value) =>
+											rows[0].unit === "percent"
+												? `${value}%`
+												: rows[0].unit === "usd"
+												? `$${value}`
+												: `${value}m`,
+									},
 									y: { label: null, tickSize: 0 },
 									marks: [
-										Plot.barX(values, {
+										Plot.ruleY(values, {
+											y: "arm",
+											x1: "ci_low",
+											x2: "ci_high",
+											stroke: (row) => experimentColor(row.arm, row.index),
+											strokeWidth: 2,
+										}),
+										Plot.dot(values, {
 											x: "value",
 											y: "arm",
 											fill: (row) => experimentColor(row.arm, row.index),
+											r: 5,
 											tip: true,
-											title: (row) => `${row.arm}: ${formatValue(row)} · n=${number.format(row.n)}`,
+											title: (row) =>
+												`${row.arm}: ${formatNumber(row.value, row.unit)} · ` +
+												`95% CI ${formatNumber(row.ci_low, row.unit)}–${formatNumber(
+													row.ci_high,
+													row.unit,
+												)} · n=${number.format(row.n)}`,
 										}),
 									],
 								}),
