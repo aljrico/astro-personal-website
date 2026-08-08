@@ -807,17 +807,14 @@
 					<div class="panel-controls">
 						<span id="aso-updated">daily positioning</span>
 						<select id="app-store-country" aria-label="App Store country"></select>
+						<details class="competitor-picker" id="competitor-picker">
+							<summary id="competitor-summary">Competitors</summary>
+							<div class="competitor-options" id="competitor-options"></div>
+						</details>
 					</div>
 				</div>
 
 				<div class="plot-grid">
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Daily new ratings</h3>
-						</div>
-						<div class="plot" id="new-ratings-plot"></div>
-					</section>
-
 					<section class="panel">
 						<div class="panel-head">
 							<h3 class="panel-title">Total ratings</h3>
@@ -825,24 +822,20 @@
 						</div>
 						<div class="plot" id="total-ratings-plot"></div>
 					</section>
-				</div>
 
-				<section class="panel">
-					<div class="panel-head">
-						<div>
-							<h3 class="panel-title">Keyword position</h3>
-							<p class="aso-status" id="keyword-rank-note">organic App Store rank</p>
+					<section class="panel">
+						<div class="panel-head">
+							<div>
+								<h3 class="panel-title">Keyword position</h3>
+								<p class="aso-status" id="keyword-rank-note">organic App Store rank</p>
+							</div>
+							<div class="panel-controls">
+								<select id="keyword-name" aria-label="Keyword"></select>
+							</div>
 						</div>
-						<div class="panel-controls">
-							<select id="keyword-name" aria-label="Keyword"></select>
-							<details class="competitor-picker" id="competitor-picker">
-								<summary id="competitor-summary">Competitors</summary>
-								<div class="competitor-options" id="competitor-options"></div>
-							</details>
-						</div>
-					</div>
-					<div class="plot" id="keyword-rank-plot"></div>
-				</section>
+						<div class="plot" id="keyword-rank-plot"></div>
+					</section>
+				</div>
 
 				<div class="section-heading">
 					<h2>Experiments</h2>
@@ -1307,6 +1300,19 @@
 						: `${selected.length} competitors`;
 			}
 
+			function visibleAsoApps(data) {
+				const visibleKeys = new Set([PRIMARY_APP_KEY, ...selectedCompetitorKeys]);
+				return (data.apps ?? [{ app_key: PRIMARY_APP_KEY, app_label: "Murder Sudoku" }]).filter(
+					(app) => visibleKeys.has(app.app_key),
+				);
+			}
+
+			function appColor(appKey) {
+				if (appKey === PRIMARY_APP_KEY) return "#bd2d47";
+				const index = competitorApps.findIndex((app) => app.app_key === appKey);
+				return competitorColors[index] ?? "#7d8a96";
+			}
+
 			function setCompetitorOptions(apps) {
 				const competitors = (apps ?? []).filter((app) => app.app_key !== PRIMARY_APP_KEY);
 				const signature = competitors
@@ -1331,6 +1337,7 @@
 							if (input.checked) selectedCompetitorKeys.add(app.app_key);
 							else selectedCompetitorKeys.delete(app.app_key);
 							updateCompetitorSummary();
+							if (ratingSnapshot) renderRatings(ratingSnapshot);
 							if (keywordSnapshot) renderKeywordRank(keywordSnapshot);
 						});
 						label.append(input, document.createTextNode(app.app_label));
@@ -1342,62 +1349,73 @@
 
 			function renderRatings(data) {
 				ratingSnapshot = data;
+				setCompetitorOptions(data.apps);
 				const rows = (data.ratings ?? []).map((row) => ({
 					...row,
+					app_key: row.app_key ?? PRIMARY_APP_KEY,
+					app_label: row.app_label ?? "Murder Sudoku",
 					date: new Date(`${row.day}T12:00:00Z`),
-					rating: Number(row.rating),
-					rating_count: Number(row.rating_count),
-					new_ratings: row.new_ratings == null ? null : Number(row.new_ratings),
+					rating: row.rating == null ? null : Number(row.rating),
+					rating_count: row.rating_count == null ? null : Number(row.rating_count),
 				}));
-				const changes = rows.filter((row) => Number.isFinite(row.new_ratings));
-				const newNode = document.querySelector("#new-ratings-plot");
-				if (changes.length) {
+				const totalNode = document.querySelector("#total-ratings-plot");
+				const selectedApps = visibleAsoApps(data);
+				const visibleKeys = new Set(selectedApps.map((app) => app.app_key));
+				const visibleRows = rows.filter(
+					(row) => visibleKeys.has(row.app_key) && Number.isFinite(row.rating_count),
+				);
+				if (visibleRows.length) {
 					replacePlot(
-						"#new-ratings-plot",
+						"#total-ratings-plot",
 						Plot.plot({
-							width: newNode.clientWidth || 320,
-							height: 178,
-							marginTop: 8,
+							width: totalNode.clientWidth || 320,
+							height: 210,
+							marginTop: 10,
 							marginRight: 12,
 							marginBottom: 28,
-							marginLeft: 43,
+							marginLeft: 48,
 							style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
-							x: { type: "utc", label: null, ticks: 4, tickFormat: "%b %-d", tickSize: 0 },
-							y: { label: null, grid: true, ticks: 4, tickSize: 0 },
+							x: { type: "utc", label: null, ticks: 6, tickFormat: "%b %-d", tickSize: 0 },
+							color: {
+								domain: selectedApps.map((app) => app.app_label),
+								range: selectedApps.map((app) => appColor(app.app_key)),
+								legend: true,
+							},
+							y: {
+								label: null,
+								grid: true,
+								nice: true,
+								ticks: 4,
+								tickSize: 0,
+								tickFormat: number.format,
+							},
 							marks: [
-								Plot.ruleY([0], { stroke: "#cbd3d8" }),
-								Plot.rectY(changes, {
+								Plot.lineY(visibleRows, {
 									x: "date",
-									y: "new_ratings",
-									interval: "day",
-									fill: (row) => (row.new_ratings < 0 ? "#bd2d47" : "#2abd88"),
-									insetLeft: 1.2,
-									insetRight: 1.2,
+									y: "rating_count",
+									z: "app_key",
+									stroke: "app_label",
+									strokeWidth: 2.2,
+									curve: "monotone-x",
 									tip: true,
 									title: (row) =>
-										`${shortDate.format(row.date)}: ${
-											row.new_ratings > 0 ? "+" : ""
-										}${number.format(row.new_ratings)}`,
+										`${row.app_label} · ${shortDate.format(row.date)}: ${number.format(
+											row.rating_count,
+										)} ratings${Number.isFinite(row.rating) ? ` · ${row.rating.toFixed(2)}★` : ""}`,
 								}),
+								Plot.dot(visibleRows, { x: "date", y: "rating_count", fill: "app_label", r: 2.5 }),
 							],
 						}),
 					);
-				} else newNode.replaceChildren();
-
-				const totalNode = document.querySelector("#total-ratings-plot");
-				const totalPlot = linePlot(rows, "rating_count", "#234766", number.format, {
-					width: totalNode.clientWidth || 320,
-					floor: 0,
-					title: (row) =>
-						`${shortDate.format(row.date)}: ${number.format(
-							row.rating_count,
-						)} ratings · ${row.rating.toFixed(2)}★`,
-				});
-				if (totalPlot) replacePlot("#total-ratings-plot", totalPlot);
-				else totalNode.replaceChildren();
-				const latest = rows[rows.length - 1];
+				} else totalNode.replaceChildren();
+				const primaryRows = rows.filter(
+					(row) => row.app_key === PRIMARY_APP_KEY && Number.isFinite(row.rating_count),
+				);
+				const latest = primaryRows[primaryRows.length - 1];
 				document.querySelector("#total-ratings-note").textContent = latest
-					? `${number.format(latest.rating_count)} · ${latest.rating.toFixed(2)}★`
+					? `${number.format(latest.rating_count)}${
+							Number.isFinite(latest.rating) ? ` · ${latest.rating.toFixed(2)}★` : ""
+					  }`
 					: "no data";
 			}
 
@@ -1424,9 +1442,7 @@
 				}
 				const visibleKeys = new Set([PRIMARY_APP_KEY, ...selectedCompetitorKeys]);
 				const visibleRows = rows.filter((row) => visibleKeys.has(row.app_key));
-				const selectedApps = (
-					data.apps ?? [{ app_key: PRIMARY_APP_KEY, app_label: "Murder Sudoku" }]
-				).filter((app) => visibleKeys.has(app.app_key));
+				const selectedApps = visibleAsoApps(data);
 				const limit = Math.max(...visibleRows.map((row) => row.search_limit));
 				const rankedRows = visibleRows.filter((row) => Number.isFinite(row.rank));
 				if (!rankedRows.length) {
@@ -1454,11 +1470,7 @@
 						x: { type: "utc", label: null, ticks: 6, tickFormat: "%b %-d", tickSize: 0 },
 						color: {
 							domain: selectedApps.map((app) => app.app_label),
-							range: selectedApps.map((app, index) =>
-								app.app_key === PRIMARY_APP_KEY
-									? "#bd2d47"
-									: competitorColors[index - 1] ?? "#7d8a96",
-							),
+							range: selectedApps.map((app) => appColor(app.app_key)),
 							legend: true,
 						},
 						y: {
