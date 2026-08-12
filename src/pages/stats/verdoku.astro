@@ -540,13 +540,15 @@
 				margin-bottom: 32px;
 			}
 
-			.retention .panel {
+			.retention .panel,
+			.retention-sized .panel {
 				min-width: 0;
 				margin-bottom: 0;
 				padding-inline: 12px;
 			}
 
-			.retention .plot {
+			.retention .plot,
+			.retention-sized .plot {
 				min-height: 150px;
 			}
 
@@ -1061,7 +1063,7 @@
 						</section>
 					</div>
 
-					<div class="plot-grid three">
+					<div class="plot-grid retention-sized">
 						<section class="panel">
 							<div class="panel-head">
 								<h3 class="panel-title">ARPDAU</h3>
@@ -2428,11 +2430,12 @@
 						)}%)`,
 				});
 
-				const line = (selector, field, color, tickFormat, source = rows) => {
+				const line = (selector, field, color, tickFormat, source = rows, options = {}) => {
 					const node = document.querySelector(selector);
 					const plot = linePlot(source, field, color, tickFormat, {
 						width: node.clientWidth || 320,
 						floor: 0,
+						...options,
 					});
 					if (plot) replacePlot(selector, plot);
 					else node.replaceChildren();
@@ -2539,9 +2542,29 @@
 						`${shortDate.format(row.date)} · ${row.series}: ${money.format(row.value)} ` +
 						`of ${money.format(row.total)}`,
 				});
-				line("#arpdau-plot", "arpdau_usd", "#3a86a8", preciseMoney.format);
-				line("#conversion-plot", "conversion_pct", "#7b61a8", (value) => `${value.toFixed(1)}%`);
-				line("#ads-plot", "ads_per_dau", "#e76f51", (value) => value.toFixed(2));
+				const monetisationLineOptions = {
+					height: 150,
+					marginLeft: 38,
+					fontSize: "9px",
+					xTicks: 3,
+				};
+				line("#arpdau-plot", "arpdau_usd", "#3a86a8", preciseMoney.format, rows, monetisationLineOptions);
+				line(
+					"#conversion-plot",
+					"conversion_pct",
+					"#7b61a8",
+					(value) => `${value.toFixed(1)}%`,
+					rows,
+					monetisationLineOptions,
+				);
+				line(
+					"#ads-plot",
+					"ads_per_dau",
+					"#e76f51",
+					(value) => value.toFixed(2),
+					rows,
+					monetisationLineOptions,
+				);
 			}
 
 			function renderStickiness(rows) {
