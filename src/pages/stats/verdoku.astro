@@ -330,6 +330,45 @@
 				margin-bottom: 28px;
 			}
 
+			.dashboard-tabs {
+				display: flex;
+				gap: 4px;
+				margin: -10px 0 28px;
+				padding: 4px;
+				border: 1px solid var(--line);
+				border-radius: 11px;
+				background: color-mix(in srgb, var(--card) 68%, transparent);
+			}
+
+			.dashboard-tab {
+				flex: 1;
+				padding: 9px 12px;
+				border: 0;
+				border-radius: 7px;
+				color: var(--muted);
+				background: transparent;
+				font-size: 10px;
+				font-weight: 800;
+				letter-spacing: 0.04em;
+				text-transform: uppercase;
+				cursor: pointer;
+			}
+
+			.dashboard-tab:hover {
+				color: var(--ink);
+			}
+
+			.dashboard-tab:focus-visible {
+				outline: 2px solid var(--red);
+				outline-offset: 1px;
+			}
+
+			.dashboard-tab[aria-selected="true"] {
+				color: var(--ink);
+				background: var(--card);
+				box-shadow: 0 1px 4px color-mix(in srgb, var(--ink) 10%, transparent);
+			}
+
 			.eyebrow {
 				margin: 0 0 6px;
 				color: var(--red);
@@ -681,7 +720,7 @@
 				<header class="topbar">
 					<div>
 						<p class="eyebrow">Murder Sudoku: Tiny Crimes</p>
-						<h1>The pulse.</h1>
+						<h1 id="dashboard-title">The pulse.</h1>
 					</div>
 					<div class="live-status" id="live-status" data-state="loading">
 						<span class="status-dot"></span>
@@ -689,310 +728,349 @@
 					</div>
 				</header>
 
-				<section class="summary" aria-label="Today so far">
-					<div class="metric" data-metric="dau"></div>
-					<div class="metric" data-metric="new_installs"></div>
-					<div class="metric" data-metric="cases_solved"></div>
-					<div class="metric" data-metric="purchases"></div>
-				</section>
+				<nav class="dashboard-tabs" aria-label="Dashboard sections" role="tablist">
+					<button
+						class="dashboard-tab"
+						type="button"
+						role="tab"
+						aria-selected="true"
+						aria-controls="dashboard-overview-primary dashboard-overview-secondary"
+						data-dashboard-tab="overview">Overview</button
+					>
+					<button
+						class="dashboard-tab"
+						type="button"
+						role="tab"
+						aria-selected="false"
+						aria-controls="dashboard-aso"
+						tabindex="-1"
+						data-dashboard-tab="aso">ASO</button
+					>
+					<button
+						class="dashboard-tab"
+						type="button"
+						role="tab"
+						aria-selected="false"
+						aria-controls="dashboard-experiments"
+						tabindex="-1"
+						data-dashboard-tab="experiments">A/B tests</button
+					>
+				</nav>
 
-				<div class="section-heading">
-					<h2>Retention</h2>
-					<span>matured · n≥100 · by install date</span>
-				</div>
-
-				<section class="retention" aria-label="Matured retention">
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">D1</h3>
-							<p class="panel-note" id="retention-d1-note">matured cohorts</p>
-						</div>
-						<div class="plot" id="retention-d1-plot"></div>
-					</section>
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">D3</h3>
-							<p class="panel-note" id="retention-d3-note">matured cohorts</p>
-						</div>
-						<div class="plot" id="retention-d3-plot"></div>
-					</section>
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">D7</h3>
-							<p class="panel-note" id="retention-d7-note">matured cohorts</p>
-						</div>
-						<div class="plot" id="retention-d7-plot"></div>
-					</section>
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">D14</h3>
-							<p class="panel-note" id="retention-d14-note">matured cohorts</p>
-						</div>
-						<div class="plot" id="retention-d14-plot"></div>
-					</section>
-				</section>
-
-				<div class="section-heading">
-					<h2>Stickiness</h2>
-					<span>last 30 days · UTC · complete days only</span>
-				</div>
-
-				<div class="plot-grid">
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">DAU / WAU</h3>
-							<p class="panel-note" id="dau-wau-note">trailing 7 days</p>
-						</div>
-						<div class="plot" id="dau-wau-plot"></div>
+				<div id="dashboard-overview-primary" data-dashboard-view="overview">
+					<section class="summary" aria-label="Today so far">
+						<div class="metric" data-metric="dau"></div>
+						<div class="metric" data-metric="new_installs"></div>
+						<div class="metric" data-metric="cases_solved"></div>
+						<div class="metric" data-metric="purchases"></div>
 					</section>
 
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">CURR</h3>
-							<p class="panel-note" id="curr-note">established players · D+1</p>
-						</div>
-						<div class="plot" id="curr-plot"></div>
-					</section>
-				</div>
-
-				<div class="section-heading">
-					<h2>Audience</h2>
-					<span>last 30 days · UTC · complete days only</span>
-				</div>
-
-				<section class="panel">
-					<div class="panel-head">
-						<h3 class="panel-title">Daily active players</h3>
-						<p class="panel-note" id="dau-note">DAU</p>
+					<div class="section-heading">
+						<h2>Retention</h2>
+						<span>matured · n≥100 · by install date</span>
 					</div>
-					<div class="plot" id="dau-plot"></div>
-				</section>
 
-				<div class="plot-grid">
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">New + existing players</h3>
-							<p class="panel-note">stacked</p>
-						</div>
-						<div class="plot" id="player-mix-plot"></div>
-					</section>
-
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">New + existing players</h3>
-							<p class="panel-note">trend</p>
-						</div>
-						<div class="plot" id="player-mix-lines-plot"></div>
-					</section>
-				</div>
-
-				<section class="panel">
-					<div class="panel-head">
-						<h3 class="panel-title">Countries</h3>
-						<p class="panel-note" id="country-note">daily top 3 · others</p>
-					</div>
-					<div class="plot" id="country-plot"></div>
-				</section>
-
-				<section class="panel">
-					<div class="panel-head">
-						<h3 class="panel-title">Platforms</h3>
-						<p class="panel-note" id="platform-note">iOS · Android</p>
-					</div>
-					<div class="plot" id="platform-plot"></div>
-				</section>
-
-				<div class="section-heading">
-					<h2>App Store</h2>
-					<div class="panel-controls">
-						<span id="aso-updated">daily positioning</span>
-						<select id="app-store-country" aria-label="App Store country"></select>
-						<details class="competitor-picker" id="competitor-picker">
-							<summary id="competitor-summary">Competitors</summary>
-							<div class="competitor-options" id="competitor-options"></div>
-						</details>
-					</div>
-				</div>
-
-				<div class="plot-grid">
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Total ratings</h3>
-							<p class="panel-note" id="total-ratings-note">public count</p>
-						</div>
-						<div class="plot" id="total-ratings-plot"></div>
-					</section>
-
-					<section class="panel">
-						<div class="panel-head">
-							<div>
-								<h3 class="panel-title">Keyword position</h3>
-								<p class="aso-status" id="keyword-rank-note">organic App Store rank</p>
+					<section class="retention" aria-label="Matured retention">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">D1</h3>
+								<p class="panel-note" id="retention-d1-note">matured cohorts</p>
 							</div>
-							<div class="panel-controls">
-								<select id="keyword-name" aria-label="Keyword"></select>
+							<div class="plot" id="retention-d1-plot"></div>
+						</section>
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">D3</h3>
+								<p class="panel-note" id="retention-d3-note">matured cohorts</p>
+							</div>
+							<div class="plot" id="retention-d3-plot"></div>
+						</section>
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">D7</h3>
+								<p class="panel-note" id="retention-d7-note">matured cohorts</p>
+							</div>
+							<div class="plot" id="retention-d7-plot"></div>
+						</section>
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">D14</h3>
+								<p class="panel-note" id="retention-d14-note">matured cohorts</p>
+							</div>
+							<div class="plot" id="retention-d14-plot"></div>
+						</section>
+					</section>
+
+					<div class="section-heading">
+						<h2>Stickiness</h2>
+						<span>last 30 days · UTC · complete days only</span>
+					</div>
+
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">DAU / WAU</h3>
+								<p class="panel-note" id="dau-wau-note">trailing 7 days</p>
+							</div>
+							<div class="plot" id="dau-wau-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">CURR</h3>
+								<p class="panel-note" id="curr-note">established players · D+1</p>
+							</div>
+							<div class="plot" id="curr-plot"></div>
+						</section>
+					</div>
+
+					<div class="section-heading">
+						<h2>Audience</h2>
+						<span>last 30 days · UTC · complete days only</span>
+					</div>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Daily active players</h3>
+							<p class="panel-note" id="dau-note">DAU</p>
+						</div>
+						<div class="plot" id="dau-plot"></div>
+					</section>
+
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">New + existing players</h3>
+								<p class="panel-note">stacked</p>
+							</div>
+							<div class="plot" id="player-mix-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">New + existing players</h3>
+								<p class="panel-note">trend</p>
+							</div>
+							<div class="plot" id="player-mix-lines-plot"></div>
+						</section>
+					</div>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Countries</h3>
+							<p class="panel-note" id="country-note">daily top 3 · others</p>
+						</div>
+						<div class="plot" id="country-plot"></div>
+					</section>
+
+					<section class="panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Platforms</h3>
+							<p class="panel-note" id="platform-note">iOS · Android</p>
+						</div>
+						<div class="plot" id="platform-plot"></div>
+					</section>
+				</div>
+
+				<div id="dashboard-aso" data-dashboard-view="aso" hidden>
+					<div class="section-heading">
+						<h2>App Store optimisation</h2>
+						<div class="panel-controls">
+							<span id="aso-updated">daily positioning</span>
+							<select id="app-store-country" aria-label="App Store country"></select>
+							<details class="competitor-picker" id="competitor-picker">
+								<summary id="competitor-summary">Competitors</summary>
+								<div class="competitor-options" id="competitor-options"></div>
+							</details>
+						</div>
+					</div>
+
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Total ratings</h3>
+								<p class="panel-note" id="total-ratings-note">public count</p>
+							</div>
+							<div class="plot" id="total-ratings-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<div>
+									<h3 class="panel-title">Keyword position</h3>
+									<p class="aso-status" id="keyword-rank-note">organic App Store rank</p>
+								</div>
+								<div class="panel-controls">
+									<select id="keyword-name" aria-label="Keyword"></select>
+								</div>
+							</div>
+							<div class="plot" id="keyword-rank-plot"></div>
+						</section>
+					</div>
+				</div>
+
+				<div id="dashboard-experiments" data-dashboard-view="experiments" hidden>
+					<div class="section-heading">
+						<h2>A/B tests</h2>
+						<div class="panel-controls">
+							<span id="experiment-updated">assignment + exposure</span>
+							<select id="experiment-name" aria-label="Experiment"></select>
+							<select id="experiment-platform" aria-label="Experiment platform"></select>
+							<select id="experiment-country" aria-label="Experiment country"></select>
+						</div>
+					</div>
+
+					<section class="panel experiment-hero">
+						<div class="experiment-title-row">
+							<h3 id="experiment-title">Loading experiments…</h3>
+							<span class="phase-pill" id="experiment-phase">loading</span>
+						</div>
+						<p class="experiment-metric-copy" id="experiment-metric-copy"></p>
+						<div class="experiment-summary">
+							<div class="experiment-stat">
+								<span>Users assigned</span>
+								<strong id="experiment-assigned">—</strong>
+							</div>
+							<div class="experiment-stat">
+								<span>Users exposed</span>
+								<strong id="experiment-exposed">—</strong>
+							</div>
+							<div class="experiment-stat">
+								<span>Days running</span>
+								<strong id="experiment-days">—</strong>
+							</div>
+							<div class="experiment-stat">
+								<span>Dates</span>
+								<strong id="experiment-dates" data-kind="dates">—</strong>
 							</div>
 						</div>
-						<div class="plot" id="keyword-rank-plot"></div>
+						<div class="experiment-health" id="experiment-health"></div>
 					</section>
-				</div>
 
-				<div class="section-heading">
-					<h2>Experiments</h2>
-					<div class="panel-controls">
-						<span id="experiment-updated">assignment + exposure</span>
-						<select id="experiment-name" aria-label="Experiment"></select>
-						<select id="experiment-platform" aria-label="Experiment platform"></select>
-						<select id="experiment-country" aria-label="Experiment country"></select>
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Assignment and exposure</h3>
+								<p class="panel-note" id="experiment-allocation-note">
+									active vs experiment-to-date
+								</p>
+							</div>
+							<div class="plot" id="experiment-allocation-plot"></div>
+						</section>
+					</div>
+
+					<div class="experiment-metrics-grid" id="experiment-metrics-grid"></div>
+
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Funnel</h3>
+								<p class="panel-note">players after first exposure</p>
+							</div>
+							<div class="plot" id="experiment-funnel-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Guardrails</h3>
+								<p class="panel-note">retention · failures · cancellations</p>
+							</div>
+							<div class="plot" id="experiment-guardrail-plot"></div>
+						</section>
 					</div>
 				</div>
 
-				<section class="panel experiment-hero">
-					<div class="experiment-title-row">
-						<h3 id="experiment-title">Loading experiments…</h3>
-						<span class="phase-pill" id="experiment-phase">loading</span>
+				<div id="dashboard-overview-secondary" data-dashboard-view="overview">
+					<div class="section-heading">
+						<h2>Engagement</h2>
+						<span>per active player</span>
 					</div>
-					<p class="experiment-metric-copy" id="experiment-metric-copy"></p>
-					<div class="experiment-summary">
-						<div class="experiment-stat">
-							<span>Users assigned</span>
-							<strong id="experiment-assigned">—</strong>
-						</div>
-						<div class="experiment-stat">
-							<span>Users exposed</span>
-							<strong id="experiment-exposed">—</strong>
-						</div>
-						<div class="experiment-stat">
-							<span>Days running</span>
-							<strong id="experiment-days">—</strong>
-						</div>
-						<div class="experiment-stat">
-							<span>Dates</span>
-							<strong id="experiment-dates" data-kind="dates">—</strong>
-						</div>
+
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Cases per user</h3>
+								<p class="panel-note">solves ÷ DAU</p>
+							</div>
+							<div class="plot" id="cases-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Sessions per user</h3>
+								<p class="panel-note">sessions ÷ DAU</p>
+							</div>
+							<div class="plot" id="sessions-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Daily challenge</h3>
+								<p class="panel-note">comparable telemetry only</p>
+							</div>
+							<div class="plot" id="daily-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">XP per player</h3>
+								<p class="panel-note">earned XP ÷ DAU</p>
+							</div>
+							<div class="plot" id="xp-plot"></div>
+						</section>
 					</div>
-					<div class="experiment-health" id="experiment-health"></div>
-				</section>
 
-				<div class="plot-grid">
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Assignment and exposure</h3>
-							<p class="panel-note" id="experiment-allocation-note">active vs experiment-to-date</p>
-						</div>
-						<div class="plot" id="experiment-allocation-plot"></div>
-					</section>
+					<div class="section-heading">
+						<h2>Monetisation</h2>
+						<span>gross USD estimate</span>
+					</div>
+
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Revenue by source</h3>
+								<p class="panel-note">IAP · ads</p>
+							</div>
+							<div class="plot" id="revenue-source-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Revenue by platform</h3>
+								<p class="panel-note">iOS · Android</p>
+							</div>
+							<div class="plot" id="revenue-platform-plot"></div>
+						</section>
+					</div>
+
+					<div class="plot-grid three">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">ARPDAU</h3>
+								<p class="panel-note">revenue ÷ DAU</p>
+							</div>
+							<div class="plot" id="arpdau-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Conversion</h3>
+								<p class="panel-note">payers ÷ DAU</p>
+							</div>
+							<div class="plot" id="conversion-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Ads per DAU</h3>
+								<p class="panel-note">ads watched ÷ DAU</p>
+							</div>
+							<div class="plot" id="ads-plot"></div>
+						</section>
+					</div>
+
+					<ul class="footnotes" id="footnotes"></ul>
 				</div>
-
-				<div class="experiment-metrics-grid" id="experiment-metrics-grid"></div>
-
-				<div class="plot-grid">
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Funnel</h3>
-							<p class="panel-note">players after first exposure</p>
-						</div>
-						<div class="plot" id="experiment-funnel-plot"></div>
-					</section>
-
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Guardrails</h3>
-							<p class="panel-note">retention · failures · cancellations</p>
-						</div>
-						<div class="plot" id="experiment-guardrail-plot"></div>
-					</section>
-				</div>
-
-				<div class="section-heading">
-					<h2>Engagement</h2>
-					<span>per active player</span>
-				</div>
-
-				<div class="plot-grid">
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Cases per user</h3>
-							<p class="panel-note">solves ÷ DAU</p>
-						</div>
-						<div class="plot" id="cases-plot"></div>
-					</section>
-
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Sessions per user</h3>
-							<p class="panel-note">sessions ÷ DAU</p>
-						</div>
-						<div class="plot" id="sessions-plot"></div>
-					</section>
-
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Daily challenge</h3>
-							<p class="panel-note">comparable telemetry only</p>
-						</div>
-						<div class="plot" id="daily-plot"></div>
-					</section>
-
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">XP per player</h3>
-							<p class="panel-note">earned XP ÷ DAU</p>
-						</div>
-						<div class="plot" id="xp-plot"></div>
-					</section>
-				</div>
-
-				<div class="section-heading">
-					<h2>Monetisation</h2>
-					<span>gross USD estimate</span>
-				</div>
-
-				<div class="plot-grid">
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Revenue by source</h3>
-							<p class="panel-note">IAP · ads</p>
-						</div>
-						<div class="plot" id="revenue-source-plot"></div>
-					</section>
-
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Revenue by platform</h3>
-							<p class="panel-note">iOS · Android</p>
-						</div>
-						<div class="plot" id="revenue-platform-plot"></div>
-					</section>
-				</div>
-
-				<div class="plot-grid three">
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">ARPDAU</h3>
-							<p class="panel-note">revenue ÷ DAU</p>
-						</div>
-						<div class="plot" id="arpdau-plot"></div>
-					</section>
-
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Conversion</h3>
-							<p class="panel-note">payers ÷ DAU</p>
-						</div>
-						<div class="plot" id="conversion-plot"></div>
-					</section>
-
-					<section class="panel">
-						<div class="panel-head">
-							<h3 class="panel-title">Ads per DAU</h3>
-							<p class="panel-note">ads watched ÷ DAU</p>
-						</div>
-						<div class="plot" id="ads-plot"></div>
-					</section>
-				</div>
-
-				<ul class="footnotes" id="footnotes"></ul>
 			</section>
 		</main>
 
@@ -1041,6 +1119,15 @@
 			const errorMessage = document.querySelector("#access-error");
 			const liveStatus = document.querySelector("#live-status");
 			const updatedAt = document.querySelector("#updated-at");
+			const dashboardTitle = document.querySelector("#dashboard-title");
+			const dashboardTabs = [...document.querySelectorAll("[data-dashboard-tab]")];
+			const dashboardViews = [...document.querySelectorAll("[data-dashboard-view]")];
+			const dashboardTabTitles = {
+				overview: "The pulse.",
+				aso: "App Store.",
+				experiments: "The tests.",
+			};
+			let activeDashboardTab = "overview";
 			let snapshot;
 			let ratingSnapshot;
 			let keywordSnapshot;
@@ -1099,6 +1186,52 @@
 				history.replaceState(null, "", location.pathname + location.search);
 				storeToken(fromHash);
 				return fromHash;
+			}
+
+			function dashboardTabFromUrl() {
+				const tab = new URL(location.href).searchParams.get("tab");
+				return tab in dashboardTabTitles ? tab : "overview";
+			}
+
+			function renderActiveDashboardTab(token = storedToken()) {
+				if (dashboard.hidden || !token) return;
+				if (activeDashboardTab === "overview") {
+					if (snapshot) render(snapshot);
+				} else if (activeDashboardTab === "aso") {
+					if (ratingSnapshot && keywordSnapshot) {
+						renderRatings(ratingSnapshot);
+						renderKeywordRank(keywordSnapshot);
+					} else {
+						void loadInitialAso(token);
+					}
+				} else if (experimentSnapshot) {
+					renderExperiment(experimentSnapshot);
+				} else {
+					void loadInitialExperiments(token);
+				}
+			}
+
+			function activateDashboardTab(tab, { updateHistory = false, renderView = true } = {}) {
+				activeDashboardTab = tab in dashboardTabTitles ? tab : "overview";
+				dashboardTitle.textContent = dashboardTabTitles[activeDashboardTab];
+
+				for (const button of dashboardTabs) {
+					const selected = button.dataset.dashboardTab === activeDashboardTab;
+					button.setAttribute("aria-selected", String(selected));
+					button.tabIndex = selected ? 0 : -1;
+				}
+				for (const view of dashboardViews) {
+					view.hidden = view.dataset.dashboardView !== activeDashboardTab;
+				}
+
+				if (updateHistory) {
+					const url = new URL(location.href);
+					if (activeDashboardTab === "overview") url.searchParams.delete("tab");
+					else url.searchParams.set("tab", activeDashboardTab);
+					history.pushState(null, "", url);
+				}
+
+				if (renderView) requestAnimationFrame(() => renderActiveDashboardTab());
 			}
 
 			function deltaCopy(current, previous) {
@@ -2399,8 +2532,10 @@
 				errorMessage.textContent = "";
 				try {
 					render(data);
-					if (!ratingSnapshot) void loadInitialAso(token);
-					if (!experimentSnapshot) void loadInitialExperiments(token);
+					if (activeDashboardTab === "aso" && !ratingSnapshot) void loadInitialAso(token);
+					if (activeDashboardTab === "experiments" && !experimentSnapshot) {
+						void loadInitialExperiments(token);
+					}
 				} catch (error) {
 					liveStatus.dataset.state = "error";
 					updatedAt.textContent = "display error";
@@ -2437,6 +2572,28 @@
 				}
 			}
 
+			for (const [index, button] of dashboardTabs.entries()) {
+				button.addEventListener("click", () => {
+					activateDashboardTab(button.dataset.dashboardTab, { updateHistory: true });
+				});
+				button.addEventListener("keydown", (event) => {
+					let nextIndex;
+					if (event.key === "ArrowRight") nextIndex = (index + 1) % dashboardTabs.length;
+					if (event.key === "ArrowLeft") {
+						nextIndex = (index - 1 + dashboardTabs.length) % dashboardTabs.length;
+					}
+					if (event.key === "Home") nextIndex = 0;
+					if (event.key === "End") nextIndex = dashboardTabs.length - 1;
+					if (nextIndex == null) return;
+					event.preventDefault();
+					const nextTab = dashboardTabs[nextIndex];
+					nextTab.focus();
+					activateDashboardTab(nextTab.dataset.dashboardTab, { updateHistory: true });
+				});
+			}
+
+			window.addEventListener("popstate", () => activateDashboardTab(dashboardTabFromUrl()));
+
 			appStoreCountry.addEventListener("change", () => {
 				void refreshAsoSelection({ includeRatings: true });
 			});
@@ -2456,23 +2613,30 @@
 			document.addEventListener("visibilitychange", () => {
 				if (!document.hidden && storedToken()) {
 					load(storedToken());
-					if (experimentSnapshot) void refreshExperimentSelection();
+					if (activeDashboardTab === "experiments" && experimentSnapshot) {
+						void refreshExperimentSelection();
+					}
 				}
 			});
 
 			new ResizeObserver(() => {
 				if (snapshot && Math.abs(document.body.clientWidth - lastRenderedWidth) > 30) {
-					renderRetention(snapshot.retention, snapshot.retention_series);
-					renderStickiness(snapshot.stickiness ?? []);
-					renderPlots(snapshot);
-					if (ratingSnapshot) renderRatings(ratingSnapshot);
-					if (keywordSnapshot) renderKeywordRank(keywordSnapshot);
-					if (experimentSnapshot) renderExperiment(experimentSnapshot);
+					if (activeDashboardTab === "overview") {
+						renderRetention(snapshot.retention, snapshot.retention_series);
+						renderStickiness(snapshot.stickiness ?? []);
+						renderPlots(snapshot);
+					} else if (activeDashboardTab === "aso") {
+						if (ratingSnapshot) renderRatings(ratingSnapshot);
+						if (keywordSnapshot) renderKeywordRank(keywordSnapshot);
+					} else if (experimentSnapshot) {
+						renderExperiment(experimentSnapshot);
+					}
 					lastRenderedWidth = document.body.clientWidth;
 				}
 			}).observe(document.body);
 
 			const initialToken = consumeTokenFromHash() || storedToken();
+			activateDashboardTab(dashboardTabFromUrl(), { renderView: false });
 			if (initialToken) load(initialToken, { first: true });
 		</script>
 	</body>
