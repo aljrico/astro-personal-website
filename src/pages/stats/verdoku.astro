@@ -278,6 +278,18 @@
 				font-size: 10px;
 			}
 
+			:global(.experiment-posterior-effect) {
+				margin: -4px 0 10px;
+				color: var(--muted);
+				font-size: 10px;
+				line-height: 1.5;
+				font-variant-numeric: tabular-nums;
+			}
+
+			:global(.experiment-posterior-effect strong) {
+				color: var(--ink);
+			}
+
 			:global(.experiment-metric-panel .plot) {
 				width: 100%;
 				min-height: 170px;
@@ -1114,6 +1126,7 @@
 
 		<script type="module" is:inline>
 			import * as Plot from "https://esm.sh/@observablehq/plot@0.6.17?bundle";
+			import { summarizeBayesianMetrics } from "/scripts/bayesian-experiments.js";
 
 			const endpoint = "https://lbitxwhhrohcjkbpbcrv.supabase.co/functions/v1/verdoku-dashboard";
 			// Telemetry before the 1.7.0 staged rollout completed is not trustworthy,
@@ -1904,6 +1917,12 @@
 				if (!data.health?.refreshed_at && data.experiment.phase !== "draft") {
 					chips.push(["Initial backfill pending", "warn"]);
 				}
+				chips.push([
+					data.bayesian_revision === 0
+						? "Legacy · unversioned"
+						: `Revision ${data.bayesian_revision ?? "pending"}`,
+					data.bayesian_revision == null ? "warn" : "ok",
+				]);
 
 				const node = document.querySelector("#experiment-health");
 				node.replaceChildren(
@@ -1928,7 +1947,7 @@
 				phase.textContent = phaseLabel(experiment.phase);
 				phase.dataset.phase = experiment.phase;
 				document.querySelector("#experiment-metric-copy").textContent =
-					`Decision metric: ${experiment.primary_metric}.` +
+					"Bayesian readout: retention, cumulative playtime, and cumulative LTV." +
 					(experiment.winner_arm ? ` Winner: ${experiment.winner_arm}.` : "");
 
 				const assignment = (data.assignment ?? []).map((row, index) => ({
@@ -2006,67 +2025,88 @@
 
 				const metricOrder = [
 					"d1_retention",
-					"d3_retention",
 					"d7_retention",
-					"d14_retention",
-					"arpdau",
-					"conversion",
-					"arppu",
-					"d0_arpdau",
-					"d7_ltv",
+					"d1_playtime",
 					"d7_playtime",
-					"d14_ltv",
-					"d14_playtime",
-					"current_ltv",
+					"d0_ltv",
+					"d1_ltv",
+					"d7_ltv",
 				];
 				const metricGrid = document.querySelector("#experiment-metrics-grid");
-				const metricRows = (data.metrics ?? []).map((row) => ({
-					...row,
-					n: Number(row.n),
-					mature_n: Number(row.mature_n),
-					value: row.value == null ? null : Number(row.value),
-					ci_low: row.ci_low == null ? null : Number(row.ci_low),
-					ci_high: row.ci_high == null ? null : Number(row.ci_high),
-					index: row.arm === experiment.control_arm ? 0 : 1,
-				}));
+				const posteriorMetrics = summarizeBayesianMetrics(data.bayesian_inputs ?? [], {
+					controlArm: experiment.control_arm,
+					treatmentArm: experiment.treatment_arm,
+					draws: 5000,
+					seed:
+						`${experiment.experiment_key}|${data.filters?.platform}|${data.filters?.country}|` +
+						`${data.bayesian_revision}|${data.bayesian_refreshed_at}`,
+				});
+				const metricByKey = new Map(posteriorMetrics.map((metric) => [metric.metric, metric]));
 				const metricPlots = [];
 				const metricPanels = metricOrder.map((metric) => {
-					const rows = metricRows.filter((row) => row.metric === metric);
-					if (!rows.length) return document.createDocumentFragment();
+					const summary = metricByKey.get(metric);
 					const section = document.createElement("section");
 					section.className = "panel experiment-metric-panel";
 					const head = document.createElement("div");
 					head.className = "panel-head";
 					const title = document.createElement("h3");
 					title.className = "panel-title";
-					title.textContent = rows[0].label;
+					title.textContent = summary?.label ?? metric.replaceAll("_", " ");
 					head.append(title);
 					const plotNode = document.createElement("div");
 					plotNode.className = "plot";
-					section.append(head, plotNode);
+					if (!summary) {
+						section.append(head, plotNode);
+						const empty = document.createElement("p");
+						empty.className = "panel-note";
+						empty.textContent = "Complete cohort snapshot pending";
+						plotNode.append(empty);
+						return section;
+					}
+					const rows = summary.arms.map((row) => ({
+						...row,
+						unit: summary.unit,
+						index: row.arm === experiment.control_arm ? 0 : 1,
+					}));
+					const formatNumber = (value, unit, signed = false) => {
+						const sign = signed && value > 0 ? "+" : "";
+						return unit === "percent"
+							? `${sign}${value.toFixed(2)}%`
+							: unit === "usd"
+							? `${sign}$${value.toFixed(4)}`
+							: `${sign}${value.toFixed(2)} min`;
+					};
+					const formatEffect = (value) =>
+						summary.unit === "percent"
+							? `${value > 0 ? "+" : ""}${value.toFixed(2)}pp`
+							: formatNumber(value, summary.unit, true);
+					const effect = document.createElement("p");
+					effect.className = "experiment-posterior-effect";
+					const probability = 100 * summary.effect.probability_better;
+					const relative =
+						summary.unit !== "percent" && Number.isFinite(summary.effect.relative_pct)
+							? ` · ${
+									summary.effect.relative_pct > 0 ? "+" : ""
+							  }${summary.effect.relative_pct.toFixed(1)}% relative`
+							: "";
+					effect.innerHTML =
+						`Treatment − control: <strong>${formatEffect(
+							summary.effect.value,
+						)}</strong> · 95% CrI ${formatEffect(summary.effect.ci_low)} to ${formatEffect(
+							summary.effect.ci_high,
+						)}` + `${relative} · ${probability.toFixed(1)}% chance better`;
+					section.append(head, effect, plotNode);
 					const values = rows.filter(
 						(row) =>
 							Number.isFinite(row.value) &&
 							Number.isFinite(row.ci_low) &&
 							Number.isFinite(row.ci_high),
 					);
-					if (values.length) metricPlots.push({ plotNode, rows, values });
-					else {
-						const empty = document.createElement("p");
-						empty.className = "panel-note";
-						empty.textContent = "No observed cohort yet";
-						plotNode.append(empty);
-					}
+					if (values.length) metricPlots.push({ plotNode, rows, values, formatNumber });
 					return section;
 				});
 				metricGrid.replaceChildren(...metricPanels);
-				metricPlots.forEach(({ plotNode, rows, values }) => {
-					const formatNumber = (value, unit) =>
-						unit === "percent"
-							? `${value.toFixed(1)}%`
-							: unit === "usd"
-							? `$${value.toFixed(3)}`
-							: `${value.toFixed(1)} min`;
+				metricPlots.forEach(({ plotNode, rows, values, formatNumber }) => {
 					plotNode.append(
 						Plot.plot({
 							width: plotNode.clientWidth || 320,
@@ -2118,7 +2158,7 @@
 									tip: true,
 									title: (row) =>
 										`${row.arm}: ${formatNumber(row.value, row.unit)} · ` +
-										`95% CI ${formatNumber(row.ci_low, row.unit)}–${formatNumber(
+										`95% credible interval ${formatNumber(row.ci_low, row.unit)}–${formatNumber(
 											row.ci_high,
 											row.unit,
 										)} · n=${number.format(row.n)}`,
@@ -2219,9 +2259,10 @@
 					);
 				} else guardrailNode.replaceChildren();
 
-				const refreshed = data.health?.refreshed_at ?? data.generated_at;
-				document.querySelector("#experiment-updated").textContent = data.health?.refreshed_at
-					? `facts ${shortDate.format(new Date(refreshed))}`
+				const refreshed =
+					data.bayesian_refreshed_at ?? data.health?.refreshed_at ?? data.generated_at;
+				document.querySelector("#experiment-updated").textContent = refreshed
+					? `posterior ${shortDate.format(new Date(refreshed))}`
 					: "backfill pending";
 			}
 

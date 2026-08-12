@@ -259,14 +259,17 @@ Deno.serve(async (req) => {
 			p_platform: platform === "all" ? null : platform,
 			p_country: country === "ALL" ? null : country,
 		};
-		const [metricsResult, assignmentsResult] = await Promise.all([
-			client.rpc("get_verdoku_experiment_metrics", params),
+		const [bayesianResult, assignmentsResult] = await Promise.all([
+			client.rpc("get_experiment_bayesian_metric_inputs", {
+				p_project_id: "verdoku",
+				...params,
+			}),
 			client.rpc("get_verdoku_experiment_assignment_total", params),
 		]);
-		if (metricsResult.error || !metricsResult.data) {
+		if (bayesianResult.error || !bayesianResult.data) {
 			console.error(
-				"experiment metrics read failed",
-				metricsResult.error?.message ?? "empty metrics",
+				"experiment Bayesian inputs read failed",
+				bayesianResult.error?.message ?? "empty Bayesian inputs",
 			);
 			return json({ error: "snapshot unavailable" }, 503, origin);
 		}
@@ -277,8 +280,10 @@ Deno.serve(async (req) => {
 			);
 			return json({ error: "snapshot unavailable" }, 503, origin);
 		}
-		data.metrics = metricsResult.data.metrics;
-		data.maturity = metricsResult.data.maturity;
+		data.bayesian_inputs = bayesianResult.data.inputs;
+		data.bayesian_method = bayesianResult.data.method;
+		data.bayesian_revision = bayesianResult.data.revision;
+		data.bayesian_refreshed_at = bayesianResult.data.refreshed_at;
 		data.assigned_total = Number(assignmentsResult.data);
 	}
 
