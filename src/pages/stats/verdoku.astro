@@ -1091,7 +1091,7 @@
 						<section class="panel">
 							<div class="panel-head">
 								<h3 class="panel-title">Revenue by source</h3>
-								<p class="panel-note">daily gross USD</p>
+								<p class="panel-note">share of daily revenue</p>
 							</div>
 							<div class="plot" id="revenue-source-area-plot"></div>
 						</section>
@@ -2355,7 +2355,11 @@
 						value: revenueSourceValues.get(`${day.day}:${source}`) ?? 0,
 					}));
 					const total = values.reduce((sum, row) => sum + row.value, 0);
-					return values.map((row) => ({ ...row, total }));
+					return values.map((row) => ({
+						...row,
+						total,
+						share: total ? row.value / total : 0,
+					}));
 				});
 				const caseBreakdowns = (data.case_breakdowns ?? []).map((row) => ({
 					...row,
@@ -2736,10 +2740,10 @@
 							y: {
 								label: null,
 								grid: true,
-								zero: true,
-								ticks: 4,
+								domain: [0, 1],
+								ticks: 5,
 								tickSize: 0,
-								tickFormat: money.format,
+								tickFormat: (value) => `${Math.round(value * 100)}%`,
 							},
 							color: {
 								domain: revenueSourceKeys.map((key) => revenueSourceLabels[key] ?? key),
@@ -2747,23 +2751,23 @@
 								legend: true,
 							},
 							marks: [
-								Plot.ruleY([0], { stroke: "#dfe5e8" }),
+								Plot.ruleY([0, 1], { stroke: "#dfe5e8" }),
 								Plot.areaY(
 									revenueSources,
 									Plot.stackY(
 										{ order: revenueSourceKeys.map((key) => revenueSourceLabels[key] ?? key) },
 										{
 											x: "date",
-											y: "value",
+											y: "share",
 											z: "series",
 											fill: "series",
 											fillOpacity: 1,
 											curve: "monotone-x",
 											tip: true,
 											title: (row) =>
-												`${shortDate.format(row.date)} · ${row.series}: ${sourceMoney.format(
-													row.value,
-												)} of ${sourceMoney.format(row.total)}`,
+												`${shortDate.format(row.date)} · ${row.series}: ${(100 * row.share).toFixed(
+													1,
+												)}% · ${sourceMoney.format(row.value)} of ${sourceMoney.format(row.total)}`,
 										},
 									),
 								),
