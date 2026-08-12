@@ -425,57 +425,13 @@
 				box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 15%, transparent);
 			}
 
-			.summary {
-				display: grid;
-				grid-template-columns: repeat(4, 1fr);
-				gap: 10px;
+			.hourly-players {
 				margin-bottom: 32px;
 			}
 
-			.metric,
 			.panel {
 				border: 1px solid var(--line);
 				background: color-mix(in srgb, var(--card) 82%, transparent);
-			}
-
-			.metric {
-				min-width: 0;
-				padding: 16px 14px 14px;
-				border-radius: 12px;
-			}
-
-			.metric-label {
-				display: block;
-				margin-bottom: 9px;
-				color: var(--muted);
-				font-size: 10px;
-				font-weight: 700;
-				letter-spacing: 0.06em;
-				text-transform: uppercase;
-			}
-
-			.metric-value {
-				display: block;
-				font-family: "Tiempos Text", Georgia, serif;
-				font-size: clamp(25px, 5vw, 34px);
-				line-height: 1;
-				font-variant-numeric: tabular-nums;
-			}
-
-			.metric-change {
-				display: block;
-				margin-top: 8px;
-				color: var(--muted);
-				font-size: 10px;
-				font-variant-numeric: tabular-nums;
-			}
-
-			.metric-change[data-direction="up"] {
-				color: #14815d;
-			}
-
-			.metric-change[data-direction="down"] {
-				color: var(--red);
 			}
 
 			.section-heading {
@@ -670,10 +626,6 @@
 					padding-top: 24px;
 				}
 
-				.summary {
-					grid-template-columns: 1fr 1fr;
-				}
-
 				.experiment-summary {
 					grid-template-columns: 1fr 1fr;
 				}
@@ -772,11 +724,12 @@
 				</nav>
 
 				<div id="dashboard-overview-primary" data-dashboard-view="overview">
-					<section class="summary" aria-label="Today so far">
-						<div class="metric" data-metric="dau"></div>
-						<div class="metric" data-metric="new_installs"></div>
-						<div class="metric" data-metric="cases_solved"></div>
-						<div class="metric" data-metric="purchases"></div>
+					<section class="panel hourly-players" aria-labelledby="hourly-players-title">
+						<div class="panel-head">
+							<h2 class="panel-title" id="hourly-players-title">Hourly active players</h2>
+							<p class="panel-note">last 48 hours · UTC · current hour is partial</p>
+						</div>
+						<div class="plot" id="hourly-players-plot"></div>
 					</section>
 
 					<div class="section-heading">
@@ -1134,12 +1087,6 @@
 			// in get_verdoku_dashboard_snapshot(); kept here so the page is correct
 			// even against an older snapshot.
 			const TRUSTED_FROM = "2026-07-01";
-			const metricLabels = {
-				dau: "Active",
-				new_installs: "New installs",
-				cases_solved: "Cases solved",
-				purchases: "Purchases",
-			};
 			const number = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });
 			const compact = new Intl.NumberFormat("en", {
 				notation: "compact",
@@ -1285,30 +1232,59 @@
 				if (renderView) requestAnimationFrame(() => renderActiveDashboardTab());
 			}
 
-			function deltaCopy(current, previous) {
-				if (!Number.isFinite(current) || !Number.isFinite(previous) || previous === 0) {
-					return { copy: "no comparison", direction: "flat" };
+			function renderHourlyPlayers(data) {
+				const rows = (data.hourly_players ?? []).map((row) => ({
+					...row,
+					hour: new Date(row.hour),
+					players: Number(row.players),
+				}));
+				const node = document.querySelector("#hourly-players-plot");
+				if (!rows.length) {
+					node.replaceChildren();
+					return;
 				}
-				const change = ((current - previous) / previous) * 100;
-				const sign = change > 0 ? "+" : "";
-				return {
-					copy: `${sign}${change.toFixed(0)}% vs yesterday`,
-					direction: change > 0 ? "up" : change < 0 ? "down" : "flat",
-				};
-			}
-
-			function renderSummary(data) {
-				for (const [key, label] of Object.entries(metricLabels)) {
-					const current = Number(data.today[key] ?? 0);
-					const previous = Number(data.yesterday_same_time[key] ?? 0);
-					const change = deltaCopy(current, previous);
-					const card = document.querySelector(`[data-metric="${key}"]`);
-					card.innerHTML = `
-						<span class="metric-label">${label}</span>
-						<strong class="metric-value">${compact.format(current)}</strong>
-						<span class="metric-change" data-direction="${change.direction}">${change.copy}</span>
-					`;
-				}
+				const width = node.clientWidth || 700;
+				replacePlot(
+					"#hourly-players-plot",
+					Plot.plot({
+						width,
+						height: 210,
+						marginTop: 8,
+						marginRight: 12,
+						marginBottom: 30,
+						marginLeft: 43,
+						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+						x: {
+							type: "utc",
+							label: null,
+							ticks: width < 500 ? 4 : 7,
+							tickFormat: width < 500 ? "%a %Hh" : "%a %H:%M",
+							tickSize: 0,
+						},
+						y: { label: null, grid: true, zero: true, ticks: 4, tickSize: 0 },
+						marks: [
+							Plot.ruleY([0], { stroke: "#dfe5e8" }),
+							Plot.rectY(rows, {
+								x: "hour",
+								y: "players",
+								interval: "hour",
+								fill: "#234766",
+								insetLeft: 1,
+								insetRight: 1,
+								tip: true,
+								title: (row) =>
+									`${row.hour.toLocaleString("en", {
+										timeZone: "UTC",
+										month: "short",
+										day: "numeric",
+										hour: "2-digit",
+										minute: "2-digit",
+										hour12: false,
+									})} UTC: ${number.format(row.players)} players${row.partial ? " · partial" : ""}`,
+							}),
+						],
+					}),
+				);
 			}
 
 			function linePlot(source, field, color, tickFormat, options = {}) {
@@ -2905,7 +2881,7 @@
 
 			function render(data) {
 				data = applyTrustFloor(data);
-				renderSummary(data);
+				renderHourlyPlayers(data);
 				renderPeak(data.peak_dau);
 				renderRetention(data.retention, data.retention_series);
 				renderCohortRevenue(data.cohort_revenue_series);
@@ -3049,6 +3025,7 @@
 			new ResizeObserver(() => {
 				if (snapshot && Math.abs(document.body.clientWidth - lastRenderedWidth) > 30) {
 					if (activeDashboardTab === "overview") {
+						renderHourlyPlayers(snapshot);
 						renderRetention(snapshot.retention, snapshot.retention_series);
 						renderCohortRevenue(snapshot.cohort_revenue_series);
 						renderStickiness(snapshot.stickiness ?? []);
