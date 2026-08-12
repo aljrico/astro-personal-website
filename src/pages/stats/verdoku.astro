@@ -1024,7 +1024,7 @@
 						<section class="panel">
 							<div class="panel-head">
 								<h3 class="panel-title">Cases by environment</h3>
-								<p class="panel-note">daily solves · stacked</p>
+								<p class="panel-note">share of daily solves</p>
 							</div>
 							<div class="plot" id="cases-environment-plot"></div>
 						</section>
@@ -1032,7 +1032,7 @@
 						<section class="panel">
 							<div class="panel-head">
 								<h3 class="panel-title">Cases by difficulty</h3>
-								<p class="panel-note">daily solves · stacked</p>
+								<p class="panel-note">share of daily solves</p>
 							</div>
 							<div class="plot" id="cases-difficulty-plot"></div>
 						</section>
@@ -2247,6 +2247,7 @@
 								series: labels[key] ?? key,
 								value: counts.get(key) ?? 0,
 								total,
+								share: total ? (counts.get(key) ?? 0) / total : 0,
 							}));
 						}),
 					};
@@ -2456,17 +2457,18 @@
 							y: {
 								label: null,
 								grid: true,
-								zero: true,
-								ticks: 4,
+								domain: [0, 1],
+								percent: true,
+								ticks: 5,
 								tickSize: 0,
-								tickFormat: compact.format,
 							},
 							color: { ...color, legend: true },
 							marks: [
-								Plot.ruleY([0], { stroke: "#dfe5e8" }),
+								Plot.ruleY([0, 1], { stroke: "#dfe5e8" }),
 								Plot.areaY(
 									source,
 									Plot.stackY({
+										offset: "normalize",
 										x: "date",
 										y: "value",
 										fill: "series",
@@ -2474,9 +2476,9 @@
 										curve: "monotone-x",
 										tip: true,
 										title: (row) =>
-											`${shortDate.format(row.date)} · ${row.series}: ${number.format(
-												row.value,
-											)} of ${number.format(row.total)}`,
+											`${shortDate.format(row.date)} · ${row.series}: ${(100 * row.share).toFixed(
+												1,
+											)}% · ${number.format(row.value)} solves`,
 									}),
 								),
 							],
