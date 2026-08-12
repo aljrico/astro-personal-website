@@ -983,7 +983,7 @@
 				<div id="dashboard-overview-secondary" data-dashboard-view="overview">
 					<div class="section-heading">
 						<h2>Engagement</h2>
-						<span>per active player</span>
+						<span>last 30 complete UTC days</span>
 					</div>
 
 					<div class="plot-grid">
@@ -1017,6 +1017,24 @@
 								<p class="panel-note">earned XP ÷ DAU</p>
 							</div>
 							<div class="plot" id="xp-plot"></div>
+						</section>
+					</div>
+
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Cases by environment</h3>
+								<p class="panel-note">daily solves · stacked</p>
+							</div>
+							<div class="plot" id="cases-environment-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Cases by difficulty</h3>
+								<p class="panel-note">daily solves · stacked</p>
+							</div>
+							<div class="plot" id="cases-difficulty-plot"></div>
 						</section>
 					</div>
 
@@ -2204,6 +2222,51 @@
 						{ ...row, series: "Android", value: row.android_revenue_usd, total },
 					];
 				});
+				const caseBreakdowns = (data.case_breakdowns ?? []).map((row) => ({
+					...row,
+					date: new Date(`${row.day}T12:00:00Z`),
+				}));
+				const breakdownSeries = (field, labels, preferredKeys) => {
+					const availableKeys = new Set(
+						caseBreakdowns.flatMap((day) => (day[field] ?? []).map((entry) => entry.key)),
+					);
+					const keys = [
+						...preferredKeys.filter((key) => availableKeys.has(key)),
+						...[...availableKeys].filter((key) => !preferredKeys.includes(key)).sort(),
+					];
+					return {
+						keys,
+						domain: keys.map((key) => labels[key] ?? key),
+						rows: caseBreakdowns.flatMap((day) => {
+							const counts = new Map(
+								(day[field] ?? []).map((entry) => [entry.key, Number(entry.cases_solved)]),
+							);
+							const total = [...counts.values()].reduce((sum, value) => sum + value, 0);
+							return keys.map((key) => ({
+								date: day.date,
+								series: labels[key] ?? key,
+								value: counts.get(key) ?? 0,
+								total,
+							}));
+						}),
+					};
+				};
+				const environments = breakdownSeries(
+					"environments",
+					{
+						nextDoor: "Next Door",
+						islands: "Dead Man's Cove",
+						grove: "Grove in Pink",
+						farmyard: "Farmyard",
+						unknown: "Unknown",
+					},
+					["nextDoor", "islands", "grove", "farmyard", "unknown"],
+				);
+				const difficulties = breakdownSeries(
+					"difficulties",
+					{ easy: "Easy", medium: "Medium", hard: "Hard", free: "Free", unknown: "Unknown" },
+					["easy", "medium", "hard", "free", "unknown"],
+				);
 				const platformDays = rows.filter((row) => row.ios_dau + row.android_dau > 0);
 				const platform = platformDays.flatMap((row) => {
 					const total = row.ios_dau + row.android_dau;
@@ -2373,12 +2436,85 @@
 					if (plot) replacePlot(selector, plot);
 					else node.replaceChildren();
 				};
+				const stackedArea = (selector, source, color) => {
+					const node = document.querySelector(selector);
+					if (!source.length) {
+						node.replaceChildren();
+						return;
+					}
+					replacePlot(
+						selector,
+						Plot.plot({
+							width: node.clientWidth || 320,
+							height: 190,
+							marginTop: 34,
+							marginRight: 12,
+							marginBottom: 28,
+							marginLeft: 43,
+							style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+							x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+							y: {
+								label: null,
+								grid: true,
+								zero: true,
+								ticks: 4,
+								tickSize: 0,
+								tickFormat: compact.format,
+							},
+							color: { ...color, legend: true },
+							marks: [
+								Plot.ruleY([0], { stroke: "#dfe5e8" }),
+								Plot.areaY(
+									source,
+									Plot.stackY({
+										x: "date",
+										y: "value",
+										fill: "series",
+										fillOpacity: 1,
+										curve: "monotone-x",
+										tip: true,
+										title: (row) =>
+											`${shortDate.format(row.date)} · ${row.series}: ${number.format(
+												row.value,
+											)} of ${number.format(row.total)}`,
+									}),
+								),
+							],
+						}),
+					);
+				};
 
 				line("#cases-plot", "cases_per_player", "#bd2d47", (value) => value.toFixed(1));
 				line("#sessions-plot", "sessions_per_player", "#3a6ea5", (value) => value.toFixed(1));
 				const dailyRows = rows.filter((row) => Number.isFinite(row.daily_pct));
 				line("#daily-plot", "daily_pct", "#d89024", (value) => `${value.toFixed(0)}%`, dailyRows);
 				line("#xp-plot", "xp_per_player", "#2a9d8f", (value) => compact.format(value));
+				stackedArea("#cases-environment-plot", environments.rows, {
+					domain: environments.domain,
+					range: environments.keys.map(
+						(key) =>
+							({
+								nextDoor: "#9c3e29",
+								islands: "#1cadf4",
+								grove: "#ff608a",
+								farmyard: "#df7956",
+								unknown: "#b8c0c7",
+							})[key] ?? "#5b7894",
+					),
+				});
+				stackedArea("#cases-difficulty-plot", difficulties.rows, {
+					domain: difficulties.domain,
+					range: difficulties.keys.map(
+						(key) =>
+							({
+								easy: "#2abd88",
+								medium: "#d89024",
+								hard: "#bd2d47",
+								free: "#7b61a8",
+								unknown: "#b8c0c7",
+							})[key] ?? "#5b7894",
+					),
+				});
 
 				bars("#revenue-source-plot", revenueBySource, {
 					stacked: true,
