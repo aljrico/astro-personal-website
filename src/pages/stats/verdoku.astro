@@ -1090,7 +1090,7 @@
 
 						<section class="panel">
 							<div class="panel-head">
-								<h3 class="panel-title">D0 revenue per user</h3>
+								<h3 class="panel-title">D0 LTV</h3>
 								<p class="panel-note" id="revenue-d0-note">matured cohorts</p>
 							</div>
 							<div class="plot" id="revenue-d0-plot"></div>
@@ -1098,7 +1098,7 @@
 
 						<section class="panel">
 							<div class="panel-head">
-								<h3 class="panel-title">D3 revenue per user</h3>
+								<h3 class="panel-title">D3 LTV</h3>
 								<p class="panel-note" id="revenue-d3-note">matured cohorts</p>
 							</div>
 							<div class="plot" id="revenue-d3-plot"></div>
@@ -1106,7 +1106,7 @@
 
 						<section class="panel">
 							<div class="panel-head">
-								<h3 class="panel-title">D7 revenue per user</h3>
+								<h3 class="panel-title">D7 LTV</h3>
 								<p class="panel-note" id="revenue-d7-note">matured cohorts</p>
 							</div>
 							<div class="plot" id="revenue-d7-plot"></div>
@@ -1480,10 +1480,10 @@
 						continue;
 					}
 
-					noteNode.textContent = preciseMoney.format(latest.revenue_per_install_usd);
+					noteNode.textContent = `${preciseMoney.format(latest.revenue_per_install_usd)} avg`;
 					noteNode.title =
 						`Cohorts ${entry.cohort_from} to ${entry.cohort_to}, matured through ` +
-						`${entry.matured_through}. Each point is cumulative ads + IAP per user in one install cohort.`;
+						`${entry.matured_through}. Each point is average cumulative ads + IAP per user from D0 through D${dayN}.`;
 					replacePlot(
 						`#revenue-d${dayN}-plot`,
 						linePlot(cohorts, "revenue_per_install_usd", colors[dayN], preciseMoney.format, {
@@ -1494,13 +1494,9 @@
 							xTicks: 3,
 							floor: 0,
 							title: (row) =>
-								`${shortDate.format(row.date)}: ${preciseMoney.format(
+								`${shortDate.format(row.date)} · average D${dayN} LTV: ${preciseMoney.format(
 									row.revenue_per_install_usd,
-								)} / user · ${money.format(row.revenue_usd)} total · ` +
-								`${money.format(row.ad_revenue_usd)} ads + ${money.format(
-									row.iap_revenue_usd,
-								)} IAP · ` +
-								`${number.format(row.cohort_size)} installs`,
+								)} per user · ${number.format(row.cohort_size)} users`,
 						}),
 					);
 				}
