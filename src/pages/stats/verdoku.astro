@@ -2458,28 +2458,31 @@
 								label: null,
 								grid: true,
 								domain: [0, 1],
-								percent: true,
 								ticks: 5,
 								tickSize: 0,
+								tickFormat: (value) => `${Math.round(value * 100)}%`,
 							},
 							color: { ...color, legend: true },
 							marks: [
 								Plot.ruleY([0, 1], { stroke: "#dfe5e8" }),
 								Plot.areaY(
 									source,
-									Plot.stackY({
-										offset: "normalize",
-										x: "date",
-										y: "value",
-										fill: "series",
-										fillOpacity: 1,
-										curve: "monotone-x",
-										tip: true,
-										title: (row) =>
-											`${shortDate.format(row.date)} · ${row.series}: ${(100 * row.share).toFixed(
-												1,
-											)}% · ${number.format(row.value)} solves`,
-									}),
+									Plot.stackY(
+										{ order: color.domain },
+										{
+											x: "date",
+											y: "share",
+											z: "series",
+											fill: "series",
+											fillOpacity: 1,
+											curve: "monotone-x",
+											tip: true,
+											title: (row) =>
+												`${shortDate.format(row.date)} · ${row.series}: ${(100 * row.share).toFixed(
+													1,
+												)}% · ${number.format(row.value)} solves`,
+										},
+									),
 								),
 							],
 						}),
