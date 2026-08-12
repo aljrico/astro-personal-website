@@ -239,7 +239,7 @@ Deno.serve(async (req) => {
 		data.cohort_revenue_series = cohortRevenueResult.data;
 		data.notes = [
 			...(Array.isArray(data.notes) ? data.notes : []),
-			"D0/D3/D7 cohort revenue is cumulative estimated ads plus attributable RevenueCat IAP; only mature UTC cohorts with at least 100 installs are shown.",
+			"D0/D3/D7/D14/D28 cohort LTV is cumulative estimated ads plus attributable RevenueCat IAP per user; only mature UTC cohorts with at least 100 installs are shown.",
 			"Cohort IAP begins on 2026-07-14 and includes RevenueCat purchases matched to install telemetry by product, platform, and purchase time.",
 		];
 	}

@@ -1087,29 +1087,15 @@
 							</div>
 							<div class="plot" id="ads-plot"></div>
 						</section>
+					</div>
 
+					<div class="plot-grid">
 						<section class="panel">
 							<div class="panel-head">
-								<h3 class="panel-title">D0 LTV</h3>
-								<p class="panel-note" id="revenue-d0-note">matured cohorts</p>
+								<h3 class="panel-title">Cohort LTV</h3>
+								<p class="panel-note">cumulative ads + IAP per user</p>
 							</div>
-							<div class="plot" id="revenue-d0-plot"></div>
-						</section>
-
-						<section class="panel">
-							<div class="panel-head">
-								<h3 class="panel-title">D3 LTV</h3>
-								<p class="panel-note" id="revenue-d3-note">matured cohorts</p>
-							</div>
-							<div class="plot" id="revenue-d3-plot"></div>
-						</section>
-
-						<section class="panel">
-							<div class="panel-head">
-								<h3 class="panel-title">D7 LTV</h3>
-								<p class="panel-note" id="revenue-d7-note">matured cohorts</p>
-							</div>
-							<div class="plot" id="revenue-d7-plot"></div>
+							<div class="plot" id="cohort-ltv-plot"></div>
 						</section>
 					</div>
 
@@ -1452,54 +1438,73 @@
 			}
 
 			function renderCohortRevenue(series = []) {
-				const byDayN = new Map(
-					(Array.isArray(series) ? series : [])
-						.filter((entry) => Array.isArray(entry?.points))
-						.map((entry) => [Number(entry.day_n), entry]),
-				);
-				const colors = { 0: "#3a86a8", 3: "#7b61a8", 7: "#14815d" };
-
-				for (const dayN of [0, 3, 7]) {
-					const entry = byDayN.get(dayN);
-					const cohorts = (entry?.points ?? []).map((point) => ({
+				const node = document.querySelector("#cohort-ltv-plot");
+				const dayNs = [0, 3, 7, 14, 28];
+				const rows = (Array.isArray(series) ? series : []).flatMap((entry) => {
+					const dayN = Number(entry.day_n);
+					if (!dayNs.includes(dayN) || !Array.isArray(entry?.points)) return [];
+					return entry.points.map((point) => ({
 						...point,
 						date: new Date(`${point.cohort_day}T12:00:00Z`),
+						series: `D${dayN}`,
+						day_n: dayN,
 						cohort_size: Number(point.cohort_size),
-						ad_revenue_usd: Number(point.ad_revenue_usd),
-						iap_revenue_usd: Number(point.iap_revenue_usd),
-						revenue_usd: Number(point.revenue_usd),
-						revenue_per_install_usd: Number(point.revenue_per_install_usd),
+						value: Number(point.revenue_per_install_usd),
 					}));
-					const latest = cohorts[cohorts.length - 1];
-					const plotNode = document.querySelector(`#revenue-d${dayN}-plot`);
-					const noteNode = document.querySelector(`#revenue-d${dayN}-note`);
-					if (!latest) {
-						noteNode.textContent = "not enough mature data";
-						noteNode.title = "";
-						plotNode.replaceChildren();
-						continue;
-					}
-
-					noteNode.textContent = `${preciseMoney.format(latest.revenue_per_install_usd)} avg`;
-					noteNode.title =
-						`Cohorts ${entry.cohort_from} to ${entry.cohort_to}, matured through ` +
-						`${entry.matured_through}. Each point is average cumulative ads + IAP per user from D0 through D${dayN}.`;
-					replacePlot(
-						`#revenue-d${dayN}-plot`,
-						linePlot(cohorts, "revenue_per_install_usd", colors[dayN], preciseMoney.format, {
-							width: plotNode.clientWidth || 220,
-							height: 150,
-							marginLeft: 38,
-							fontSize: "9px",
-							xTicks: 3,
-							floor: 0,
-							title: (row) =>
-								`${shortDate.format(row.date)} · average D${dayN} LTV: ${preciseMoney.format(
-									row.revenue_per_install_usd,
-								)} per user · ${number.format(row.cohort_size)} users`,
-						}),
-					);
+				});
+				if (!rows.length) {
+					node.replaceChildren();
+					return;
 				}
+
+				replacePlot(
+					"#cohort-ltv-plot",
+					Plot.plot({
+						width: node.clientWidth || 700,
+						height: 210,
+						marginTop: 34,
+						marginRight: 12,
+						marginBottom: 28,
+						marginLeft: 48,
+						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+						x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+						y: {
+							label: null,
+							grid: true,
+							zero: true,
+							ticks: 5,
+							tickSize: 0,
+							tickFormat: preciseMoney.format,
+						},
+						color: {
+							domain: dayNs.map((dayN) => `D${dayN}`),
+							range: ["#3a86a8", "#7b61a8", "#14815d", "#d89024", "#bd2d47"],
+							legend: true,
+						},
+						marks: [
+							Plot.ruleY([0], { stroke: "#dfe5e8" }),
+							Plot.lineY(rows, {
+								x: "date",
+								y: "value",
+								z: "series",
+								stroke: "series",
+								strokeWidth: 2.2,
+								curve: "monotone-x",
+							}),
+							Plot.dot(rows, {
+								x: "date",
+								y: "value",
+								fill: "series",
+								r: 2.5,
+								tip: true,
+								title: (row) =>
+									`${shortDate.format(row.date)} · average ${row.series} LTV: ` +
+									`${preciseMoney.format(row.value)} per user · ` +
+									`${number.format(row.cohort_size)} users`,
+							}),
+						],
+					}),
+				);
 			}
 
 			function replacePlot(selector, plot) {
