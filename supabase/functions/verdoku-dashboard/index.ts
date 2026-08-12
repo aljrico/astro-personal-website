@@ -217,9 +217,10 @@ Deno.serve(async (req) => {
 	}
 
 	if (!isAsoView && !isExperimentView) {
-		const [breakdownResult, cohortRevenueResult] = await Promise.all([
+		const [breakdownResult, cohortRevenueResult, revenueSourcesResult] = await Promise.all([
 			client.rpc("get_verdoku_dashboard_case_breakdowns"),
 			client.rpc("get_verdoku_dashboard_cohort_revenue"),
+			client.rpc("get_verdoku_dashboard_revenue_sources"),
 		]);
 		if (breakdownResult.error || !breakdownResult.data) {
 			console.error(
@@ -235,8 +236,16 @@ Deno.serve(async (req) => {
 			);
 			return json({ error: "snapshot unavailable" }, 503, origin);
 		}
+		if (revenueSourcesResult.error || !revenueSourcesResult.data) {
+			console.error(
+				"revenue source read failed",
+				revenueSourcesResult.error?.message ?? "empty revenue sources",
+			);
+			return json({ error: "snapshot unavailable" }, 503, origin);
+		}
 		data.case_breakdowns = breakdownResult.data;
 		data.cohort_revenue_series = cohortRevenueResult.data;
+		data.revenue_sources = revenueSourcesResult.data;
 		data.notes = [
 			...(Array.isArray(data.notes) ? data.notes : []),
 			"D0/D3/D7/D14/D28 cohort LTV is cumulative estimated ads plus attributable RevenueCat IAP per user; only mature UTC cohorts with at least 100 installs are shown.",
