@@ -217,7 +217,10 @@ Deno.serve(async (req) => {
 	}
 
 	if (!isAsoView && !isExperimentView) {
-		const breakdownResult = await client.rpc("get_verdoku_dashboard_case_breakdowns");
+		const [breakdownResult, cohortRevenueResult] = await Promise.all([
+			client.rpc("get_verdoku_dashboard_case_breakdowns"),
+			client.rpc("get_verdoku_dashboard_cohort_revenue"),
+		]);
 		if (breakdownResult.error || !breakdownResult.data) {
 			console.error(
 				"case breakdown read failed",
@@ -225,7 +228,20 @@ Deno.serve(async (req) => {
 			);
 			return json({ error: "snapshot unavailable" }, 503, origin);
 		}
+		if (cohortRevenueResult.error || !cohortRevenueResult.data) {
+			console.error(
+				"cohort revenue read failed",
+				cohortRevenueResult.error?.message ?? "empty cohort revenue",
+			);
+			return json({ error: "snapshot unavailable" }, 503, origin);
+		}
 		data.case_breakdowns = breakdownResult.data;
+		data.cohort_revenue_series = cohortRevenueResult.data;
+		data.notes = [
+			...(Array.isArray(data.notes) ? data.notes : []),
+			"D0/D3/D7 cohort revenue is cumulative estimated ads plus attributable RevenueCat IAP; only mature UTC cohorts with at least 100 installs are shown.",
+			"Cohort IAP begins on 2026-07-14 and includes RevenueCat purchases matched to install telemetry by product, platform, and purchase time.",
+		];
 	}
 
 	if (isExperimentView) {

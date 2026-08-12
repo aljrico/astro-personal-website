@@ -1087,6 +1087,30 @@
 							</div>
 							<div class="plot" id="ads-plot"></div>
 						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">D0 cumulative revenue</h3>
+								<p class="panel-note" id="revenue-d0-note">matured cohorts</p>
+							</div>
+							<div class="plot" id="revenue-d0-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">D3 cumulative revenue</h3>
+								<p class="panel-note" id="revenue-d3-note">matured cohorts</p>
+							</div>
+							<div class="plot" id="revenue-d3-plot"></div>
+						</section>
+
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">D7 cumulative revenue</h3>
+								<p class="panel-note" id="revenue-d7-note">matured cohorts</p>
+							</div>
+							<div class="plot" id="revenue-d7-plot"></div>
+						</section>
 					</div>
 
 					<ul class="footnotes" id="footnotes"></ul>
@@ -1422,6 +1446,60 @@
 							title: (row) =>
 								`${shortDate.format(row.date)}: ${row.retention_pct.toFixed(1)}% · ` +
 								`${number.format(row.returned)} of ${number.format(row.cohort_size)}`,
+						}),
+					);
+				}
+			}
+
+			function renderCohortRevenue(series = []) {
+				const byDayN = new Map(
+					(Array.isArray(series) ? series : [])
+						.filter((entry) => Array.isArray(entry?.points))
+						.map((entry) => [Number(entry.day_n), entry]),
+				);
+				const colors = { 0: "#3a86a8", 3: "#7b61a8", 7: "#14815d" };
+
+				for (const dayN of [0, 3, 7]) {
+					const entry = byDayN.get(dayN);
+					const cohorts = (entry?.points ?? []).map((point) => ({
+						...point,
+						date: new Date(`${point.cohort_day}T12:00:00Z`),
+						cohort_size: Number(point.cohort_size),
+						ad_revenue_usd: Number(point.ad_revenue_usd),
+						iap_revenue_usd: Number(point.iap_revenue_usd),
+						revenue_usd: Number(point.revenue_usd),
+						revenue_per_install_usd: Number(point.revenue_per_install_usd),
+					}));
+					const latest = cohorts[cohorts.length - 1];
+					const plotNode = document.querySelector(`#revenue-d${dayN}-plot`);
+					const noteNode = document.querySelector(`#revenue-d${dayN}-note`);
+					if (!latest) {
+						noteNode.textContent = "not enough mature data";
+						noteNode.title = "";
+						plotNode.replaceChildren();
+						continue;
+					}
+
+					noteNode.textContent = money.format(latest.revenue_usd);
+					noteNode.title =
+						`Cohorts ${entry.cohort_from} to ${entry.cohort_to}, matured through ` +
+						`${entry.matured_through}. Each point is cumulative ads + IAP for one install cohort.`;
+					replacePlot(
+						`#revenue-d${dayN}-plot`,
+						linePlot(cohorts, "revenue_usd", colors[dayN], money.format, {
+							width: plotNode.clientWidth || 220,
+							height: 150,
+							marginLeft: 38,
+							fontSize: "9px",
+							xTicks: 3,
+							floor: 0,
+							title: (row) =>
+								`${shortDate.format(row.date)}: ${money.format(row.revenue_usd)} · ` +
+								`${money.format(row.ad_revenue_usd)} ads + ${money.format(
+									row.iap_revenue_usd,
+								)} IAP · ` +
+								`${preciseMoney.format(row.revenue_per_install_usd)} / install · ` +
+								`${number.format(row.cohort_size)} installs`,
 						}),
 					);
 				}
@@ -2548,7 +2626,14 @@
 					fontSize: "9px",
 					xTicks: 3,
 				};
-				line("#arpdau-plot", "arpdau_usd", "#3a86a8", preciseMoney.format, rows, monetisationLineOptions);
+				line(
+					"#arpdau-plot",
+					"arpdau_usd",
+					"#3a86a8",
+					preciseMoney.format,
+					rows,
+					monetisationLineOptions,
+				);
 				line(
 					"#conversion-plot",
 					"conversion_pct",
@@ -2636,6 +2721,14 @@
 							points: (entry.points ?? []).filter((point) => trusted(point.cohort_day)),
 						}))
 						.filter((entry) => entry.points.length),
+					cohort_revenue_series: (data.cohort_revenue_series ?? [])
+						.map((entry) => ({
+							...entry,
+							points: (entry.points ?? []).filter(
+								(point) => typeof point.cohort_day === "string" && point.cohort_day >= "2026-07-14",
+							),
+						}))
+						.filter((entry) => entry.points.length),
 					stickiness: (data.stickiness ?? []).filter((row) => trusted(row.day)),
 					peak_dau: trusted(data.peak_dau?.day) ? data.peak_dau : null,
 				};
@@ -2646,6 +2739,7 @@
 				renderSummary(data);
 				renderPeak(data.peak_dau);
 				renderRetention(data.retention, data.retention_series);
+				renderCohortRevenue(data.cohort_revenue_series);
 				renderStickiness(data.stickiness ?? []);
 				renderPlots(data);
 				document.querySelector("#footnotes").innerHTML = data.notes
@@ -2787,6 +2881,7 @@
 				if (snapshot && Math.abs(document.body.clientWidth - lastRenderedWidth) > 30) {
 					if (activeDashboardTab === "overview") {
 						renderRetention(snapshot.retention, snapshot.retention_series);
+						renderCohortRevenue(snapshot.cohort_revenue_series);
 						renderStickiness(snapshot.stickiness ?? []);
 						renderPlots(snapshot);
 					} else if (activeDashboardTab === "aso") {
