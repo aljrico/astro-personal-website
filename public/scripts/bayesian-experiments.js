@@ -71,32 +71,31 @@ function continuousMean(row) {
 	);
 }
 
-function continuousVariance(row, mean) {
-	if (!row?.n) return 0;
-	const secondMoment =
-		row.buckets.reduce((sum, bucket) => sum + Number(bucket[0]) * Number(bucket[1]) ** 2, 0) /
-		Number(row.n);
-	return Math.max(0, (secondMoment - mean ** 2) / (Number(row.n) + 1));
-}
-
 function posteriorDraws(row, draws, random) {
 	if (row.unit === "percent") {
 		const successes = Number(row.successes);
 		const failures = Number(row.n) - successes;
 		return Array.from({ length: draws }, () => 100 * beta(successes + 1, failures + 1, random));
 	}
-	// A grouped Bayesian bootstrap has Dirichlet(bucket counts) weights. Its
-	// posterior mean and variance are analytic; at experiment-sized samples the
-	// posterior of the mean is effectively normal. Sampling that approximation
-	// avoids millions of gamma draws on every dashboard load.
-	const mean = continuousMean(row);
-	const standardDeviation = Math.sqrt(continuousVariance(row, mean));
-	const bucketMeans = row.buckets.map((bucket) => Number(bucket[1]));
-	const minimum = Math.min(...bucketMeans);
-	const maximum = Math.max(...bucketMeans);
-	return Array.from({ length: draws }, () =>
-		Math.min(maximum, Math.max(minimum, mean + standardDeviation * normal(random))),
-	);
+	// Direct grouped Bayesian bootstrap. Each stored atom is [count, exact mean]
+	// for a narrow logarithmic bucket. Dirichlet(counts) weights preserve the
+	// empirical zero mass and ugly revenue tail without imposing a Normal or
+	// LogNormal likelihood on mixed ad + fixed-tier IAP revenue.
+	const buckets = row.buckets
+		.map(([count, mean]) => [Number(count), Number(mean)])
+		.filter(([count, mean]) => count > 0 && Number.isFinite(mean));
+	if (!buckets.length) return [];
+	if (buckets.length === 1) return Array(draws).fill(buckets[0][1]);
+	return Array.from({ length: draws }, () => {
+		let totalWeight = 0;
+		let weightedMean = 0;
+		for (const [count, mean] of buckets) {
+			const weight = gamma(count, random);
+			totalWeight += weight;
+			weightedMean += weight * mean;
+		}
+		return totalWeight > 0 ? weightedMean / totalWeight : continuousMean(row);
+	});
 }
 
 function armCenter(row) {
@@ -130,6 +129,7 @@ export function summarizeBayesianMetrics(
 
 		const controlDraws = posteriorDraws(control, draws, random);
 		const treatmentDraws = posteriorDraws(treatment, draws, random);
+		if (!controlDraws.length || !treatmentDraws.length) continue;
 		const differenceDraws = treatmentDraws.map((value, index) => value - controlDraws[index]);
 		const relativeDraws = treatmentDraws
 			.map((value, index) =>
@@ -173,7 +173,14 @@ export function summarizeBayesianMetrics(
 				relative_ci_high_pct: relativeHigh,
 				probability_better:
 					differenceDraws.filter((value) => value > 0).length / differenceDraws.length,
+				expected_loss_treatment:
+					differenceDraws.reduce((sum, value) => sum + Math.max(-value, 0), 0) /
+					differenceDraws.length,
+				expected_loss_control:
+					differenceDraws.reduce((sum, value) => sum + Math.max(value, 0), 0) /
+					differenceDraws.length,
 			},
+			posterior: { difference_draws: differenceDraws },
 		});
 	}
 	return summaries;

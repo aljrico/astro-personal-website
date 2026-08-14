@@ -34,6 +34,7 @@ test("beta-binomial retention is deterministic and favors the stronger arm", () 
 	assert.equal(first.length, 1);
 	assert.ok(first[0].effect.probability_better > 0.97);
 	assert.ok(first[0].effect.ci_low > 0);
+	assert.ok(first[0].effect.expected_loss_treatment < first[0].effect.expected_loss_control);
 	assert.ok(first[0].arms[0].ci_low < first[0].arms[0].value);
 	assert.ok(first[0].arms[0].value < first[0].arms[0].ci_high);
 });
@@ -112,6 +113,47 @@ test("continuous posterior stays inside the observed grouped support", () => {
 		assert.ok(arm.ci_low >= 0);
 		assert.ok(arm.ci_high <= 1);
 	}
+});
+
+test("grouped bootstrap exposes skew instead of forcing a symmetric interval", () => {
+	const inputs = [
+		{
+			metric: "d14_ltv",
+			label: "D14 net LTV",
+			unit: "usd",
+			horizon: "d14",
+			arm: "control",
+			n: 1000,
+			buckets: [
+				[990, 0],
+				[9, 1],
+				[1, 100],
+			],
+		},
+		{
+			metric: "d14_ltv",
+			label: "D14 net LTV",
+			unit: "usd",
+			horizon: "d14",
+			arm: "treatment",
+			n: 1000,
+			buckets: [
+				[980, 0],
+				[20, 4],
+			],
+		},
+	];
+	const [summary] = summarizeBayesianMetrics(inputs, {
+		controlArm: "control",
+		treatmentArm: "treatment",
+		draws: 8000,
+		seed: "whale",
+	});
+
+	const leftWidth = summary.arms[0].value - summary.arms[0].ci_low;
+	const rightWidth = summary.arms[0].ci_high - summary.arms[0].value;
+	assert.ok(Math.abs(rightWidth - leftWidth) > 0.005);
+	assert.ok(summary.posterior.difference_draws.length === 8000);
 });
 
 test("metrics missing either arm stay pending", () => {

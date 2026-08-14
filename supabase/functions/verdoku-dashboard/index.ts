@@ -269,12 +269,15 @@ Deno.serve(async (req) => {
 			p_platform: platform === "all" ? null : platform,
 			p_country: country === "ALL" ? null : country,
 		};
-		const [bayesianResult, assignmentsResult] = await Promise.all([
+		const [bayesianResult, assignmentsResult, policyResult] = await Promise.all([
 			client.rpc("get_experiment_bayesian_metric_inputs", {
 				p_project_id: "verdoku",
 				...params,
 			}),
 			client.rpc("get_verdoku_experiment_assignment_total", params),
+			client.rpc("get_verdoku_experiment_decision_policy", {
+				p_experiment_key: experiment,
+			}),
 		]);
 		if (bayesianResult.error || !bayesianResult.data) {
 			console.error(
@@ -290,11 +293,19 @@ Deno.serve(async (req) => {
 			);
 			return json({ error: "snapshot unavailable" }, 503, origin);
 		}
+		if (policyResult.error || !policyResult.data) {
+			console.error(
+				"experiment decision policy read failed",
+				policyResult.error?.message ?? "empty decision policy",
+			);
+			return json({ error: "snapshot unavailable" }, 503, origin);
+		}
 		data.bayesian_inputs = bayesianResult.data.inputs;
 		data.bayesian_method = bayesianResult.data.method;
 		data.bayesian_revision = bayesianResult.data.revision;
 		data.bayesian_refreshed_at = bayesianResult.data.refreshed_at;
 		data.assigned_total = Number(assignmentsResult.data);
+		data.decision_policy = policyResult.data;
 	}
 
 	return json(data, 200, origin);

@@ -242,64 +242,142 @@
 				flex-wrap: wrap;
 			}
 
-			.experiment-metrics-grid {
+			.experiment-decision-panel,
+			.experiment-effects-panel {
+				margin-bottom: 12px;
+			}
+
+			.experiment-decision-summary {
 				display: grid;
-				grid-template-columns: repeat(2, minmax(0, 1fr));
-				gap: 12px;
-				margin-bottom: 12px;
+				grid-template-columns: repeat(4, minmax(0, 1fr));
+				gap: 16px;
+				margin-top: 16px;
 			}
 
-			:global(.experiment-metric-panel) {
-				margin-bottom: 0;
-				padding: 18px 18px 14px;
-				border: 1px solid var(--line);
-				border-radius: 12px;
-				overflow: hidden;
-				background: color-mix(in srgb, var(--card) 82%, transparent);
+			.experiment-decision-stat {
+				min-width: 0;
+				padding-top: 12px;
+				border-top: 1px solid var(--line);
 			}
 
-			:global(.experiment-metric-panel .panel-head) {
-				display: flex;
-				align-items: baseline;
-				justify-content: space-between;
-				gap: 12px;
-				margin-bottom: 12px;
-			}
-
-			:global(.experiment-metric-panel .panel-title) {
-				margin: 0;
-				font-size: 12px;
-				font-weight: 800;
-			}
-
-			:global(.experiment-metric-panel .panel-note) {
-				margin: 0;
+			.experiment-decision-stat span,
+			:global(.experiment-effect-heading) {
+				display: block;
 				color: var(--muted);
-				font-size: 10px;
+				font-size: 9px;
+				font-weight: 700;
+				letter-spacing: 0.04em;
+				text-transform: uppercase;
 			}
 
-			:global(.experiment-posterior-effect) {
-				margin: -4px 0 10px;
-				color: var(--muted);
-				font-size: 10px;
-				line-height: 1.5;
+			.experiment-decision-stat strong {
+				display: block;
+				margin-top: 6px;
+				font-family: "Tiempos Text", Georgia, serif;
+				font-size: 20px;
 				font-variant-numeric: tabular-nums;
 			}
 
-			:global(.experiment-posterior-effect strong) {
-				color: var(--ink);
-			}
-
-			:global(.experiment-metric-panel .plot) {
-				width: 100%;
-				min-height: 170px;
-			}
-
-			:global(.experiment-metric-panel .plot svg) {
+			.experiment-decision-stat small {
 				display: block;
-				max-width: 100%;
-				overflow: visible;
-				font-family: "Styrene B", ui-sans-serif, system-ui, sans-serif;
+				margin-top: 4px;
+				color: var(--muted);
+				font-size: 9px;
+				line-height: 1.4;
+			}
+
+			.experiment-decision-stat[data-state="ship_treatment"] strong,
+			.experiment-decision-stat[data-state="practical_tie"] strong {
+				color: #14815d;
+			}
+
+			.experiment-decision-stat[data-state="keep_control"] strong,
+			.experiment-decision-stat[data-state="guardrail_blocked"] strong {
+				color: var(--red);
+			}
+
+			:global(.experiment-effect-group + .experiment-effect-group) {
+				margin-top: 18px;
+			}
+
+			:global(.experiment-effect-heading) {
+				margin-bottom: 5px;
+			}
+
+			:global(.experiment-effect-row) {
+				display: grid;
+				grid-template-columns: 38px 54px minmax(130px, 1fr) 74px;
+				align-items: center;
+				gap: 8px;
+				min-height: 35px;
+				border-bottom: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+				font-size: 10px;
+				font-variant-numeric: tabular-nums;
+			}
+
+			:global(.experiment-effect-row[data-role="primary"]) {
+				background: color-mix(in srgb, var(--green) 5%, transparent);
+			}
+
+			:global(.experiment-effect-horizon) {
+				font-weight: 800;
+			}
+
+			:global(.experiment-effect-probability) {
+				font-weight: 800;
+			}
+
+			:global(.experiment-effect-probability[data-strong="true"]) {
+				color: #14815d;
+			}
+
+			:global(.experiment-effect-track) {
+				position: relative;
+				height: 20px;
+			}
+
+			:global(.experiment-effect-zero) {
+				position: absolute;
+				top: 3px;
+				bottom: 3px;
+				left: 50%;
+				width: 1px;
+				background: color-mix(in srgb, var(--muted) 55%, transparent);
+			}
+
+			:global(.experiment-effect-interval) {
+				position: absolute;
+				top: 9px;
+				height: 2px;
+				border-radius: 999px;
+				background: var(--green);
+			}
+
+			:global(.experiment-effect-dot) {
+				position: absolute;
+				top: 6px;
+				width: 8px;
+				height: 8px;
+				border: 2px solid var(--card);
+				border-radius: 50%;
+				background: var(--navy);
+				transform: translateX(-50%);
+			}
+
+			:global(.experiment-effect-value) {
+				color: var(--muted);
+				text-align: right;
+			}
+
+			:global(.experiment-effect-pending) {
+				grid-column: 3 / -1;
+				color: var(--muted);
+			}
+
+			.experiment-effect-legend {
+				margin: 12px 0 0;
+				color: var(--muted);
+				font-size: 9px;
 			}
 
 			.plot-grid > :only-child {
@@ -630,8 +708,13 @@
 					grid-template-columns: 1fr 1fr;
 				}
 
-				.experiment-metrics-grid {
-					grid-template-columns: 1fr;
+				.experiment-decision-summary {
+					grid-template-columns: 1fr 1fr;
+				}
+
+				:global(.experiment-effect-row) {
+					grid-template-columns: 32px 48px minmax(90px, 1fr) 62px;
+					gap: 5px;
 				}
 
 				.plot-grid {
@@ -914,6 +997,52 @@
 						<div class="experiment-health" id="experiment-health"></div>
 					</section>
 
+					<section class="panel experiment-decision-panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Advisory read</h3>
+							<p class="panel-note" id="experiment-decision-note">
+								the dashboard recommends · you decide
+							</p>
+						</div>
+						<div class="experiment-decision-summary">
+							<div class="experiment-decision-stat">
+								<span id="experiment-probability-label">P(treatment &gt; control)</span>
+								<strong id="experiment-probability">—</strong>
+								<small id="experiment-probability-note">primary metric pending</small>
+							</div>
+							<div class="experiment-decision-stat">
+								<span id="experiment-lift-label">Expected lift</span>
+								<strong id="experiment-lift">—</strong>
+								<small id="experiment-lift-note">treatment − control</small>
+							</div>
+							<div class="experiment-decision-stat">
+								<span>Expected loss</span>
+								<strong id="experiment-risk">—</strong>
+								<small id="experiment-risk-note">choosing treatment · choosing control</small>
+							</div>
+							<div class="experiment-decision-stat" id="experiment-decision-stat">
+								<span>Recommendation</span>
+								<strong id="experiment-decision">Waiting for data</strong>
+								<small id="experiment-decision-reason"
+									>No experiment setting changes automatically.</small
+								>
+							</div>
+						</div>
+					</section>
+
+					<section class="panel experiment-effects-panel">
+						<div class="panel-head">
+							<h3 class="panel-title">Outcome effects</h3>
+							<p class="panel-note">
+								P(treatment &gt; control) · 95% credible interval around zero
+							</p>
+						</div>
+						<div id="experiment-effects"></div>
+						<p class="experiment-effect-legend">
+							Green line: credible interval · navy dot: posterior mean · shaded row: decision metric
+						</p>
+					</section>
+
 					<div class="plot-grid">
 						<section class="panel">
 							<div class="panel-head">
@@ -925,8 +1054,6 @@
 							<div class="plot" id="experiment-allocation-plot"></div>
 						</section>
 					</div>
-
-					<div class="experiment-metrics-grid" id="experiment-metrics-grid"></div>
 
 					<div class="plot-grid">
 						<section class="panel">
@@ -1080,6 +1207,7 @@
 		<script type="module" is:inline>
 			import * as Plot from "https://esm.sh/@observablehq/plot@0.6.17?bundle";
 			import { summarizeBayesianMetrics } from "/scripts/bayesian-experiments.js";
+			import { evaluateExperimentDecision } from "/scripts/experiment-decisions.js";
 
 			const endpoint = "https://lbitxwhhrohcjkbpbcrv.supabase.co/functions/v1/verdoku-dashboard";
 			// Telemetry before the 1.7.0 staged rollout completed is not trustworthy,
@@ -1143,6 +1271,10 @@
 			const PRIMARY_APP_KEY = "murder_sudoku";
 			const selectedCompetitorKeys = new Set(["enigmic"]);
 			const competitorColors = ["#234766", "#2abd88", "#8d6bb1", "#d18a28", "#5b7894", "#8b5e3c"];
+			const platformColor = {
+				domain: ["iOS", "Android"],
+				range: ["#5b7cfa", "#72b01d"],
+			};
 			let competitorApps = [];
 			let competitorSignature = "";
 			let experimentRosterSignature = "";
@@ -1236,6 +1368,7 @@
 				const rows = (data.hourly_players ?? []).map((row) => ({
 					...row,
 					hour: new Date(row.hour),
+					series: row.platform === "ios" ? "iOS" : "Android",
 					players: Number(row.players),
 				}));
 				const node = document.querySelector("#hourly-players-plot");
@@ -1243,13 +1376,19 @@
 					node.replaceChildren();
 					return;
 				}
+				const totals = new Map();
+				for (const row of rows) {
+					const key = row.hour.getTime();
+					totals.set(key, (totals.get(key) ?? 0) + row.players);
+				}
+				for (const row of rows) row.total = totals.get(row.hour.getTime()) ?? 0;
 				const width = node.clientWidth || 700;
 				replacePlot(
 					"#hourly-players-plot",
 					Plot.plot({
 						width,
 						height: 210,
-						marginTop: 8,
+						marginTop: 34,
 						marginRight: 12,
 						marginBottom: 30,
 						marginLeft: 43,
@@ -1262,26 +1401,32 @@
 							tickSize: 0,
 						},
 						y: { label: null, grid: true, zero: true, ticks: 4, tickSize: 0 },
+						color: { ...platformColor, legend: true },
 						marks: [
 							Plot.ruleY([0], { stroke: "#dfe5e8" }),
-							Plot.rectY(rows, {
-								x: "hour",
-								y: "players",
-								interval: "hour",
-								fill: "#234766",
-								insetLeft: 1,
-								insetRight: 1,
-								tip: true,
-								title: (row) =>
-									`${row.hour.toLocaleString("en", {
-										timeZone: "UTC",
-										month: "short",
-										day: "numeric",
-										hour: "2-digit",
-										minute: "2-digit",
-										hour12: false,
-									})} UTC: ${number.format(row.players)} players${row.partial ? " · partial" : ""}`,
-							}),
+							Plot.rectY(
+								rows,
+								Plot.stackY({
+									x: "hour",
+									y: "players",
+									interval: "hour",
+									fill: "series",
+									insetLeft: 1,
+									insetRight: 1,
+									tip: true,
+									title: (row) =>
+										`${row.hour.toLocaleString("en", {
+											timeZone: "UTC",
+											month: "short",
+											day: "numeric",
+											hour: "2-digit",
+											minute: "2-digit",
+											hour12: false,
+										})} UTC · ${row.series}: ${number.format(row.players)} players` +
+										(row.total ? ` (${((100 * row.players) / row.total).toFixed(1)}%)` : "") +
+										(row.partial ? " · partial" : ""),
+								}),
+							),
 						],
 					}),
 				);
@@ -1912,6 +2057,184 @@
 				);
 			}
 
+			function formatExperimentEffect(value, unit, signed = true) {
+				if (!Number.isFinite(value)) return "—";
+				const sign = signed && value > 0 ? "+" : "";
+				if (unit === "percent") return `${sign}${value.toFixed(2)}pp`;
+				if (unit === "usd")
+					return `${sign}$${value.toFixed(value < 0.01 && value > -0.01 ? 4 : 3)}`;
+				return `${sign}${value.toFixed(2)}m`;
+			}
+
+			function renderExperimentDecision(data, metrics, decision) {
+				const byKey = new Map(metrics.map((metric) => [metric.metric, metric]));
+				const policy = data.decision_policy ?? {};
+				const metric =
+					byKey.get(decision.metric) ??
+					byKey.get(policy.final?.metric) ??
+					byKey.get(policy.early?.metric);
+				const horizon = (
+					decision.horizon ??
+					metric?.horizon ??
+					policy.final?.horizon ??
+					""
+				).toUpperCase();
+				document.querySelector("#experiment-probability-label").textContent = horizon
+					? `P(treatment > control) · ${horizon}`
+					: "P(treatment > control)";
+				document.querySelector("#experiment-lift-label").textContent = horizon
+					? `Expected lift · ${horizon}`
+					: "Expected lift";
+				document.querySelector("#experiment-probability").textContent = metric
+					? `${(100 * metric.effect.probability_better).toFixed(1)}%`
+					: "—";
+				document.querySelector("#experiment-probability-note").textContent = metric
+					? `${metric.arms.map((arm) => `${arm.arm} n=${number.format(arm.n)}`).join(" · ")}`
+					: "complete cohort snapshot pending";
+				const relative = metric?.effect.relative_pct;
+				document.querySelector("#experiment-lift").textContent = Number.isFinite(relative)
+					? `${relative > 0 ? "+" : ""}${relative.toFixed(1)}%`
+					: metric
+					? formatExperimentEffect(metric.effect.value, metric.unit)
+					: "—";
+				document.querySelector("#experiment-lift-note").textContent = metric
+					? `${formatExperimentEffect(
+							metric.effect.value,
+							metric.unit,
+					  )} · 95% CrI ${formatExperimentEffect(
+							metric.effect.ci_low,
+							metric.unit,
+					  )} to ${formatExperimentEffect(metric.effect.ci_high, metric.unit)}`
+					: "treatment − control";
+				document.querySelector("#experiment-risk").textContent = metric
+					? `${formatExperimentEffect(
+							metric.effect.expected_loss_treatment,
+							metric.unit,
+							false,
+					  )} / ${formatExperimentEffect(metric.effect.expected_loss_control, metric.unit, false)}`
+					: "—";
+				document.querySelector("#experiment-risk-note").textContent =
+					"choosing treatment · choosing control";
+
+				const labels = {
+					insufficient_data: "Waiting for data",
+					keep_running: "Keep running",
+					ship_treatment: "Treatment looks shippable",
+					keep_control: "Keep control",
+					practical_tie: "Practical tie",
+					guardrail_blocked: "Guardrail blocks treatment",
+				};
+				const decisionStat = document.querySelector("#experiment-decision-stat");
+				decisionStat.dataset.state = decision.state;
+				document.querySelector("#experiment-decision").textContent =
+					labels[decision.state] ?? "Waiting for data";
+				const threshold = Number(decision.loss_threshold);
+				document.querySelector("#experiment-decision-reason").textContent =
+					decision.state === "insufficient_data"
+						? decision.reason
+						: decision.state === "guardrail_blocked"
+						? `${decision.blocked_by.metric.replaceAll("_", " ")} crossed its harm threshold`
+						: `${
+								decision.timing === "early" ? "D7 fast path" : "D14 final read"
+						  } · loss threshold ${
+								Number.isFinite(threshold) ? `$${threshold.toFixed(3)}/user` : "pending"
+						  }`;
+				document.querySelector("#experiment-decision-note").textContent =
+					"recommendation only · no experiment setting changes automatically";
+			}
+
+			function renderExperimentEffects(metrics, decision) {
+				const byKey = new Map(metrics.map((metric) => [metric.metric, metric]));
+				const groups = [
+					{
+						title: "Retention · lift in percentage points",
+						metrics: ["d1_retention", "d3_retention", "d7_retention", "d14_retention"],
+					},
+					{
+						title: "Cumulative playtime per exposed player · lift in minutes",
+						metrics: ["d0_playtime", "d1_playtime", "d3_playtime", "d7_playtime", "d14_playtime"],
+					},
+					{
+						title: "Estimated net LTV per exposed player · lift in USD",
+						metrics: ["d0_ltv", "d1_ltv", "d3_ltv", "d7_ltv", "d14_ltv"],
+					},
+					{ title: "Post-decision audit", metrics: ["d30_ltv"] },
+				];
+				const root = document.querySelector("#experiment-effects");
+				root.replaceChildren(
+					...groups.map((group) => {
+						const section = document.createElement("section");
+						section.className = "experiment-effect-group";
+						const heading = document.createElement("h4");
+						heading.className = "experiment-effect-heading";
+						heading.textContent = group.title;
+						const available = group.metrics.map((key) => byKey.get(key)).filter(Boolean);
+						const scale = Math.max(
+							...available.flatMap((metric) => [
+								Math.abs(metric.effect.ci_low),
+								Math.abs(metric.effect.ci_high),
+							]),
+							Number.EPSILON,
+						);
+						const rows = group.metrics.map((key) => {
+							const summary = byKey.get(key);
+							const row = document.createElement("div");
+							row.className = "experiment-effect-row";
+							if (key === decision.metric) row.dataset.role = "primary";
+							const horizon = document.createElement("span");
+							horizon.className = "experiment-effect-horizon";
+							horizon.textContent = key.split("_")[0].toUpperCase();
+							const probability = document.createElement("span");
+							probability.className = "experiment-effect-probability";
+							if (!summary) {
+								probability.textContent = "—";
+								const pending = document.createElement("span");
+								pending.className = "experiment-effect-pending";
+								pending.textContent = "Complete cohort snapshot pending";
+								row.append(horizon, probability, pending);
+								return row;
+							}
+							const pBetter = 100 * summary.effect.probability_better;
+							probability.textContent = `${pBetter.toFixed(0)}%`;
+							probability.dataset.strong = pBetter >= 90 ? "true" : "false";
+							const track = document.createElement("span");
+							track.className = "experiment-effect-track";
+							const zero = document.createElement("span");
+							zero.className = "experiment-effect-zero";
+							const position = (value) => 50 + 45 * Math.max(-1, Math.min(1, value / scale));
+							const low = position(summary.effect.ci_low);
+							const high = position(summary.effect.ci_high);
+							const interval = document.createElement("span");
+							interval.className = "experiment-effect-interval";
+							interval.style.left = `${Math.min(low, high)}%`;
+							interval.style.width = `${Math.abs(high - low)}%`;
+							const dot = document.createElement("span");
+							dot.className = "experiment-effect-dot";
+							dot.style.left = `${position(summary.effect.value)}%`;
+							track.append(zero, interval, dot);
+							const value = document.createElement("span");
+							value.className = "experiment-effect-value";
+							value.textContent = formatExperimentEffect(summary.effect.value, summary.unit);
+							row.title =
+								`${summary.label}: ${formatExperimentEffect(
+									summary.effect.value,
+									summary.unit,
+								)} · ` +
+								`95% credible interval ${formatExperimentEffect(
+									summary.effect.ci_low,
+									summary.unit,
+								)} to ` +
+								`${formatExperimentEffect(summary.effect.ci_high, summary.unit)} · ` +
+								summary.arms.map((arm) => `${arm.arm} n=${number.format(arm.n)}`).join(" · ");
+							row.append(horizon, probability, track, value);
+							return row;
+						});
+						section.append(heading, ...rows);
+						return section;
+					}),
+				);
+			}
+
 			function renderExperiment(data) {
 				experimentSnapshot = data;
 				experimentColors.clear();
@@ -1923,7 +2246,7 @@
 				phase.textContent = phaseLabel(experiment.phase);
 				phase.dataset.phase = experiment.phase;
 				document.querySelector("#experiment-metric-copy").textContent =
-					"Bayesian readout: retention, cumulative playtime, and cumulative LTV." +
+					"Bayesian readout: retention, cumulative playtime, and estimated net LTV. Recommendations remain yours to accept or reject." +
 					(experiment.winner_arm ? ` Winner: ${experiment.winner_arm}.` : "");
 
 				const assignment = (data.assignment ?? []).map((row, index) => ({
@@ -1999,150 +2322,17 @@
 				document.querySelector("#experiment-allocation-note").textContent =
 					"assigned: active 3d · exposed: experiment-to-date";
 
-				const metricOrder = [
-					"d1_retention",
-					"d7_retention",
-					"d1_playtime",
-					"d7_playtime",
-					"d0_ltv",
-					"d1_ltv",
-					"d7_ltv",
-				];
-				const metricGrid = document.querySelector("#experiment-metrics-grid");
 				const posteriorMetrics = summarizeBayesianMetrics(data.bayesian_inputs ?? [], {
 					controlArm: experiment.control_arm,
 					treatmentArm: experiment.treatment_arm,
-					draws: 5000,
+					draws: 8000,
 					seed:
 						`${experiment.experiment_key}|${data.filters?.platform}|${data.filters?.country}|` +
 						`${data.bayesian_revision}|${data.bayesian_refreshed_at}`,
 				});
-				const metricByKey = new Map(posteriorMetrics.map((metric) => [metric.metric, metric]));
-				const metricPlots = [];
-				const metricPanels = metricOrder.map((metric) => {
-					const summary = metricByKey.get(metric);
-					const section = document.createElement("section");
-					section.className = "panel experiment-metric-panel";
-					const head = document.createElement("div");
-					head.className = "panel-head";
-					const title = document.createElement("h3");
-					title.className = "panel-title";
-					title.textContent = summary?.label ?? metric.replaceAll("_", " ");
-					head.append(title);
-					const plotNode = document.createElement("div");
-					plotNode.className = "plot";
-					if (!summary) {
-						section.append(head, plotNode);
-						const empty = document.createElement("p");
-						empty.className = "panel-note";
-						empty.textContent = "Complete cohort snapshot pending";
-						plotNode.append(empty);
-						return section;
-					}
-					const rows = summary.arms.map((row) => ({
-						...row,
-						unit: summary.unit,
-						index: row.arm === experiment.control_arm ? 0 : 1,
-					}));
-					const formatNumber = (value, unit, signed = false) => {
-						const sign = signed && value > 0 ? "+" : "";
-						return unit === "percent"
-							? `${sign}${value.toFixed(2)}%`
-							: unit === "usd"
-							? `${sign}$${value.toFixed(4)}`
-							: `${sign}${value.toFixed(2)} min`;
-					};
-					const formatEffect = (value) =>
-						summary.unit === "percent"
-							? `${value > 0 ? "+" : ""}${value.toFixed(2)}pp`
-							: formatNumber(value, summary.unit, true);
-					const effect = document.createElement("p");
-					effect.className = "experiment-posterior-effect";
-					const probability = 100 * summary.effect.probability_better;
-					const relative =
-						summary.unit !== "percent" && Number.isFinite(summary.effect.relative_pct)
-							? ` · ${
-									summary.effect.relative_pct > 0 ? "+" : ""
-							  }${summary.effect.relative_pct.toFixed(1)}% relative`
-							: "";
-					effect.innerHTML =
-						`Treatment − control: <strong>${formatEffect(
-							summary.effect.value,
-						)}</strong> · 95% CrI ${formatEffect(summary.effect.ci_low)} to ${formatEffect(
-							summary.effect.ci_high,
-						)}` + `${relative} · ${probability.toFixed(1)}% chance better`;
-					section.append(head, effect, plotNode);
-					const values = rows.filter(
-						(row) =>
-							Number.isFinite(row.value) &&
-							Number.isFinite(row.ci_low) &&
-							Number.isFinite(row.ci_high),
-					);
-					if (values.length) metricPlots.push({ plotNode, rows, values, formatNumber });
-					return section;
-				});
-				metricGrid.replaceChildren(...metricPanels);
-				metricPlots.forEach(({ plotNode, rows, values, formatNumber }) => {
-					plotNode.append(
-						Plot.plot({
-							width: plotNode.clientWidth || 320,
-							height: 170,
-							marginTop: 14,
-							marginRight: 14,
-							marginBottom: 30,
-							marginLeft: 92,
-							style: experimentPlotStyle(),
-							x: {
-								label: null,
-								grid: true,
-								ticks: 4,
-								tickSize: 0,
-								tickFormat: (value) =>
-									rows[0].unit === "percent"
-										? `${value}%`
-										: rows[0].unit === "usd"
-										? `$${value}`
-										: `${value}m`,
-							},
-							y: { label: null, tickSize: 0 },
-							marks: [
-								Plot.ruleY(values, {
-									y: "arm",
-									x1: "ci_low",
-									x2: "ci_high",
-									stroke: (row) => experimentColor(row.arm, row.index),
-									strokeWidth: 2.4,
-								}),
-								Plot.tickX(values, {
-									x: "ci_low",
-									y: "arm",
-									stroke: (row) => experimentColor(row.arm, row.index),
-									strokeWidth: 1.5,
-								}),
-								Plot.tickX(values, {
-									x: "ci_high",
-									y: "arm",
-									stroke: (row) => experimentColor(row.arm, row.index),
-									strokeWidth: 1.5,
-								}),
-								Plot.dot(values, {
-									x: "value",
-									y: "arm",
-									fill: (row) => experimentColor(row.arm, row.index),
-									symbol: (row) => (row.index === 0 ? "circle" : "diamond"),
-									r: 5.5,
-									tip: true,
-									title: (row) =>
-										`${row.arm}: ${formatNumber(row.value, row.unit)} · ` +
-										`95% credible interval ${formatNumber(row.ci_low, row.unit)}–${formatNumber(
-											row.ci_high,
-											row.unit,
-										)} · n=${number.format(row.n)}`,
-								}),
-							],
-						}),
-					);
-				});
+				const decision = evaluateExperimentDecision(posteriorMetrics, data.decision_policy);
+				renderExperimentDecision(data, posteriorMetrics, decision);
+				renderExperimentEffects(posteriorMetrics, decision);
 
 				const funnel = (data.funnel ?? []).flatMap((armRow, index) =>
 					(armRow.stages ?? []).map((stage) => ({
@@ -2577,7 +2767,7 @@
 				bars("#platform-plot", platform, {
 					stacked: true,
 					legend: true,
-					color: { domain: ["iOS", "Android"], range: ["#5b7cfa", "#72b01d"], legend: true },
+					color: { ...platformColor, legend: true },
 					title: (row) =>
 						`${row.series}: ${number.format(row.value)} (${((100 * row.value) / row.total).toFixed(
 							1,
@@ -2691,7 +2881,7 @@
 					stacked: true,
 					legend: true,
 					tickFormat: money.format,
-					color: { domain: ["iOS", "Android"], range: ["#5b7cfa", "#72b01d"], legend: true },
+					color: { ...platformColor, legend: true },
 					title: (row) =>
 						`${shortDate.format(row.date)} · ${row.series}: ${money.format(row.value)} ` +
 						`of ${money.format(row.total)}`,
