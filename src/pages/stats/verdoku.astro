@@ -1196,6 +1196,16 @@
 					<div class="plot-grid">
 						<section class="panel">
 							<div class="panel-head">
+								<h3 class="panel-title">Revenue by environment</h3>
+								<p class="panel-note">share of environment-led revenue</p>
+							</div>
+							<div class="plot" id="revenue-environment-area-plot"></div>
+						</section>
+					</div>
+
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
 								<h3 class="panel-title">Revenue by source</h3>
 								<p class="panel-note">share of daily revenue</p>
 							</div>
@@ -2543,6 +2553,12 @@
 					farmyard: "Farmyard",
 					other_iap: "Other IAP",
 				};
+				const revenueLabel = (source) =>
+					revenueSourceLabels[source] ??
+					source
+						.split("_")
+						.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+						.join(" ");
 				const rawRevenueSources = (data.revenue_sources ?? []).map((row) => ({
 					day: row.day,
 					source: row.source,
@@ -2573,7 +2589,26 @@
 						date: day.date,
 						day: day.day,
 						source,
-						series: revenueSourceLabels[source] ?? source,
+						series: revenueLabel(source),
+						value: revenueSourceValues.get(`${day.day}:${source}`) ?? 0,
+					}));
+					const total = values.reduce((sum, row) => sum + row.value, 0);
+					return values.map((row) => ({
+						...row,
+						total,
+						share: total ? row.value / total : 0,
+					}));
+				});
+				const nonEnvironmentRevenueSources = new Set(["ads", "remove_ads", "hints", "other_iap"]);
+				const revenueEnvironmentKeys = revenueSourceKeys.filter(
+					(source) => !nonEnvironmentRevenueSources.has(source),
+				);
+				const revenueEnvironments = revenueSourceDays.flatMap((day) => {
+					const values = revenueEnvironmentKeys.map((source) => ({
+						date: day.date,
+						day: day.day,
+						source,
+						series: revenueLabel(source),
 						value: revenueSourceValues.get(`${day.day}:${source}`) ?? 0,
 					}));
 					const total = values.reduce((sum, row) => sum + row.value, 0);
@@ -2940,6 +2975,11 @@
 					monetisationLineOptions,
 				);
 
+				const sourceMoney = new Intl.NumberFormat("en", {
+					style: "currency",
+					currency: "USD",
+					maximumFractionDigits: 2,
+				});
 				const revenueSourceAreaNode = document.querySelector("#revenue-source-area-plot");
 				if (revenueSources.length) {
 					const sourceColors = {
@@ -2951,11 +2991,6 @@
 						farmyard: "#df7956",
 						other_iap: "#b8c0c7",
 					};
-					const sourceMoney = new Intl.NumberFormat("en", {
-						style: "currency",
-						currency: "USD",
-						maximumFractionDigits: 2,
-					});
 					replacePlot(
 						"#revenue-source-area-plot",
 						Plot.plot({
@@ -2976,7 +3011,7 @@
 								tickFormat: (value) => `${Math.round(value * 100)}%`,
 							},
 							color: {
-								domain: revenueSourceKeys.map((key) => revenueSourceLabels[key] ?? key),
+								domain: revenueSourceKeys.map(revenueLabel),
 								range: revenueSourceKeys.map((key) => sourceColors[key] ?? "#5b7894"),
 								legend: true,
 							},
@@ -2985,7 +3020,7 @@
 								Plot.areaY(
 									revenueSources,
 									Plot.stackY(
-										{ order: revenueSourceKeys.map((key) => revenueSourceLabels[key] ?? key) },
+										{ order: revenueSourceKeys.map(revenueLabel) },
 										{
 											x: "date",
 											y: "share",
@@ -3005,6 +3040,70 @@
 						}),
 					);
 				} else revenueSourceAreaNode.replaceChildren();
+
+				const revenueEnvironmentAreaNode = document.querySelector("#revenue-environment-area-plot");
+				if (revenueEnvironments.length) {
+					const environmentPalette = [
+						"#7b61a8",
+						"#d65d9e",
+						"#df7956",
+						"#2a9d8f",
+						"#3a86a8",
+						"#d89024",
+						"#bd2d47",
+						"#5b7894",
+					];
+					replacePlot(
+						"#revenue-environment-area-plot",
+						Plot.plot({
+							width: revenueEnvironmentAreaNode.clientWidth || 320,
+							height: 150,
+							marginTop: 34,
+							marginRight: 12,
+							marginBottom: 28,
+							marginLeft: 38,
+							style: { background: "transparent", color: "#7d8a96", fontSize: "9px" },
+							x: { type: "utc", label: null, ticks: 3, tickFormat: "%b %-d", tickSize: 0 },
+							y: {
+								label: null,
+								grid: true,
+								domain: [0, 1],
+								ticks: 5,
+								tickSize: 0,
+								tickFormat: (value) => `${Math.round(value * 100)}%`,
+							},
+							color: {
+								domain: revenueEnvironmentKeys.map(revenueLabel),
+								range: revenueEnvironmentKeys.map(
+									(_, index) => environmentPalette[index % environmentPalette.length],
+								),
+								legend: true,
+							},
+							marks: [
+								Plot.ruleY([0, 1], { stroke: "#dfe5e8" }),
+								Plot.areaY(
+									revenueEnvironments,
+									Plot.stackY(
+										{ order: revenueEnvironmentKeys.map(revenueLabel) },
+										{
+											x: "date",
+											y: "share",
+											z: "series",
+											fill: "series",
+											fillOpacity: 1,
+											curve: "monotone-x",
+											tip: true,
+											title: (row) =>
+												`${shortDate.format(row.date)} · ${row.series}: ${(100 * row.share).toFixed(
+													1,
+												)}% · ${sourceMoney.format(row.value)} of ${sourceMoney.format(row.total)}`,
+										},
+									),
+								),
+							],
+						}),
+					);
+				} else revenueEnvironmentAreaNode.replaceChildren();
 			}
 
 			function renderStickiness(rows) {
