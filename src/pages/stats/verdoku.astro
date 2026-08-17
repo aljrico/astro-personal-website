@@ -1197,7 +1197,7 @@
 						<section class="panel">
 							<div class="panel-head">
 								<h3 class="panel-title">Revenue by environment</h3>
-								<p class="panel-note">daily gross USD</p>
+								<p class="panel-note">environment revenue ÷ DAU</p>
 							</div>
 							<div class="plot" id="revenue-environment-plot"></div>
 						</section>
@@ -2609,7 +2609,7 @@
 						day: day.day,
 						source,
 						series: revenueLabel(source),
-						value: revenueSourceValues.get(`${day.day}:${source}`) ?? 0,
+						value: day.dau ? (revenueSourceValues.get(`${day.day}:${source}`) ?? 0) / day.dau : 0,
 					}));
 					const total = values.reduce((sum, row) => sum + row.value, 0);
 					return values.map((row) => ({
@@ -3056,7 +3056,7 @@
 					bars("#revenue-environment-plot", revenueEnvironments, {
 						stacked: true,
 						legend: true,
-						tickFormat: money.format,
+						tickFormat: preciseMoney.format,
 						color: {
 							domain: revenueEnvironmentKeys.map(revenueLabel),
 							range: revenueEnvironmentKeys.map(
@@ -3065,8 +3065,8 @@
 							legend: true,
 						},
 						title: (row) =>
-							`${shortDate.format(row.date)} · ${row.series}: ${sourceMoney.format(row.value)} ` +
-							`of ${sourceMoney.format(row.total)}`,
+							`${shortDate.format(row.date)} · ${row.series}: ${preciseMoney.format(row.value)} ` +
+							`of ${preciseMoney.format(row.total)} environment ARPDAU`,
 					});
 				} else revenueEnvironmentNode.replaceChildren();
 			}
