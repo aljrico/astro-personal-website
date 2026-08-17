@@ -1182,6 +1182,16 @@
 
 						<section class="panel">
 							<div class="panel-head">
+								<h3 class="panel-title">ARPPU</h3>
+								<p class="panel-note">revenue ÷ payers</p>
+							</div>
+							<div class="plot" id="arppu-plot"></div>
+						</section>
+					</div>
+
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
 								<h3 class="panel-title">Revenue by source</h3>
 								<p class="panel-note">share of daily revenue</p>
 							</div>
@@ -2500,6 +2510,7 @@
 						revenue_usd: revenue,
 						arpdau_usd: dau ? revenue / dau : 0,
 						conversion_pct: dau ? (100 * Number(row.payers)) / dau : 0,
+						arppu_usd: Number(row.payers) ? revenue / Number(row.payers) : 0,
 						ads_per_dau: dau ? Number(row.ad_impressions) / dau : 0,
 						country_dau: Array.isArray(row.country_dau) ? row.country_dau : [],
 					};
@@ -2913,6 +2924,14 @@
 					"ads_per_dau",
 					"#e76f51",
 					(value) => value.toFixed(2),
+					rows,
+					monetisationLineOptions,
+				);
+				line(
+					"#arppu-plot",
+					"arppu_usd",
+					"#bd2d47",
+					preciseMoney.format,
 					rows,
 					monetisationLineOptions,
 				);
