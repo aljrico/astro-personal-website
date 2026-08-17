@@ -1206,6 +1206,16 @@
 					<div class="plot-grid">
 						<section class="panel">
 							<div class="panel-head">
+								<h3 class="panel-title">Hints revenue</h3>
+								<p class="panel-note">hints revenue ÷ DAU</p>
+							</div>
+							<div class="plot" id="hints-revenue-plot"></div>
+						</section>
+					</div>
+
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
 								<h3 class="panel-title">Revenue by source</h3>
 								<p class="panel-note">share of daily revenue</p>
 							</div>
@@ -2618,6 +2628,11 @@
 						share: total ? row.value / total : 0,
 					}));
 				});
+				const hintsRevenue = revenueSourceDays.map((day) => ({
+					date: day.date,
+					day: day.day,
+					value: day.dau ? (revenueSourceValues.get(`${day.day}:hints`) ?? 0) / day.dau : 0,
+				}));
 				const caseBreakdowns = (data.case_breakdowns ?? []).map((row) => ({
 					...row,
 					date: new Date(`${row.day}T12:00:00Z`),
@@ -3069,6 +3084,14 @@
 							`of ${preciseMoney.format(row.total)} environment ARPDAU`,
 					});
 				} else revenueEnvironmentNode.replaceChildren();
+
+				bars("#hints-revenue-plot", hintsRevenue, {
+					y: "value",
+					fill: "#3a86a8",
+					tickFormat: preciseMoney.format,
+					title: (row) =>
+						`${shortDate.format(row.date)} · Hints: ${preciseMoney.format(row.value)} per DAU`,
+				});
 			}
 
 			function renderStickiness(rows) {
