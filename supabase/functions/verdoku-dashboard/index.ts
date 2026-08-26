@@ -272,7 +272,7 @@ Deno.serve(async (req) => {
 		data.hourly_players = hourlyPlayersResult.data;
 		data.notes = [
 			...(Array.isArray(data.notes) ? data.notes : []),
-			"D0/D3/D7/D14/D28 cohort LTV is cumulative estimated ads plus attributable RevenueCat IAP per user; only mature UTC cohorts with at least 100 installs are shown.",
+			"D0/D3/D7/D14/D28 cohort LTV is cumulative estimated paid ads plus attributable RevenueCat IAP per user; in-product house ads earn no ad revenue and are excluded. Only mature UTC cohorts with at least 100 installs are shown.",
 			"Mix-adjusted cohort LTV holds the country and platform distribution fixed to installs from 2026-07-14 through 2026-08-12; rare countries are pooled and points below 80% reference-mix coverage are omitted.",
 			"Cohort IAP begins on 2026-07-14 and includes RevenueCat purchases matched to install telemetry by product, platform, and purchase time.",
 		];
