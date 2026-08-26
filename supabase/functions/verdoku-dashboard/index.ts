@@ -217,13 +217,19 @@ Deno.serve(async (req) => {
 	}
 
 	if (!isAsoView && !isExperimentView) {
-		const [breakdownResult, cohortRevenueResult, revenueSourcesResult, hourlyPlayersResult] =
-			await Promise.all([
-				client.rpc("get_verdoku_dashboard_case_breakdowns"),
-				client.rpc("get_verdoku_dashboard_cohort_revenue"),
-				client.rpc("get_verdoku_dashboard_revenue_sources"),
-				client.rpc("get_verdoku_dashboard_hourly_players"),
-			]);
+		const [
+			breakdownResult,
+			cohortRevenueResult,
+			mixAdjustedCohortRevenueResult,
+			revenueSourcesResult,
+			hourlyPlayersResult,
+		] = await Promise.all([
+			client.rpc("get_verdoku_dashboard_case_breakdowns"),
+			client.rpc("get_verdoku_dashboard_cohort_revenue"),
+			client.rpc("get_verdoku_dashboard_mix_adjusted_cohort_revenue"),
+			client.rpc("get_verdoku_dashboard_revenue_sources"),
+			client.rpc("get_verdoku_dashboard_hourly_players"),
+		]);
 		if (breakdownResult.error || !breakdownResult.data) {
 			console.error(
 				"case breakdown read failed",
@@ -235,6 +241,13 @@ Deno.serve(async (req) => {
 			console.error(
 				"cohort revenue read failed",
 				cohortRevenueResult.error?.message ?? "empty cohort revenue",
+			);
+			return json({ error: "snapshot unavailable" }, 503, origin);
+		}
+		if (mixAdjustedCohortRevenueResult.error || !mixAdjustedCohortRevenueResult.data) {
+			console.error(
+				"mix-adjusted cohort revenue read failed",
+				mixAdjustedCohortRevenueResult.error?.message ?? "empty mix-adjusted cohort revenue",
 			);
 			return json({ error: "snapshot unavailable" }, 503, origin);
 		}
@@ -254,11 +267,13 @@ Deno.serve(async (req) => {
 		}
 		data.case_breakdowns = breakdownResult.data;
 		data.cohort_revenue_series = cohortRevenueResult.data;
+		data.mix_adjusted_cohort_revenue_series = mixAdjustedCohortRevenueResult.data;
 		data.revenue_sources = revenueSourcesResult.data;
 		data.hourly_players = hourlyPlayersResult.data;
 		data.notes = [
 			...(Array.isArray(data.notes) ? data.notes : []),
 			"D0/D3/D7/D14/D28 cohort LTV is cumulative estimated ads plus attributable RevenueCat IAP per user; only mature UTC cohorts with at least 100 installs are shown.",
+			"Mix-adjusted cohort LTV holds the country and platform distribution fixed to installs from 2026-07-14 through 2026-08-12; rare countries are pooled and points below 80% reference-mix coverage are omitted.",
 			"Cohort IAP begins on 2026-07-14 and includes RevenueCat purchases matched to install telemetry by product, platform, and purchase time.",
 		];
 	}

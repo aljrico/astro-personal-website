@@ -1238,6 +1238,16 @@
 						</section>
 					</div>
 
+					<div class="plot-grid">
+						<section class="panel">
+							<div class="panel-head">
+								<h3 class="panel-title">Mix-adjusted cohort LTV</h3>
+								<p class="panel-note">fixed country × platform mix</p>
+							</div>
+							<div class="plot" id="mix-adjusted-cohort-ltv-plot"></div>
+						</section>
+					</div>
+
 					<ul class="footnotes" id="footnotes"></ul>
 				</div>
 			</section>
@@ -1618,8 +1628,15 @@
 				}
 			}
 
-			function renderCohortRevenue(series = []) {
-				const node = document.querySelector("#cohort-ltv-plot");
+			function renderCohortRevenue(
+				series = [],
+				{
+					selector = "#cohort-ltv-plot",
+					colors = ["#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#084594"],
+					mixAdjusted = false,
+				} = {},
+			) {
+				const node = document.querySelector(selector);
 				const dayNs = [0, 3, 7, 14, 28];
 				const rows = (Array.isArray(series) ? series : []).flatMap((entry) => {
 					const dayN = Number(entry.day_n);
@@ -1630,6 +1647,7 @@
 						series: `D${dayN}`,
 						day_n: dayN,
 						cohort_size: Number(point.cohort_size),
+						reference_mix_coverage: Number(point.reference_mix_coverage),
 						value: Number(point.revenue_per_install_usd),
 					}));
 				});
@@ -1639,7 +1657,7 @@
 				}
 
 				replacePlot(
-					"#cohort-ltv-plot",
+					selector,
 					Plot.plot({
 						width: node.clientWidth || 700,
 						height: 210,
@@ -1659,7 +1677,7 @@
 						},
 						color: {
 							domain: dayNs.map((dayN) => `D${dayN}`),
-							range: ["#9ecae1", "#6baed6", "#4292c6", "#2171b5", "#084594"],
+							range: colors,
 							legend: true,
 						},
 						marks: [
@@ -1681,7 +1699,10 @@
 								title: (row) =>
 									`${shortDate.format(row.date)} · average ${row.series} LTV: ` +
 									`${preciseMoney.format(row.value)} per user · ` +
-									`${number.format(row.cohort_size)} users`,
+									`${number.format(row.cohort_size)} users` +
+									(mixAdjusted
+										? ` · ${(100 * row.reference_mix_coverage).toFixed(0)}% mix coverage`
+										: ""),
 							}),
 						],
 					}),
@@ -3176,6 +3197,14 @@
 							),
 						}))
 						.filter((entry) => entry.points.length),
+					mix_adjusted_cohort_revenue_series: (data.mix_adjusted_cohort_revenue_series ?? [])
+						.map((entry) => ({
+							...entry,
+							points: (entry.points ?? []).filter(
+								(point) => typeof point.cohort_day === "string" && point.cohort_day >= "2026-07-14",
+							),
+						}))
+						.filter((entry) => entry.points.length),
 					revenue_sources: (data.revenue_sources ?? []).filter(
 						(row) => typeof row.day === "string" && row.day >= "2026-07-14",
 					),
@@ -3190,6 +3219,11 @@
 				renderPeak(data.peak_dau);
 				renderRetention(data.retention, data.retention_series);
 				renderCohortRevenue(data.cohort_revenue_series);
+				renderCohortRevenue(data.mix_adjusted_cohort_revenue_series, {
+					selector: "#mix-adjusted-cohort-ltv-plot",
+					colors: ["#c7e9c0", "#a1d99b", "#74c476", "#31a354", "#006d2c"],
+					mixAdjusted: true,
+				});
 				renderStickiness(data.stickiness ?? []);
 				renderPlots(data);
 				document.querySelector("#footnotes").innerHTML = data.notes
@@ -3333,6 +3367,11 @@
 						renderHourlyPlayers(snapshot);
 						renderRetention(snapshot.retention, snapshot.retention_series);
 						renderCohortRevenue(snapshot.cohort_revenue_series);
+						renderCohortRevenue(snapshot.mix_adjusted_cohort_revenue_series, {
+							selector: "#mix-adjusted-cohort-ltv-plot",
+							colors: ["#c7e9c0", "#a1d99b", "#74c476", "#31a354", "#006d2c"],
+							mixAdjusted: true,
+						});
 						renderStickiness(snapshot.stickiness ?? []);
 						renderPlots(snapshot);
 					} else if (activeDashboardTab === "aso") {
