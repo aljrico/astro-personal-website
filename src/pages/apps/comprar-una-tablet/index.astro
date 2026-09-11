@@ -1,0 +1,60 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "Comprar una tablet",
+	description:
+		"A Spanish WordPress blog with tablet reviews, comparisons and buying guides. Around 90 posts between 2014 and 2016.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img src="/tabletIcon.svg" alt="Comprar una tablet icon" class="h-20 w-20 rounded-2xl" />
+			<div>
+				<h1 class="title mb-1 text-3xl">Comprar una tablet</h1>
+				<p class="text-gray-500">2014-2016</p>
+			</div>
+		</div>
+
+		<section class="mb-8">
+			<p class="mb-4">
+				A Spanish blog about tablets. Reviews, head to head comparisons, buying guides. The tagline
+				was "la verdad sobre cada tablet, que no te engañen": the truth about every tablet, don't
+				let them fool you.
+			</p>
+			<p class="mb-4">
+				Built on WordPress, monetised with affiliate links, promoted through a Facebook page.
+				Around 90 posts over two years, covering everything from the BQ Edison to the iPad Pro
+				to Remix OS.
+			</p>
+			<p class="mb-4">
+				It was my first go at SEO and writing for search intent. The domain is gone, but the
+				Wayback Machine still has it.
+			</p>
+		</section>
+
+		<div class="mb-12 flex flex-wrap gap-3">
+			<a
+				href="https://web.archive.org/web/2015/http://comprarunatablet.eu/"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="mdi:open-in-new" class="h-5 w-5" />
+				 Wayback Machine
+			</a>
+			<a
+				href="https://www.facebook.com/comprarunatablet.eu/"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="fa-brands:facebook" class="h-5 w-5" />
+				 Facebook
+			</a>
+		</div>
+	</div>
+</PageLayout>

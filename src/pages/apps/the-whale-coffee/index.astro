@@ -1,0 +1,48 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "The Whale Coffee",
+	description:
+		"A specialty coffee brand I ran in 2020 and 2021, sold on Amazon UK. It led directly to Coffee Galley.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img src="/whaleCoffeeIcon.png" alt="The Whale Coffee logo" class="h-20 w-20 rounded-2xl" />
+			<div>
+				<h1 class="title mb-1 text-3xl">The Whale Coffee</h1>
+				<p class="text-gray-500">2020-2021</p>
+			</div>
+		</div>
+
+		<section class="mb-8">
+			<p class="mb-4">
+				A specialty coffee brand. I designed the label, sourced the beans from a roaster, and sold
+				the bags on Amazon UK. Instagram did the marketing.
+			</p>
+			<p class="mb-4">
+				The interesting part was not the coffee. It was realising how much of running a coffee
+				brand is plumbing: roaster communication, packaging, labels, fulfilment. Every merchant
+				repeats the same work. That observation became
+				<a href="/apps/coffee-galley" class="project-link">Coffee Galley</a>, a Shopify app that
+				did the plumbing for them.
+			</p>
+		</section>
+
+		<div class="mb-12 flex flex-wrap gap-3">
+			<a
+				href="https://www.instagram.com/thewhalecoffee_/"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="fa-brands:instagram" class="h-5 w-5" />
+				 Instagram
+			</a>
+		</div>
+	</div>
+</PageLayout>

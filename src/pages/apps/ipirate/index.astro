@@ -1,0 +1,46 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "iPirate",
+	description: "A League of Legends YouTube channel I ran in 2014: daily pro replays and montages.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img src="/ipirateIcon.svg" alt="iPirate channel icon" class="h-20 w-20 rounded-2xl" />
+			<div>
+				<h1 class="title mb-1 text-3xl">iPirate</h1>
+				<p class="text-gray-500">2014</p>
+			</div>
+		</div>
+
+		<section class="mb-8">
+			<p class="mb-4">
+				A League of Legends YouTube channel. The pitch was simple: upload pro player replays every
+				day, cut montages of the best LCS moments, and build a place where fans could find all of
+				it in one feed.
+			</p>
+			<p class="mb-4">
+				It was my first attempt at making something for an audience instead of for myself. I
+				learned how much work sits behind "just post a video every day", and that consistency
+				beats production value. The channel is still up.
+			</p>
+		</section>
+
+		<div class="mb-12 flex flex-wrap gap-3">
+			<a
+				href="https://www.youtube.com/@iPirateLoL/videos"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="fa-brands:youtube" class="h-5 w-5" />
+				 YouTube
+			</a>
+		</div>
+	</div>
+</PageLayout>
