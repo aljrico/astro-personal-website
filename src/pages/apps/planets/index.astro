@@ -1,0 +1,54 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "planets",
+	description: "A tiny R data package with basic facts about every known planet.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img
+				src="/planets_logo.png"
+				alt="planets R package logo"
+				class="h-20 w-20 rounded-2xl object-contain"
+			/>
+			<div>
+				<h1 class="title mb-1 text-3xl">planets</h1>
+				<p class="text-gray-500">2019</p>
+			</div>
+		</div>
+
+		<section class="mb-8">
+			<p class="mb-4">
+				A data package. One data frame with basic information about all known planets: mass, radius,
+				distance, moons. Nothing clever. It exists because I wanted a small, clean dataset for
+				teaching ggplot2 and could not find one I liked.
+			</p>
+		</section>
+
+		<div class="mb-12 flex flex-wrap gap-3">
+			<a
+				href="https://github.com/aljrico/planets"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="fa-brands:github" class="h-5 w-5" />
+				 GitHub
+			</a>
+			<a
+				href="https://cran.r-project.org/package=planets"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="mdi:open-in-new" class="h-5 w-5" />
+				 CRAN
+			</a>
+		</div>
+	</div>
+</PageLayout>

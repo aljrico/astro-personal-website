@@ -8,78 +8,118 @@ const MAX_POSTS = 10;
 const allPosts = await getAllPosts();
 const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
 
-const projects: Array<{ title: string; date: string; href: string; icon: string }> = [
+type Project = { title: string; date: string; href: string; icon: string };
+const sections: Array<{ heading: string; projects: Project[] }> = [
 	{
-		title: "Tiny Crimes",
-		date: "2026",
-		href: "/apps/tiny-crimes",
-		icon: "/tinyCrimesIcon.png",
+		heading: "Apps & Games",
+		projects: [
+			{
+				title: "Tiny Crimes",
+				date: "2026",
+				href: "/apps/tiny-crimes",
+				icon: "/tinyCrimesIcon.png",
+			},
+			{
+				title: "Test DGT",
+				date: "2026",
+				href: "/apps/test-dgt",
+				icon: "/testDgtIcon.png",
+			},
+			{
+				title: "Mossos Coach",
+				date: "2026",
+				href: "/apps/flama-coach",
+				icon: "/flamaIcon.png",
+			},
+			{
+				title: "Match Tile: Mini",
+				date: "2023",
+				href: "/apps/match-tile-mini",
+				icon: "/miniMatchIcon.png",
+			},
+			{
+				title: "Cookie Empire",
+				date: "2022",
+				href: "/apps/cookie-empire",
+				icon: "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5e/15/4a/5e154ae1-c4c9-0b05-187f-918de949abb3/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-85-220.png/128x128bb.jpg",
+			},
+			{
+				title: "Pizza Clicker",
+				date: "2022",
+				href: "/apps/pizza-clicker",
+				icon: "/pizzaClickerIcon.png",
+			},
+		],
 	},
 	{
-		title: "Test DGT",
-		date: "2026",
-		href: "/apps/test-dgt",
-		icon: "/testDgtIcon.png",
+		heading: "Open Source",
+		projects: [
+			{
+				title: "toonlite",
+				date: "2025",
+				href: "/apps/toonlite",
+				icon: "/toonlite_logo.svg",
+			},
+			{
+				title: "rfinance",
+				date: "2020-2024",
+				href: "/apps/rfinance",
+				icon: "/rfinance_logo.png",
+			},
+			{
+				title: "tolkien",
+				date: "2019",
+				href: "/apps/tolkien",
+				icon: "/tolkien_logo.png",
+			},
+			{
+				title: "planets",
+				date: "2019",
+				href: "/apps/planets",
+				icon: "/planets_logo.png",
+			},
+			{
+				title: "gameofthrones",
+				date: "2018",
+				href: "/apps/gameofthrones",
+				icon: "/got_logo.png",
+			},
+			{
+				title: "harrypotter",
+				date: "2018",
+				href: "/apps/harrypotter",
+				icon: "/hp_logo.png",
+			},
+		],
 	},
 	{
-		title: "Mossos Coach",
-		date: "2026",
-		href: "/apps/flama-coach",
-		icon: "/flamaIcon.png",
-	},
-	{
-		title: "Match Tile: Mini",
-		date: "2023",
-		href: "/apps/match-tile-mini",
-		icon: "/miniMatchIcon.png",
-	},
-	{
-		title: "Cookie Empire",
-		date: "2022",
-		href: "/apps/cookie-empire",
-		icon: "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5e/15/4a/5e154ae1-c4c9-0b05-187f-918de949abb3/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-85-220.png/128x128bb.jpg",
-	},
-	{
-		title: "Pizza Clicker",
-		date: "2022",
-		href: "/apps/pizza-clicker",
-		icon: "/pizzaClickerIcon.png",
-	},
-	{
-		title: "The Whale Coffee",
-		date: "2020-2021",
-		href: "/apps/the-whale-coffee",
-		icon: "/whaleCoffeeIcon.png",
-	},
-	{
-		title: "Coffee Galley",
-		date: "2020-2022",
-		href: "/apps/coffee-galley",
-		icon: "/ship_logo.png",
-	},
-	{
-		title: "gameofthrones",
-		date: "2018",
-		href: "/apps/gameofthrones",
-		icon: "/got_logo.png",
-	},
-	{
-		title: "harrypotter",
-		date: "2018",
-		href: "/apps/harrypotter",
-		icon: "/hp_logo.png",
-	},
-	{
-		title: "Comprar una tablet",
-		date: "2014-2016",
-		href: "/apps/comprar-una-tablet",
-		icon: "/tabletIcon.svg",
-	},
-	{
-		title: "iPirate",
-		date: "2014-2017",
-		href: "/apps/ipirate",
-		icon: "/ipirateIcon.svg",
+		heading: "Ventures",
+		projects: [
+			{
+				title: "Coffee Galley",
+				date: "2020-2022",
+				href: "/apps/coffee-galley",
+				icon: "/ship_logo.png",
+			},
+			{
+				title: "The Whale Coffee",
+				date: "2020-2021",
+				href: "/apps/the-whale-coffee",
+				icon: "/whaleCoffeeIcon.png",
+			},
+			{
+				title: "Comprar una tablet",
+				date: "2014-2016",
+				href: "/apps/comprar-una-tablet",
+				icon: "/tabletIcon.svg",
+			},
+			{
+				title: "iPirate",
+				date: "2014-2017",
+				href: "/apps/ipirate",
+				icon: "/ipirateIcon.svg",
+			},
+		],
 	},
 ];
 ---
@@ -105,27 +145,38 @@ const projects: Array<{ title: string; date: string; href: string; icon: string 
 		</p>
 	</section>
 	<section class="mt-10 sm:mt-12">
-		<h2 class="title mb-4 text-xl">Side Projects</h2>
-		<ul class="grid max-w-2xl grid-cols-[repeat(auto-fit,minmax(13.5rem,1fr))] gap-x-4 gap-y-1">
-			{
-				projects.map(({ href, title, date, icon }) => (
-					<li>
-						<a
-							href={href}
-							target={href.startsWith("/") ? undefined : "_blank"}
-							rel={href.startsWith("/") ? undefined : "noopener noreferrer"}
-							class="group flex items-center gap-3 rounded-lg px-2 py-2 -mx-2 transition-colors hover:bg-[#F0EEE9]"
-						>
-							<img src={icon} alt="" class="h-10 w-10 shrink-0 rounded-[10px] object-contain shadow-sm ring-1 ring-black/5" />
-							<span class="relative">
-								<span class="block font-[550] group-hover:underline">{title}</span>
-								<span class="block text-xs text-gray-500">{date}</span>
-							</span>
-						</a>
-					</li>
-				))
-			}
-		</ul>
+		<h2 class="title mb-6 text-xl">Side Projects</h2>
+		{
+			sections.map((section) => (
+				<div class="mb-8 last:mb-0">
+					<h3 class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+						{section.heading}
+					</h3>
+					<ul class="grid max-w-2xl grid-cols-[repeat(auto-fit,minmax(13.5rem,1fr))] gap-x-4 gap-y-1">
+						{section.projects.map(({ href, title, date, icon }) => (
+							<li>
+								<a
+									href={href}
+									target={href.startsWith("/") ? undefined : "_blank"}
+									rel={href.startsWith("/") ? undefined : "noopener noreferrer"}
+									class="group -mx-2 flex items-center gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-[#F0EEE9]"
+								>
+									<img
+										src={icon}
+										alt=""
+										class="h-10 w-10 shrink-0 rounded-[10px] object-contain shadow-sm ring-1 ring-black/5"
+									/>
+									<span class="relative">
+										<span class="block font-[550] group-hover:underline">{title}</span>
+										<span class="block text-xs text-gray-500">{date}</span>
+									</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			))
+		}
 	</section>
 	<section aria-label="Blog post list" class="mt-10 sm:mt-12">
 		<h2 class="title mb-4 text-xl">Posts</h2>

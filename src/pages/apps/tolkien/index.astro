@@ -1,0 +1,55 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "tolkien",
+	description: "An R package with Tolkien-inspired colour palettes for base R and ggplot2.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img
+				src="/tolkien_logo.png"
+				alt="tolkien R package logo"
+				class="h-20 w-20 rounded-2xl object-contain"
+			/>
+			<div>
+				<h1 class="title mb-1 text-3xl">tolkien</h1>
+				<p class="text-gray-500">2019</p>
+			</div>
+		</div>
+
+		<section class="mb-8">
+			<p class="mb-4">
+				The third palette package, after harrypotter and gameofthrones. Colour scales drawn from the
+				Tolkien legendarium: Mordor, the Shire, Rivendell, Sauron. Picked by hand to match the
+				franchise but still work on a chart.
+			</p>
+			<p class="mb-4">"It's the job that's never started as takes longest to finish."</p>
+		</section>
+
+		<div class="mb-12 flex flex-wrap gap-3">
+			<a
+				href="https://github.com/aljrico/tolkien"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="fa-brands:github" class="h-5 w-5" />
+				 GitHub
+			</a>
+			<a
+				href="https://cran.r-project.org/package=tolkien"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="mdi:open-in-new" class="h-5 w-5" />
+				 CRAN
+			</a>
+		</div>
+	</div>
+</PageLayout>

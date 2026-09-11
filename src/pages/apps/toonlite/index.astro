@@ -1,0 +1,59 @@
+---
+import PageLayout from "@/layouts/Base";
+import { Icon } from "astro-icon";
+
+const meta = {
+	title: "toonlite",
+	description: "A fast, minimal-dependency R interface for TOON, a compact data format for LLMs.",
+};
+---
+
+<PageLayout meta={meta}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<img
+				src="/toonlite_logo.svg"
+				alt="toonlite R package logo"
+				class="h-20 w-20 rounded-2xl object-contain"
+			/>
+			<div>
+				<h1 class="title mb-1 text-3xl">toonlite</h1>
+				<p class="text-gray-500">2025-present</p>
+			</div>
+		</div>
+
+		<section class="mb-8">
+			<p class="mb-4">
+				A fast, minimal-dependency R interface for TOON, a compact, human-readable data format built
+				for passing structured data to language models with far fewer tokens than JSON. Read, write,
+				validate, stream and convert, with a C++ backend.
+			</p>
+			<p class="mb-4">
+				JSON is verbose. YAML is ambiguous. CSV cannot nest. TOON gives you nesting, explicit types
+				and comments at a fraction of the token cost. This package makes it a first-class citizen in
+				R.
+			</p>
+		</section>
+
+		<div class="mb-12 flex flex-wrap gap-3">
+			<a
+				href="https://github.com/aljrico/toonlite"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="fa-brands:github" class="h-5 w-5" />
+				 GitHub
+			</a>
+			<a
+				href="https://cran.r-project.org/package=toonlite"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
+			>
+				<Icon name="mdi:open-in-new" class="h-5 w-5" />
+				 CRAN
+			</a>
+		</div>
+	</div>
+</PageLayout>
