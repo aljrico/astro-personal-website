@@ -1,9 +1,19 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-const { ranges, summarize } = await import(
+const { ranges, summarize, appendCurrentMonth } = await import(
 	"data:text/javascript;base64," +
 		readFileSync(new URL("../public/scripts/revenue-portal.js", import.meta.url)).toString("base64")
 );
+const history = appendCurrentMonth({ reports: [], totals: [] }, {
+	reports: [{ provider: "apple", period_start: "2026-09-01" },
+		{ provider: "apple", period_start: "2026-09-02" },
+		{ provider: "admob", period_start: "2026-09-01" }],
+	totals: [{ provider: "apple", period_start: "2026-09-01", amount_eur: "5" },
+		{ provider: "apple", period_start: "2026-09-02", amount_eur: "-1" }],
+}, "2026-09-02");
+assert.equal(history.reports.length, 1); // Incomplete AdMob coverage stays missing.
+assert.equal(history.reports[0].period_start, "2026-09-01");
+assert.equal(history.totals.reduce((sum, row) => sum + Number(row.amount_eur), 0), 4);
 assert.deepEqual(ranges("mtd", new Date("2026-09-30T12:00:00Z")), {
 	from: "2026-09-01",
 	to: "2026-09-29",

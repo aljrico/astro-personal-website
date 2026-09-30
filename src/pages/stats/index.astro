@@ -355,7 +355,7 @@
 						>Period<select id="period"
 							><option value="mtd">Month to date</option><option value="7">Last 7 days</option
 							><option value="30">Last 30 days</option><option value="90">Last 90 days</option
-							><option value="history">Monthly history</option><option value="custom"
+							><option value="history" selected>All history</option><option value="custom"
 								>Custom dates</option
 							></select
 						></label
@@ -437,7 +437,7 @@
 		</main>
 		<script type="module" is:inline>
 			import * as Plot from "https://esm.sh/@observablehq/plot@0.6.17?bundle";
-			import { ranges, summarize } from "/scripts/revenue-portal.js";
+			import { ranges, summarize, appendCurrentMonth } from "/scripts/revenue-portal.js";
 			const $ = (selector) => document.querySelector(selector);
 			const KEY = "verdoku-dashboard-key";
 			const endpoint = "https://lbitxwhhrohcjkbpbcrv.supabase.co/functions/v1/verdoku-dashboard";
@@ -702,11 +702,10 @@
 					let nextSelection;
 					let grain = "day";
 					if (preset === "history") {
-						const now = new Date(),
-							start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 12, 1));
+						const now = new Date();
 						nextSelection = {
-							from: start.toISOString().slice(0, 10),
-							to: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 0))
+							from: "2019-01-01",
+							to: new Date(now.getTime() - 86400000)
 								.toISOString()
 								.slice(0, 10),
 							priorFrom: "1900-01-01",
@@ -746,7 +745,23 @@
 					}
 					if (!response.ok)
 						throw new Error("Revenue is temporarily unavailable. Last loaded data is preserved.");
-					snapshot = await response.json();
+						snapshot = await response.json();
+						if (grain === "month") {
+							const monthStart = nextSelection.to.slice(0, 7) + "-01";
+							if (!snapshot.reports.some((row) => row.period_start === monthStart)) {
+								url.search = new URLSearchParams({ view: "portfolio", from: monthStart,
+									to: nextSelection.to, grain: "day" }).toString();
+								const partial = await fetch(url, { headers: { Authorization: `Bearer ${token}` },
+									signal: AbortSignal.timeout(20000) });
+								if (!partial.ok) throw new Error("Current month is temporarily unavailable.");
+								const daily = await partial.json();
+								appendCurrentMonth(snapshot, daily, nextSelection.to);
+							}
+							const first = snapshot.totals.filter((row) => Number(row.amount) !== 0)
+								.map((row) => row.period_start).sort()[0] ||
+								snapshot.reports.map((row) => row.period_start).sort()[0];
+							if (first) nextSelection.from = first;
+						}
 					if (id !== requestId) return;
 					selection = nextSelection;
 					$("#access").hidden = true;

@@ -1,5 +1,16 @@
 const day = (date) => date.toISOString().slice(0, 10);
 const shifted = (date, days) => new Date(Date.parse(date + "T00:00:00Z") + days * 86400000);
+export function appendCurrentMonth(monthly, daily, to) {
+	const start = to.slice(0, 7) + "-01";
+	const bucket = (row) => ({ ...row, period_start: start, period_end: to, grain: "month" });
+	monthly.totals.push(...daily.totals.map(bucket));
+	for (const provider of new Set(daily.reports.map((row) => row.provider))) {
+		const reports = daily.reports.filter((row) => row.provider === provider);
+		if (new Set(reports.map((row) => row.period_start)).size === Number(to.slice(8)))
+			monthly.reports.push(bucket(reports[0]));
+	}
+	return monthly;
+}
 export function ranges(preset, now = new Date(), custom = {}) {
 	const to = custom.to || day(new Date(now.getTime() - 86400000));
 	const from =
