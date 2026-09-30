@@ -1,0 +1,778 @@
+---
+// Private revenue utility: excluded from navigation and sitemap like /stats/verdoku.
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex, nofollow, noarchive" />
+		<meta name="referrer" content="no-referrer" />
+		<meta name="theme-color" content="#f7f7f4" />
+		<title>Portfolio · Revenue</title>
+		<style>
+			@font-face {
+				font-family: Styrene;
+				src: url("/fonts/StyreneB-Regular.woff2");
+				font-display: swap;
+			}
+			@font-face {
+				font-family: Styrene;
+				src: url("/fonts/StyreneB-Bold.woff2");
+				font-weight: 700;
+				font-display: swap;
+			}
+			@font-face {
+				font-family: Tiempos;
+				src: url("/fonts/TiemposText-Bold.woff2");
+				font-weight: 700;
+				font-display: swap;
+			}
+			:root {
+				color-scheme: light;
+				--paper: #f7f7f4;
+				--ink: #26323d;
+				--muted: #687783;
+				--line: #e3e7e8;
+				--navy: #234766;
+				--green: #14815d;
+				--amber: #9b6514;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				margin: 0;
+				background: var(--paper);
+				color: var(--ink);
+				font-family: Styrene, system-ui, sans-serif;
+				-webkit-font-smoothing: antialiased;
+			}
+			main {
+				max-width: 1200px;
+				margin: auto;
+				padding: 32px 32px 60px;
+			}
+			header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				gap: 20px;
+				border-bottom: 1px solid var(--line);
+				padding-bottom: 20px;
+			}
+			.eyebrow,
+			.label,
+			th {
+				font-size: 11px;
+				font-weight: 700;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+			.eyebrow {
+				color: var(--muted);
+				margin: 0 0 10px;
+			}
+			h1,
+			h2,
+			.amount {
+				font-family: Tiempos, Georgia, serif;
+			}
+			h1 {
+				font-size: 46px;
+				letter-spacing: -0.04em;
+				margin: 0;
+			}
+			h2 {
+				font-size: 22px;
+				margin: 0;
+			}
+			p {
+				line-height: 1.6;
+			}
+			a {
+				color: var(--navy);
+				text-decoration-thickness: 1px;
+				text-underline-offset: 3px;
+			}
+			button,
+			input,
+			select {
+				font: inherit;
+				color: inherit;
+				border: 1px solid var(--line);
+				border-radius: 7px;
+				padding: 9px 12px;
+				background: #fff;
+			}
+			button {
+				cursor: pointer;
+			}
+			button:hover {
+				border-color: var(--navy);
+			}
+			button:focus-visible,
+			input:focus-visible,
+			select:focus-visible,
+			a:focus-visible {
+				outline: 2px solid var(--navy);
+				outline-offset: 3px;
+			}
+			.controls {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: end;
+				gap: 12px;
+				margin: 24px 0;
+			}
+			.controls label {
+				display: grid;
+				gap: 5px;
+				font-size: 11px;
+				color: var(--muted);
+			}
+			.controls select,
+			.controls input {
+				font-size: 13px;
+			}
+			.controls button {
+				margin-left: auto;
+				font-size: 12px;
+			}
+			.cards {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 14px;
+			}
+			.card,
+			.panel {
+				background: #fff;
+				border: 1px solid var(--line);
+				border-radius: 12px;
+				padding: 22px;
+			}
+			.label {
+				color: var(--muted);
+			}
+			.amount {
+				display: block;
+				margin-top: 12px;
+				font-size: 35px;
+				font-variant-numeric: tabular-nums;
+			}
+			.note {
+				display: block;
+				margin-top: 8px;
+				color: var(--muted);
+				font-size: 12px;
+				line-height: 1.5;
+			}
+			.panel {
+				margin-top: 20px;
+			}
+			.panel-head {
+				display: flex;
+				justify-content: space-between;
+				align-items: baseline;
+				gap: 16px;
+				margin-bottom: 20px;
+			}
+			.panel-head span {
+				color: var(--muted);
+				font-size: 12px;
+			}
+			.plot {
+				min-height: 240px;
+			}
+			.plot :global(svg) {
+				max-width: 100%;
+				height: auto;
+			}
+			.table-wrap {
+				overflow: auto;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 13px;
+			}
+			th {
+				text-align: right;
+				color: var(--muted);
+				padding: 0 12px 14px;
+				white-space: nowrap;
+			}
+			th:first-child,
+			td:first-child {
+				text-align: left;
+				padding-left: 0;
+			}
+			td {
+				text-align: right;
+				padding: 16px 12px;
+				border-top: 1px solid var(--line);
+				font-variant-numeric: tabular-nums;
+				white-space: nowrap;
+			}
+			td strong {
+				font-weight: 700;
+			}
+			.share {
+				height: 3px;
+				background: var(--navy);
+				margin-top: 7px;
+				border-radius: 2px;
+			}
+			.sources {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				gap: 14px;
+			}
+			.source {
+				border-top: 1px solid var(--line);
+				padding-top: 14px;
+			}
+			.source-head {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.badge {
+				border-radius: 999px;
+				padding: 4px 8px;
+				font-size: 11px;
+				color: var(--amber);
+				background: #fff4dd;
+			}
+			.badge[data-state="ok"] {
+				color: var(--green);
+				background: #e9f8f1;
+			}
+			.source p {
+				font-size: 12px;
+				margin: 9px 0 0;
+				color: var(--muted);
+			}
+			.notice {
+				color: var(--amber);
+				background: #fff4dd;
+				border-radius: 8px;
+				padding: 12px 16px;
+				font-size: 13px;
+			}
+			footer {
+				font-size: 12px;
+				color: var(--muted);
+				margin-top: 24px;
+			}
+			#access {
+				max-width: 440px;
+				margin: 80px auto;
+			}
+			#access form {
+				display: grid;
+				gap: 14px;
+			}
+			#access h1 {
+				font-size: 36px;
+			}
+			#access button {
+				background: var(--navy);
+				color: #fff;
+			}
+			#access-error,
+			#load-error {
+				color: #ab3347;
+				font-size: 13px;
+			}
+			[hidden] {
+				display: none !important;
+			}
+			@media (max-width: 700px) {
+				main {
+					padding: 22px 16px 40px;
+				}
+				h1 {
+					font-size: 36px;
+				}
+				header {
+					align-items: start;
+				}
+				.cards {
+					grid-template-columns: 1fr;
+					gap: 10px;
+				}
+				.card {
+					padding: 17px;
+				}
+				.amount {
+					font-size: 30px;
+					margin-top: 8px;
+				}
+				.sources {
+					grid-template-columns: 1fr;
+				}
+				.panel {
+					padding: 18px;
+				}
+				.panel-head {
+					flex-wrap: wrap;
+				}
+				.controls button {
+					margin-left: 0;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<section id="access" class="panel" aria-labelledby="access-title">
+				<p class="eyebrow">Private portfolio</p><h1 id="access-title">
+					Your projects. Your revenue.
+				</h1>
+				<p>Use the same access key as the Verdoku dashboard.</p>
+				<form id="access-form">
+					<label for="access-key">Dashboard access key</label><input
+						id="access-key"
+						type="password"
+						autocomplete="off"
+						required
+					/><button type="submit">Open portfolio</button>
+				</form>
+				<p id="access-error" role="alert"></p>
+			</section>
+			<p id="loading" role="status" hidden>Loading revenue…</p>
+			<section id="dashboard" hidden>
+				<header>
+					<div><p class="eyebrow">Alejandro · Portfolio</p><h1>The earnings.</h1></div><button
+						id="lock"
+						type="button">Lock dashboard</button
+					>
+				</header>
+				<div class="controls">
+					<label
+						>Period<select id="period"
+							><option value="mtd">Month to date</option><option value="7">Last 7 days</option
+							><option value="30">Last 30 days</option><option value="90">Last 90 days</option
+							><option value="history">Monthly history</option><option value="custom"
+								>Custom dates</option
+							></select
+						></label
+					>
+					<label id="from-label" hidden>From<input id="from" type="date" /></label><label
+						id="to-label"
+						hidden>To<input id="to" type="date" /></label
+					>
+					<label
+						>Platform<select id="platform"
+							><option value="all">All platforms</option><option value="ios">iOS</option><option
+								value="android">Android</option
+							></select
+						></label
+					>
+					<label
+						>Source<select id="provider"
+							><option value="all">All revenue</option><option value="apple">Apple purchases</option
+							><option value="admob">Advertising</option></select
+						></label
+					>
+					<button id="refresh" type="button">Refresh view</button>
+				</div>
+				<p id="load-error" role="alert"></p><p id="coverage" class="notice" hidden></p>
+				<div class="cards">
+					<section class="card">
+						<span class="label">Reported earnings · EUR</span><strong class="amount" id="total"
+							>—</strong
+						><span class="note" id="total-note">Developer proceeds + advertising</span>
+					</section>
+					<section class="card">
+						<span class="label">Compared with previous period</span><strong
+							class="amount"
+							id="change">—</strong
+						><span class="note" id="change-note">Waiting for matching coverage</span>
+					</section>
+					<section class="card">
+						<span class="label">Top project</span><strong class="amount" id="leader">—</strong><span
+							class="note"
+							id="leader-note"></span>
+					</section>
+				</div>
+				<section class="panel">
+					<div class="panel-head"><h2>Revenue over time</h2><span id="range-label"></span></div><div
+						id="trend"
+						class="plot"
+					>
+					</div>
+				</section>
+				<section class="panel">
+					<div class="panel-head">
+						<h2>By project</h2><span>Store fees and taxes deducted from Apple proceeds</span>
+					</div><div class="table-wrap">
+						<table>
+							<thead
+								><tr><th>Project</th><th>Purchases</th><th>Ads</th><th>Total</th><th>Share</th></tr
+								></thead
+							><tbody id="projects"></tbody>
+						</table>
+					</div>
+				</section>
+				<section class="panel">
+					<div class="panel-head">
+						<h2>Connections</h2><span>Automatic collection · daily at 17:20 UTC</span>
+					</div><div id="sources" class="sources"></div>
+				</section>
+				<footer>
+					<p>
+						Provider estimates of developer earnings, including negative refund rows. These are
+						earnings for the reporting period, not bank payouts or profit. Apple and AdMob reporting
+						days use their source time zones. Non-EUR Apple proceeds use dated ECB reference rates;
+						currencies without a rate are listed separately.
+					</p><p><a href="/stats/verdoku/">Open the Verdoku gameplay dashboard</a></p>
+				</footer>
+			</section>
+		</main>
+		<script type="module" is:inline>
+			import * as Plot from "https://esm.sh/@observablehq/plot@0.6.17?bundle";
+			import { ranges, summarize } from "/scripts/revenue-portal.js";
+			const $ = (selector) => document.querySelector(selector);
+			const KEY = "verdoku-dashboard-key";
+			const endpoint = "https://lbitxwhhrohcjkbpbcrv.supabase.co/functions/v1/verdoku-dashboard";
+			const money = new Intl.NumberFormat("en", {
+				style: "currency",
+				currency: "EUR",
+				maximumFractionDigits: 2,
+			});
+			let token = "",
+				snapshot,
+				selection,
+				requestId = 0;
+			try {
+				token =
+					decodeURIComponent(location.hash.slice(1)).trim() || localStorage.getItem(KEY) || "";
+				if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+			} catch {}
+			function element(tag, text, className) {
+				const el = document.createElement(tag);
+				if (text !== undefined) el.textContent = text;
+				if (className) el.className = className;
+				return el;
+			}
+			function coverage(data, from, to, grain, provider, platform) {
+				const expected =
+					grain === "month"
+						? new Date(to + "T00:00:00Z").getUTCMonth() -
+						  new Date(from + "T00:00:00Z").getUTCMonth() +
+						  12 * (Number(to.slice(0, 4)) - Number(from.slice(0, 4))) +
+						  1
+						: Math.round((Date.parse(to) - Date.parse(from)) / 86400000) + 1;
+				const providers = (provider === "all" ? ["apple", "admob"] : [provider]).filter(
+					(source) => source !== "apple" || platform !== "android",
+				);
+				return providers.map((source) => ({
+					source,
+					count: data.reports.filter(
+						(r) => r.provider === source && r.period_start >= from && r.period_start <= to,
+					).length,
+					expected,
+				}));
+			}
+			function render() {
+				if (!snapshot) return;
+				const { from, to, priorFrom, priorTo, grain } = selection;
+				const platform = $("#platform").value,
+					provider = $("#provider").value;
+				const current = summarize(snapshot, from, to, platform, provider);
+				const prior = summarize(snapshot, priorFrom, priorTo, platform, provider);
+				const missing = coverage(snapshot, from, to, grain, provider, platform).filter(
+					(s) => s.count < s.expected,
+				);
+				const priorMissing = coverage(snapshot, priorFrom, priorTo, grain, provider, platform).some(
+					(s) => s.count < s.expected,
+				);
+				const hasReports = current.rows.some((row) => row.hasData);
+				const androidMissing = platform !== "ios" && provider !== "admob";
+				$("#total").textContent = hasReports ? money.format(current.total) : "—";
+				$("#total-note").textContent = !hasReports
+					? "No provider reports available"
+					: missing.length || current.unconverted.length || androidMissing
+					? "Subtotal · incomplete coverage"
+					: "Developer proceeds + advertising";
+				$("#change").textContent =
+					!hasReports ||
+					missing.length ||
+					priorMissing ||
+					current.unconverted.length ||
+					prior.unconverted.length ||
+					androidMissing ||
+					grain === "month"
+						? "—"
+						: prior.total === 0
+						? "—"
+						: `${current.total >= prior.total ? "+" : ""}${(
+								((current.total - prior.total) / Math.abs(prior.total)) *
+								100
+						  ).toFixed(1)}%`;
+				$("#change-note").textContent =
+					grain === "month"
+						? "Select daily dates for a period comparison"
+						: priorMissing || missing.length || androidMissing
+						? "Comparison needs complete coverage"
+						: `${priorFrom} – ${priorTo} · ${money.format(prior.total)}`;
+				const leader = current.rows.find((r) => r.hasData && r.total > 0);
+				$("#leader").textContent = leader?.name ?? "—";
+				$("#leader").style.fontSize = "25px";
+				$("#leader-note").textContent = leader
+					? `${money.format(leader.total)} · ${((leader.total / current.total) * 100).toFixed(
+							1,
+					  )}% of reported earnings`
+					: "";
+				$("#range-label").textContent = `${from} – ${to} · ${
+					grain === "month" ? "monthly" : "daily"
+				}`;
+				const notices = missing.map(
+					(s) =>
+						`${s.source === "apple" ? "Apple" : "AdMob"}: ${s.count}/${s.expected} ${
+							grain === "month" ? "months" : "days"
+						} imported`,
+				);
+				if (androidMissing) notices.push("Android store purchases are not connected yet.");
+				if (current.unconverted.length) {
+					const native = new Map();
+					for (const row of current.unconverted)
+						native.set(row.currency, (native.get(row.currency) ?? 0) + Number(row.amount));
+					notices.push(
+						"Excluded from EUR subtotal: " +
+							[...native]
+								.map(
+									([currency, amount]) =>
+										`${currency} ${amount.toLocaleString("en", { maximumFractionDigits: 2 })}`,
+								)
+								.join(", "),
+					);
+				}
+				$("#coverage").hidden = !notices.length;
+				$("#coverage").textContent = notices.join(" · ");
+				const tbody = $("#projects");
+				tbody.replaceChildren();
+				for (const row of current.rows) {
+					const tr = element("tr"),
+						name = element("td");
+					if (row.detail_path) {
+						const link = element("a", row.name);
+						link.href = row.detail_path;
+						name.append(link);
+					} else name.textContent = row.name;
+					tr.append(
+						name,
+						element("td", row.apple === null ? "—" : money.format(row.apple)),
+						element("td", row.ads === null ? "—" : money.format(row.ads)),
+					);
+					const total = element("td");
+					total.append(element("strong", row.hasData ? money.format(row.total) : "—"));
+					tr.append(total);
+					const share = element(
+						"td",
+						row.hasData && current.total > 0
+							? `${((row.total / current.total) * 100).toFixed(1)}%`
+							: "—",
+					);
+					if (row.total > 0 && current.total > 0) {
+						const bar = element("div", undefined, "share");
+						bar.style.width = `${Math.min(100, (row.total / current.total) * 100)}%`;
+						share.append(bar);
+					}
+					tr.append(share);
+					tbody.append(tr);
+				}
+				const sourceNode = $("#sources");
+				sourceNode.replaceChildren();
+				for (const source of snapshot.sources) {
+					const div = element("div", undefined, "source"),
+						head = element("div", undefined, "source-head");
+					const stale =
+						source.last_success_at &&
+						Date.now() - Date.parse(source.last_success_at) > 48 * 3600000;
+					const state = stale && source.state === "ok" ? "stale" : source.state;
+					const badge = element(
+						"span",
+						state === "ok"
+							? "Connected"
+							: state === "pending"
+							? "Authorization needed"
+							: state === "stale"
+							? "Stale"
+							: "Import issue",
+						"badge",
+					);
+					badge.dataset.state = state;
+					head.append(
+						element("strong", source.provider === "apple" ? "Apple App Store" : "Google AdMob"),
+						badge,
+					);
+					div.append(head);
+					div.append(
+						element(
+							"p",
+							source.last_success_at
+								? `Last successful import: ${new Date(
+										source.last_success_at,
+								  ).toLocaleString()} · latest period: ${source.latest_period}`
+								: "No reports imported yet.",
+						),
+					);
+					if (source.error) div.append(element("p", source.error));
+					sourceNode.append(div);
+				}
+				const plot = $("#trend");
+				plot.replaceChildren();
+				const grouped = new Map();
+				for (const row of current.included) {
+					if (row.amount_eur === null) continue;
+					const key = row.period_start + ":" + row.project_id;
+					const previous = grouped.get(key);
+					grouped.set(key, {
+						date: new Date(row.period_start + "T12:00:00Z"),
+						project: snapshot.projects.find((p) => p.id === row.project_id)?.name ?? row.project_id,
+						value: (previous?.value ?? 0) + Number(row.amount_eur),
+					});
+				}
+				if (grouped.size)
+					plot.append(
+						Plot.plot({
+							width: plot.clientWidth || 900,
+							height: 280,
+							marginLeft: 65,
+							x: { label: null, type: "utc" },
+							y: { label: "EUR", grid: true },
+							color: { legend: true },
+							marks: [
+								Plot.ruleY([0]),
+								Plot.rectY(
+									[...grouped.values()],
+									Plot.stackY({
+										x: "date",
+										y: "value",
+										fill: "project",
+										interval: grain === "month" ? "month" : "day",
+										tip: true,
+									}),
+								),
+							],
+						}),
+					);
+				else plot.append(element("p", "No revenue reports for this period.", "note"));
+			}
+			async function load() {
+				const id = ++requestId;
+				$("#access-error").textContent = "";
+				$("#load-error").textContent = "";
+				$("#loading").hidden = false;
+				try {
+					const preset = $("#period").value;
+					let nextSelection;
+					let grain = "day";
+					if (preset === "history") {
+						const now = new Date(),
+							start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 12, 1));
+						nextSelection = {
+							from: start.toISOString().slice(0, 10),
+							to: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 0))
+								.toISOString()
+								.slice(0, 10),
+							priorFrom: "1900-01-01",
+							priorTo: "1900-01-01",
+							grain: "month",
+						};
+						grain = "month";
+					} else
+						nextSelection = {
+							...ranges(
+								preset === "custom" ? "30" : preset,
+								new Date(),
+								preset === "custom" ? { from: $("#from").value, to: $("#to").value } : {},
+							),
+							grain,
+						};
+					const url = new URL(endpoint);
+					url.search = new URLSearchParams({
+						view: "portfolio",
+						from: grain === "month" ? nextSelection.from : nextSelection.priorFrom,
+						to: nextSelection.to,
+						grain,
+					}).toString();
+					const response = await fetch(url, {
+						headers: { Authorization: `Bearer ${token}` },
+						signal: AbortSignal.timeout(20000),
+					});
+					if (id !== requestId) return;
+					if (response.status === 401) {
+						try {
+							localStorage.removeItem(KEY);
+						} catch {}
+						token = "";
+						$("#dashboard").hidden = true;
+						$("#access").hidden = false;
+						throw new Error("Access key rejected.");
+					}
+					if (!response.ok)
+						throw new Error("Revenue is temporarily unavailable. Last loaded data is preserved.");
+					snapshot = await response.json();
+					if (id !== requestId) return;
+					selection = nextSelection;
+					$("#access").hidden = true;
+					$("#dashboard").hidden = false;
+					try {
+						localStorage.setItem(KEY, token);
+					} catch {}
+					render();
+				} catch (error) {
+					if (id === requestId)
+						($("#dashboard").hidden ? $("#access-error") : $("#load-error")).textContent =
+							error.message;
+				} finally {
+					if (id === requestId) $("#loading").hidden = true;
+				}
+			}
+			$("#access-form").addEventListener("submit", (event) => {
+				event.preventDefault();
+				token = $("#access-key").value.trim();
+				void load();
+			});
+			$("#period").addEventListener("change", () => {
+				const custom = $("#period").value === "custom";
+				$("#from-label").hidden = !custom;
+				$("#to-label").hidden = !custom;
+				if (custom) {
+					const defaults = ranges("30");
+					$("#from").value = defaults.from;
+					$("#to").value = defaults.to;
+				}
+				void load();
+			});
+			for (const id of ["from", "to"]) $("#" + id).addEventListener("change", () => void load());
+			for (const id of ["platform", "provider"]) $("#" + id).addEventListener("change", render);
+			$("#refresh").addEventListener("click", () => void load());
+			$("#lock").addEventListener("click", () => {
+				++requestId;
+				token = "";
+				snapshot = undefined;
+				try {
+					localStorage.removeItem(KEY);
+				} catch {}
+				$("#access-key").value = "";
+				$("#dashboard").hidden = true;
+				$("#access").hidden = false;
+			});
+			let resizeTimer;
+			window.addEventListener("resize", () => {
+				clearTimeout(resizeTimer);
+				resizeTimer = setTimeout(render, 150);
+			});
+			setInterval(() => {
+				if (token && document.visibilityState === "visible") void load();
+			}, 5 * 60000);
+			if (token) void load();
+		</script>
+	</body>
+</html>
