@@ -42,13 +42,18 @@ export function summarize(data, from, to, platform = "all", provider = "all") {
 				platform !== "android" &&
 				provider !== "admob";
 			const adsKnown = reports.some((r) => r.provider === "admob") && provider !== "apple";
+			const androidKnown =
+				platform !== "ios" &&
+				reports.some((r) => r.provider === "revenuecat" && r.project_ids?.includes(project.id));
 			const unconverted = values.filter((r) => r.amount_eur === null && Number(r.amount) !== 0);
 			return {
 				...project,
 				apple: appleKnown ? sum("apple") : null,
+				android: androidKnown ? sum("revenuecat") : null,
+				purchases: appleKnown || androidKnown ? sum("apple") + sum("revenuecat") : null,
 				ads: adsKnown ? sum("admob") : null,
-				total: sum("apple") + sum("admob"),
-				hasData: appleKnown || adsKnown,
+				total: sum("apple") + sum("admob") + sum("revenuecat"),
+				hasData: appleKnown || androidKnown || adsKnown,
 				unconverted,
 			};
 		})

@@ -374,7 +374,9 @@
 					<label
 						>Source<select id="provider"
 							><option value="all">All revenue</option><option value="apple">Apple purchases</option
-							><option value="admob">Advertising</option></select
+							><option value="revenuecat">Android purchases</option><option value="admob"
+								>Advertising</option
+							></select
 						></label
 					>
 					<button id="refresh" type="button">Refresh view</button>
@@ -407,7 +409,7 @@
 				</section>
 				<section class="panel">
 					<div class="panel-head">
-						<h2>By project</h2><span>Store fees and taxes deducted from Apple proceeds</span>
+						<h2>By project</h2><span>Apple proceeds + RevenueCat Android proceeds + AdMob ads</span>
 					</div><div class="table-wrap">
 						<table>
 							<thead
@@ -427,7 +429,8 @@
 						Provider estimates of developer earnings, including negative refund rows. These are
 						earnings for the reporting period, not bank payouts or profit. Apple and AdMob reporting
 						days use their source time zones. Non-EUR Apple proceeds use dated ECB reference rates;
-						currencies without a rate are listed separately.
+						currencies without a rate are listed separately. RevenueCat Android proceeds include its
+						estimates of store fees and taxes; ads are counted only from AdMob.
 					</p><p><a href="/stats/verdoku/">Open the Verdoku gameplay dashboard</a></p>
 				</footer>
 			</section>
@@ -458,6 +461,7 @@
 				if (className) el.className = className;
 				return el;
 			}
+			const sourceName = { apple: "Apple", admob: "AdMob", revenuecat: "RevenueCat Android" };
 			function coverage(data, from, to, grain, provider, platform) {
 				const expected =
 					grain === "month"
@@ -466,8 +470,12 @@
 						  12 * (Number(to.slice(0, 4)) - Number(from.slice(0, 4))) +
 						  1
 						: Math.round((Date.parse(to) - Date.parse(from)) / 86400000) + 1;
-				const providers = (provider === "all" ? ["apple", "admob"] : [provider]).filter(
-					(source) => source !== "apple" || platform !== "android",
+				const providers = (
+					provider === "all" ? ["apple", "admob", "revenuecat"] : [provider]
+				).filter(
+					(source) =>
+						(source !== "apple" || platform !== "android") &&
+						(source !== "revenuecat" || platform !== "ios"),
 				);
 				return providers.map((source) => ({
 					source,
@@ -491,7 +499,17 @@
 					(s) => s.count < s.expected,
 				);
 				const hasReports = current.rows.some((row) => row.hasData);
-				const androidMissing = platform !== "ios" && provider !== "admob";
+				const missingAndroidProjects =
+					platform !== "ios" && !["apple", "admob"].includes(provider)
+						? snapshot.projects.filter(
+								(project) =>
+									project.android_package &&
+									!current.reports.some(
+										(r) => r.provider === "revenuecat" && r.project_ids?.includes(project.id),
+									),
+						  )
+						: [];
+				const androidMissing = missingAndroidProjects.length > 0;
 				$("#total").textContent = hasReports ? money.format(current.total) : "—";
 				$("#total-note").textContent = !hasReports
 					? "No provider reports available"
@@ -532,11 +550,15 @@
 				}`;
 				const notices = missing.map(
 					(s) =>
-						`${s.source === "apple" ? "Apple" : "AdMob"}: ${s.count}/${s.expected} ${
+						`${sourceName[s.source]}: ${s.count}/${s.expected} ${
 							grain === "month" ? "months" : "days"
 						} imported`,
 				);
-				if (androidMissing) notices.push("Android store purchases are not connected yet.");
+				if (androidMissing)
+					notices.push(
+						"Android purchase coverage missing: " +
+							missingAndroidProjects.map((p) => p.name).join(", "),
+					);
 				if (current.unconverted.length) {
 					const native = new Map();
 					for (const row of current.unconverted)
@@ -565,7 +587,7 @@
 					} else name.textContent = row.name;
 					tr.append(
 						name,
-						element("td", row.apple === null ? "—" : money.format(row.apple)),
+						element("td", row.purchases === null ? "—" : money.format(row.purchases)),
 						element("td", row.ads === null ? "—" : money.format(row.ads)),
 					);
 					const total = element("td");
@@ -607,7 +629,14 @@
 					);
 					badge.dataset.state = state;
 					head.append(
-						element("strong", source.provider === "apple" ? "Apple App Store" : "Google AdMob"),
+						element(
+							"strong",
+							source.provider === "apple"
+								? "Apple App Store"
+								: source.provider === "admob"
+								? "Google AdMob"
+								: "RevenueCat · Android purchases",
+						),
 						badge,
 					);
 					div.append(head);

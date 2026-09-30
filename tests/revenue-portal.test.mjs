@@ -52,6 +52,21 @@ assert.equal(result.rows[0].ads, null);
 assert.equal(result.unconverted.length, 1);
 assert.equal(summarize(data, "2026-08-01", "2026-08-29").rows[0].hasData, false);
 assert.equal(summarize(data, "2026-09-01", "2026-09-29", "android").rows[0].apple, null);
+data.projects.push({ id: "unconnected", name: "Unconnected" });
+data.reports.push({ provider: "revenuecat", period_start: "2026-09-01", project_ids: ["a"] });
+data.totals.push({
+	project_id: "a",
+	provider: "revenuecat",
+	platform: "android",
+	period_start: "2026-09-01",
+	amount: "5",
+	amount_eur: 5,
+});
+assert.equal(summarize(data, "2026-09-01", "2026-09-29").total, 13);
+assert.equal(summarize(data, "2026-09-01", "2026-09-29", "ios").total, 8);
+const android = summarize(data, "2026-09-01", "2026-09-29", "android", "revenuecat");
+assert.equal(android.total, 5);
+assert.equal(android.rows.find((p) => p.id === "unconnected").purchases, null);
 console.log(
 	"Revenue portal: refunds, missing sources, period comparisons and platform filters passed.",
 );
