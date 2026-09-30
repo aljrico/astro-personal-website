@@ -49,7 +49,8 @@ export function summarize(data, from, to, platform = "all", provider = "all") {
 					.filter((r) => r.provider === source && r.amount_eur !== null)
 					.reduce((total, r) => total + Number(r.amount_eur), 0);
 			const appleKnown =
-				reports.some((r) => r.provider === "apple") &&
+				reports.some((r) => r.provider === "apple" &&
+					(!r.project_ids || r.project_ids.includes(project.id))) &&
 				platform !== "android" &&
 				provider !== "admob";
 			const adsKnown = reports.some((r) => r.provider === "admob") && provider !== "apple";

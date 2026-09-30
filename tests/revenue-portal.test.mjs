@@ -14,6 +14,9 @@ const history = appendCurrentMonth({ reports: [], totals: [] }, {
 assert.equal(history.reports.length, 1); // Incomplete AdMob coverage stays missing.
 assert.equal(history.reports[0].period_start, "2026-09-01");
 assert.equal(history.totals.reduce((sum, row) => sum + Number(row.amount_eur), 0), 4);
+assert.equal(summarize({ projects: [{id: "other", name: "Other"}],
+	reports: [{provider: "apple", period_start: "2025-04-01", project_ids: ["cookie-empire"]}],
+	totals: [] }, "2025-04-01", "2025-04-30").rows[0].apple, null);
 assert.deepEqual(ranges("mtd", new Date("2026-09-30T12:00:00Z")), {
 	from: "2026-09-01",
 	to: "2026-09-29",

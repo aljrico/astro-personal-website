@@ -554,6 +554,9 @@
 							grain === "month" ? "months" : "days"
 						} imported`,
 				);
+				if (current.reports.some((r) => r.provider === "apple" &&
+					r.timezone === "UTC" && r.project_ids?.includes("cookie-empire")))
+					notices.push("Older Cookie Empire purchases use Apple's rounded USD analytics estimates.");
 				if (androidMissing)
 					notices.push(
 						"Android purchase coverage missing: " +
