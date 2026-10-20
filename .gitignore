@@ -28,3 +28,5 @@ AGENTS.md
 
 # Local Netlify folder
 .netlify
+
+.claude/worktrees/
