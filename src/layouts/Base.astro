@@ -3,18 +3,19 @@ import { ViewTransitions } from "astro:transitions";
 
 import type { SiteMeta } from "@/types";
 import BaseHead from "@/components/BaseHead";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 import SkipLink from "@/components/SkipLink";
 import KonamiConfetti from "@/components/KonamiConfetti";
 import { siteConfig } from "@/site-config";
 
 interface Props {
 	meta: SiteMeta;
+	/** Show the grey "Alejandro Rico" link home. Off only on the homepage. */
+	backLink?: boolean;
 }
 
 const {
 	meta: { title, description = siteConfig.description, ogImage, articleDate },
+	backLink = true,
 } = Astro.props;
 ---
 
@@ -25,11 +26,12 @@ const {
 	</head>
 	<body>
 		<SkipLink />
-		<Header />
-		<main id="main">
-			<slot />
-		</main>
-		<Footer />
+		<div class="page">
+			{backLink && <a href="/" class="back">{siteConfig.author}</a>}
+			<main id="main">
+				<slot />
+			</main>
+		</div>
 		<KonamiConfetti />
 	</body>
 </html>

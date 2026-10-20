@@ -1,23 +1,20 @@
 ---
+// Tags are no longer shown in the UI; these routes stay so old links still resolve.
 import type { Page, GetStaticPaths } from "astro";
 import type { CollectionEntry } from "astro:content";
 import PageLayout from "@/layouts/Base";
-import PostPreview from "@/components/blog/PostPreview";
+import EntryRow from "@/components/EntryRow";
 import Pagination from "@/components/Paginator";
 import { getAllPosts, getUniqueTags, sortMDByDate } from "@/utils";
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-	const allPosts = await getAllPosts();
-	const allPostsByDate = sortMDByDate(allPosts);
-	const uniqueTags = getUniqueTags(allPostsByDate);
-
-	return uniqueTags.flatMap((tag) => {
-		const filterPosts = allPostsByDate.filter((post) => post.data.tags.includes(tag));
-		return paginate(filterPosts, {
-			params: { tag },
-			pageSize: 10,
-		});
-	});
+	const allPostsByDate = sortMDByDate(await getAllPosts());
+	return getUniqueTags(allPostsByDate).flatMap((tag) =>
+		paginate(
+			allPostsByDate.filter((post) => post.data.tags.includes(tag)),
+			{ params: { tag }, pageSize: 10 },
+		),
+	);
 };
 
 interface Props {
@@ -26,30 +23,16 @@ interface Props {
 
 const { page } = Astro.props;
 const { tag } = Astro.params;
-
-const meta = {
-	title: `Tag: ${tag}`,
-	description: `View all posts with the tag - ${tag}`,
-};
-
 ---
 
-<PageLayout meta={meta}>
-	<h1 class="title mb-6 flex items-center">
-		<a href="/tags/" class="text-accent sm:hover:underline">Tags</a>
-		<span class="me-3 ms-2">→</span>
-		<span class="text-xl">#{tag}</span>
-	</h1>
-	<section aria-label="Blog post list">
-		<ul class="space-y-8">
-			{
-				page.data.map((p) => (
-					<li class="flex flex-col flex-wrap gap-2 sm:flex-row [&_q]:basis-full">
-						<PostPreview post={p} as="h2" withDesc />
-					</li>
-				))
-			}
-		</ul>
-		<Pagination page={page} prevText="← Previous Tags" nextText="Next Tags →" />
-	</section>
+<PageLayout meta={{ title: `Tag: ${tag}`, description: `Posts tagged ${tag}.` }}>
+	<h1 class="mb-14">Tag: {tag}</h1>
+	<ul class="rows">
+		{
+			page.data.map((post) => (
+				<EntryRow href={`/posts/${post.slug}/`} title={post.data.title} date={post.data.publishDate} />
+			))
+		}
+	</ul>
+	<Pagination page={page} />
 </PageLayout>

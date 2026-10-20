@@ -1,148 +1,55 @@
 import type { Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
 import plugin from "tailwindcss/plugin";
 
+// The design is one serif at one size, ink on paper. The theme below is deliberately tiny so that
+// leftover utility classes can't reintroduce sizes, colours, borders, radii or shadows.
+const ink = "var(--ink)";
+const muted = "var(--muted)";
+
 export default {
-	content: ["./src/**/*.{astro,html,js,jsx,md,svelte,ts,tsx,vue}"],
+	content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
 	corePlugins: {
-		// disable some core plugins as they are included in the css, even when unused
 		touchAction: false,
 		ringOffsetWidth: false,
 		ringOffsetColor: false,
+		ringWidth: false,
 		scrollSnapType: false,
 		borderOpacity: false,
 		textOpacity: false,
 		fontVariantNumeric: false,
+		boxShadow: false,
+		borderRadius: false,
+		borderWidth: false,
+		fontSize: false,
+		letterSpacing: false,
 	},
 	theme: {
-		extend: {
-			colors: {
-				bgColor: "hsl(var(--theme-bg) / <alpha-value>)",
-				textColor: "hsl(var(--theme-text) / <alpha-value>)",
-				link: "hsl(var(--theme-link) / <alpha-value>)",
-				accent: "hsl(var(--theme-accent) / <alpha-value>)",
-				"accent-2": "hsl(var(--theme-accent-2) / <alpha-value>)",
-				quote: "hsl(var(--theme-quote) / <alpha-value>)",
-			},
-			fontFamily: {
-				// Add any custom fonts here
-				sans: ['"Styrene B"', ...fontFamily.sans],
-				serif: ['"Tiempos Text"', ...fontFamily.serif],
-				mono: ['"JetBrains Mono"', ...fontFamily.mono],
-			},
-			transitionProperty: {
-				height: "height",
-			},
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			// Remove above once tailwindcss exposes theme type
-			typography: (theme) => ({
-				cactus: {
-					css: {
-						"--tw-prose-body": theme("colors.textColor / 1"),
-						"--tw-prose-headings": theme("colors.accent-2 / 1"),
-						"--tw-prose-links": theme("colors.accent / 1"),
-						"--tw-prose-bold": theme("colors.textColor / 1"),
-						"--tw-prose-bullets": theme("colors.textColor / 1"),
-						"--tw-prose-quotes": theme("colors.quote / 1"),
-						"--tw-prose-code": theme("colors.textColor / 1"),
-						"--tw-prose-hr": "0.5px dashed #666",
-						"--tw-prose-th-borders": "#666",
-					},
-				},
-				DEFAULT: {
-					css: {
-						a: {
-							color: "hsl(var(--theme-accent) / 1)",
-							textDecoration: "underline",
-							textDecorationColor: "hsl(var(--theme-accent) / 0.2)",
-							textUnderlineOffset: "3px",
-							textDecorationThickness: "2px",
-							fontWeight: "inherit",
-							transition: "color 0.2s, text-decoration-color 0.2s",
-							"&:hover": {
-								color: "hsl(var(--theme-accent) / 1)",
-								textDecorationColor: "hsl(var(--theme-accent) / 1)",
-							},
-						},
-						strong: {
-							fontWeight: "700",
-						},
-						code: {
-							backgroundColor: "hsl(var(--theme-accent) / 0.15)",
-							padding: "0.15em 0.35em",
-							borderRadius: "4px",
-							fontSize: "0.92em",
-						},
-						"pre code": {
-							backgroundColor: "transparent",
-							padding: "0",
-							borderRadius: "0",
-							fontSize: "1em",
-							fontWeight: "600",
-						},
-						"code::before": {
-							content: "none",
-						},
-						"code::after": {
-							content: "none",
-						},
-						blockquote: {
-							borderLeftWidth: "0",
-						},
-						hr: {
-							borderTopStyle: "dashed",
-						},
-						thead: {
-							borderBottomWidth: "none",
-						},
-						"thead th": {
-							fontWeight: "700",
-							borderBottom: "1px dashed #666",
-						},
-						"tbody tr": {
-							borderBottomWidth: "none",
-						},
-						tfoot: {
-							borderTop: "1px dashed #666",
-						},
-						sup: {
-							"@apply ms-0.5": "",
-							a: {
-								"@apply bg-none": "",
-								"&:hover": {
-									"@apply text-link no-underline bg-none": "",
-								},
-								"&:before": {
-									content: "'['",
-								},
-								"&:after": {
-									content: "']'",
-								},
-							},
-						},
-					},
-				},
-				sm: {
-					css: {
-						code: {
-							fontSize: "0.92em",
-							fontWeight: "500",
-						},
-						"pre code": {
-							fontSize: "1em",
-						},
-					},
-				},
-			}),
+		colors: {
+			transparent: "transparent",
+			current: "currentColor",
+			ink,
+			muted,
+			paper: "var(--paper)",
+			codebg: "var(--codebg)",
+			// Legacy names still used by a few hand-built pages map onto the two inks.
+			textColor: ink,
+			"accent-2": ink,
+			accent: ink,
+			link: ink,
+			bgColor: "var(--paper)",
+			gray: { 400: muted, 500: muted, 600: muted },
+		},
+		fontFamily: {
+			serif: ['"Source Serif 4 Variable"', '"Source Serif 4"', "Georgia", "serif"],
+			sans: ['"Source Serif 4 Variable"', '"Source Serif 4"', "Georgia", "serif"],
+			mono: ['"Source Code Pro"', "ui-monospace", "monospace"],
 		},
 	},
 	plugins: [
-		require("@tailwindcss/typography"),
 		plugin(function ({ addComponents }) {
 			addComponents({
 				".title": {
-					"@apply text-3xl font-serif font-bold text-textColor": {},
+					"@apply font-semibold text-ink": {},
 				},
 			});
 		}),

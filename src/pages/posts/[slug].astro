@@ -1,22 +1,22 @@
 ---
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import PostLayout from "@/layouts/BlogPost";
-import { getAllPosts } from "@/utils";
+import { getAllPosts, sortMDByDate } from "@/utils";
 
 export const getStaticPaths = (async () => {
-	const blogEntries = await getAllPosts();
-	return blogEntries.map((entry) => ({
+	const posts = sortMDByDate(await getAllPosts());
+	return posts.map((entry, i) => ({
 		params: { slug: entry.slug },
-		props: { entry },
+		props: { entry, next: posts[i + 1] },
 	}));
 }) satisfies GetStaticPaths;
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
-const { entry } = Astro.props;
+const { entry, next } = Astro.props;
 const { Content } = await entry.render();
 ---
 
-<PostLayout post={entry}>
+<PostLayout post={entry} next={next}>
 	<Content />
 </PostLayout>

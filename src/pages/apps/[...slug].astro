@@ -19,11 +19,11 @@ const { title, description, app } = entry.data;
 ---
 
 <PageLayout meta={{ title, description }}>
-	<div class="py-8">
-		<p class="mb-2 text-sm text-gray-500">{app}</p>
-		<h1 class="mb-8 text-3xl font-bold">{title}</h1>
-		<article class="prose prose-sm prose-cactus">
-			<Content />
-		</article>
-	</div>
+	<header class="mb-14">
+		<h1>{title}</h1>
+		<p class="muted">{app}</p>
+	</header>
+	<article class="post-body">
+		<Content />
+	</article>
 </PageLayout>

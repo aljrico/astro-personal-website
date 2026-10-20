@@ -1,0 +1,16 @@
+---
+import { monthYear } from "@/utils";
+
+interface Props {
+	href: string;
+	title: string;
+	date: Date;
+}
+
+const { href, title, date } = Astro.props;
+---
+
+<li>
+	<time class="when" datetime={date.toISOString()}>{monthYear(date)}</time>
+	<a class="what" href={href}>{title}</a>
+</li>

@@ -1,7 +1,6 @@
 ---
 import { getCollection } from "astro:content";
 import PageLayout from "@/layouts/Base";
-import AppButton from "@/components/app/AppButton";
 import ProjectIcon from "@/components/app/ProjectIcon";
 import { getProject, type LegalDoc } from "../data/projects";
 
@@ -11,7 +10,7 @@ type Props = {
 	description: string;
 	/** Page <title>; defaults to the project title. */
 	title?: string;
-	/** Links shown before the legal docs in the bottom nav. */
+	/** Links shown before the legal docs. */
 	navLinks?: Array<{ href: string; label: string }>;
 };
 
@@ -37,44 +36,45 @@ const nav = [
 ---
 
 <PageLayout meta={{ title: title ?? project.title, description }}>
-	<div class="max-w-2xl">
-		<div class="mb-8 flex items-center gap-4">
-			<ProjectIcon
-				icon={project.icon}
-				alt={project.iconAlt}
-				loading="eager"
-				class="h-20 w-20 rounded-2xl object-contain"
-			/>
-			<div>
-				<h1 class="title mb-1 text-3xl">{project.title}</h1>
-				<p class="text-gray-500">{project.subtitle ?? project.period}</p>
-			</div>
-		</div>
+	<header class="mb-14">
+		<ProjectIcon icon={project.icon} alt="" loading="eager" class="mb-6 h-16 w-16 object-contain" />
+		<h1>{project.title}</h1>
+		<p class="muted">{project.subtitle ?? project.period}</p>
+	</header>
 
-		<section class={links.length > 0 || nav.length > 0 ? "mb-8" : undefined}>
-			<slot />
-		</section>
-
-		{
-			links.length > 0 && (
-				<div class:list={["flex flex-wrap gap-3", nav.length > 0 ? "mb-8" : "mb-12"]}>
-					{links.map((link) => (
-						<AppButton {...link} />
-					))}
-				</div>
-			)
-		}
-
-		{
-			nav.length > 0 && (
-				<nav aria-label={legalLabels.nav} class="flex flex-wrap gap-x-4 gap-y-2">
-					{nav.map(({ href, label }) => (
-						<a href={href} class="project-link">
-							{label}
-						</a>
-					))}
-				</nav>
-			)
-		}
+	<div class="post-body">
+		<slot />
 	</div>
+
+	{
+		links.length > 0 && (
+			<p class="mt-14">
+				{links.map((link, i) => (
+					<>
+						{i > 0 && " · "}
+						{link.disabled ? (
+							<span class="muted">{link.label} (gone)</span>
+						) : (
+							<a href={link.href} target="_blank" rel="noopener noreferrer">
+								{link.label}
+							</a>
+						)}
+					</>
+				))}
+			</p>
+		)
+	}
+
+	{
+		nav.length > 0 && (
+			<nav aria-label={legalLabels.nav} class="muted mt-14">
+				{nav.map(({ href, label }, i) => (
+					<>
+						{i > 0 && " · "}
+						<a href={href}>{label}</a>
+					</>
+				))}
+			</nav>
+		)
+	}
 </PageLayout>

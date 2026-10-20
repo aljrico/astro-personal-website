@@ -1,0 +1,18 @@
+---
+import PageLayout from "@/layouts/Base";
+import EntryRow from "@/components/EntryRow";
+import { getAllPosts, sortMDByDate } from "@/utils";
+
+const posts = sortMDByDate(await getAllPosts());
+---
+
+<PageLayout meta={{ title: "Writing", description: "Everything Alejandro Rico has written." }}>
+	<h1 class="mb-14">Writing</h1>
+	<ul class="rows">
+		{
+			posts.map((post) => (
+				<EntryRow href={`/posts/${post.slug}/`} title={post.data.title} date={post.data.publishDate} />
+			))
+		}
+	</ul>
+</PageLayout>

@@ -2,24 +2,22 @@
 import type { CollectionEntry } from "astro:content";
 
 import BaseLayout from "./Base.astro";
-import BlogHero from "@/components/blog/Hero";
-import Prose from "@/components/blog/Prose";
-import ScrollToTop from "@/components/blog/ScrollToTop";
-import TOC from "@/components/blog/TOC";
+import FormattedDate from "@/components/FormattedDate";
 import { siteConfig } from "@/site-config";
 
 interface Props {
 	post: CollectionEntry<"post">;
+	/** The next-older post, if any. */
+	next?: CollectionEntry<"post"> | undefined;
 }
 
-const { post } = Astro.props;
+const { post, next } = Astro.props;
 const {
 	data: { title, description, ogImage, publishDate, updatedDate },
 	slug,
 } = post;
 const socialImage = ogImage ?? `/og-image/${slug}.png`;
 const articleDate = updatedDate?.toISOString() ?? publishDate.toISOString();
-const { headings } = await post.render();
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const jsonLd = {
@@ -38,12 +36,21 @@ const jsonLd = {
 
 <BaseLayout meta={{ title, description, articleDate, ogImage: socialImage }}>
 	<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-	<div class="gap-x-10 lg:flex lg:items-start">
-		{!!headings.length && <TOC headings={headings} />}
-		<article class="flex-grow break-words">
-			<div data-hero><BlogHero content={post} /></div>
-			<Prose><slot /></Prose>
-		</article>
-	</div>
-	<ScrollToTop />
+	<article>
+		<header class="mb-14">
+			<h1>{title}</h1>
+			<FormattedDate class="muted block" date={publishDate} />
+		</header>
+		<div class="post-body">
+			<slot />
+		</div>
+	</article>
+	{
+		next && (
+			<nav class="block mt-14" aria-label="Next post">
+				<p class="label">Next</p>
+				<a href={`/posts/${next.slug}/`}>{next.data.title}</a>
+			</nav>
+		)
+	}
 </BaseLayout>

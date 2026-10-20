@@ -1,6 +1,5 @@
 ---
 import PageLayout from "@/layouts/Base";
-import AppButton from "@/components/app/AppButton";
 import { getProject } from "../../../data/projects";
 
 const { links = [] } = getProject("tiny-crimes");
@@ -149,7 +148,7 @@ const environments = [
 <PageLayout meta={meta}>
 	<div class="max-w-2xl">
 		<p class="mb-3 font-mono text-xs uppercase tracking-widest text-gray-500">
-			<a href="/apps/tiny-crimes" class="project-link">Murder Sudoku: Tiny Crimes</a>
+			<a href="/apps/tiny-crimes">Murder Sudoku: Tiny Crimes</a>
 		</p>
 		<h1 class="title mb-4 text-3xl">Written by hand, in seven languages</h1>
 		<p class="mb-10 text-base text-gray-600">
@@ -261,7 +260,7 @@ const environments = [
 				None of it is accidental. The intent is written into the source file, beside the string:
 			</p>
 			<pre
-				class="mb-4 overflow-x-auto rounded-lg border border-black/10 bg-white/70 p-4 font-mono text-[11px] leading-relaxed text-gray-600">{arbNote}</pre>
+				class="mb-4 overflow-x-auto bg-codebg p-4 font-mono">{arbNote}</pre>
 			<p>
 				Murder Next Door and Dead Man's Cove each carry four of these blurbs and rotate one per
 				week, so the shelf reads a little different from one week to the next.
@@ -326,7 +325,7 @@ const environments = [
 			<h2 class="title mb-4 text-2xl">3. None of the art is generated</h2>
 			<p class="mb-4">
 				The three images above are the real headers from the app. The suspects, the props and the
-				terrain are licensed from <a href="https://rhosgfx.itch.io" class="project-link">RhosGFX</a>,
+				terrain are licensed from <a href="https://rhosgfx.itch.io">RhosGFX</a>,
 				an illustrator, with full commercial rights. The layouts, the autotiling, and the work of
 				keeping three environments in one style are done here. Not a pixel of it is AI-generated,
 				which is a choice, and an increasingly unusual one.
@@ -341,13 +340,22 @@ const environments = [
 			</p>
 		</section>
 
-		<div class="mb-8 flex flex-wrap gap-3">
-			{links.map((link) => <AppButton {...link} />)}
-		</div>
+		<p class="mb-14">
+			{
+				links.map((link, i) => (
+					<>
+						{i > 0 && " · "}
+						<a href={link.href} target="_blank" rel="noopener noreferrer">
+							{link.label}
+						</a>
+					</>
+				))
+			}
+		</p>
 
-		<nav aria-label="Tiny Crimes links" class="flex flex-wrap gap-x-4 gap-y-2">
-			<a href="/apps/tiny-crimes" class="project-link">Back to Tiny Crimes</a>
-			<a href="/apps/tiny-crimes/support" class="project-link">Support</a>
+		<nav aria-label="Tiny Crimes links" class="muted">
+			<a href="/apps/tiny-crimes">Back to Tiny Crimes</a> ·
+			<a href="/apps/tiny-crimes/support">Support</a>
 		</nav>
 	</div>
 </PageLayout>

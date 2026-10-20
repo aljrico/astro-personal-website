@@ -2,8 +2,9 @@ import type { SiteConfig } from "@/types";
 
 export const siteConfig: SiteConfig = {
 	author: "Alejandro Rico",
-	title: "Personal Website",
-	description: "Alejandro's personal website. Made with Astro",
+	title: "Alejandro Rico",
+	description:
+		"Alejandro Rico — data lead in games, indie developer, writes about companies and markets.",
 	lang: "en-GB",
 	ogLocale: "en_GB",
 	// Date.prototype.toLocaleDateString() parameters
@@ -11,20 +12,9 @@ export const siteConfig: SiteConfig = {
 		locale: "en-GB",
 		options: {
 			day: "numeric",
-			month: "short",
+			month: "long",
 			year: "numeric",
 		},
 	},
 };
 
-// Used to generate links in both the Header & Footer.
-export const menuLinks: Array<{ title: string; path: string }> = [
-	{
-		title: "Home",
-		path: "/",
-	},
-	{
-		title: "Blog",
-		path: "/posts/",
-	},
-];

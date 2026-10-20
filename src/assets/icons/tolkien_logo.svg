@@ -20,5 +20,5 @@
   <circle cx="100" cy="96" r="52" fill="url(#glow)"/>
   <circle cx="100" cy="96" r="30" fill="none" stroke="url(#gold)" stroke-width="10"/>
   <circle cx="100" cy="96" r="30" fill="none" stroke="#FFF1B8" stroke-width="1.2" opacity="0.6"/>
-  <text x="100" y="180" text-anchor="middle" font-family="'Styrene B', 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="26" fill="#E9D8A0" letter-spacing="1">tolkien</text>
+  <text x="100" y="180" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="26" fill="#E9D8A0" letter-spacing="1">tolkien</text>
 </svg>

@@ -1,33 +1,21 @@
 ---
+// Tags are no longer shown in the UI; these routes stay so old links still resolve.
 import PageLayout from "@/layouts/Base";
 import { getAllPosts, getUniqueTagsWithCount } from "@/utils";
 
-const allPosts = await getAllPosts();
-const allTags = getUniqueTagsWithCount(allPosts);
-
-const meta = {
-	title: "All Tags",
-	description: "A list of all the topics I've written about in my posts",
-};
+const allTags = getUniqueTagsWithCount(await getAllPosts());
 ---
 
-<PageLayout meta={meta}>
-	<h1 class="title mb-6">Tags</h1>
-	<ul class="space-y-4">
+<PageLayout meta={{ title: "Tags", description: "Topics Alejandro Rico has written about." }}>
+	<h1 class="mb-14">Tags</h1>
+	<ul class="rows">
 		{
-			allTags.map(([tag, val]) => (
-				<li class="flex items-center gap-x-2">
-					<a
-						class="cactus-link inline-block"
-						href={`/tags/${tag}/`}
-						title={`View posts with the tag: ${tag}`}
-						rel="prefetch"
-					>
-						&#35;{tag}
+			allTags.map(([tag, count]) => (
+				<li>
+					<span class="when">{count}</span>
+					<a class="what" href={`/tags/${tag}/`}>
+						{tag}
 					</a>
-					<span class="inline-block">
-						- {val} Post{val > 1 && "s"}
-					</span>
 				</li>
 			))
 		}

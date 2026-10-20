@@ -13,10 +13,8 @@ export default defineConfig({
 	markdown: {
 		remarkPlugins: [remarkUnwrapImages, remarkReadingTime],
 		remarkRehype: { footnoteLabelProperties: { className: [""] } },
-		shikiConfig: {
-			theme: "dracula",
-			wrap: true,
-		},
+		// Code is set in plain ink: no highlighting theme.
+		syntaxHighlight: false,
 	},
 	integrations: [
 		mdx({}),

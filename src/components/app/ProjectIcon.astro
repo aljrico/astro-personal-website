@@ -10,8 +10,8 @@ type Props = {
 	loading?: HTMLAttributes<"img">["loading"];
 };
 
-// 2x the largest display size (h-20 = 80px on app pages).
-const SIZE = 160;
+// 2x the display size (64px on app pages).
+const SIZE = 128;
 const { icon, alt, class: className, loading = "lazy" } = Astro.props;
 ---
 

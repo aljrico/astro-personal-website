@@ -15,3 +15,10 @@ export function getFormattedDate(
 
 	return dateFormat.format(new Date(date));
 }
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "May 2026": the short date used in list rows. */
+export function monthYear(date: Date) {
+	return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}

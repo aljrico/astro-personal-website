@@ -2,14 +2,12 @@
 import type { Page, GetStaticPaths } from "astro";
 import type { CollectionEntry } from "astro:content";
 import PageLayout from "@/layouts/Base";
-import DevlogPreview from "@/components/devlog/DevlogPreview";
+import EntryRow from "@/components/EntryRow";
 import Pagination from "@/components/Paginator";
 import { getAllDevlogEntries, sortDevlogByDate } from "@/utils";
 
 export const getStaticPaths = (async ({ paginate }) => {
-	const allEntries = await getAllDevlogEntries();
-	const allEntriesByDate = sortDevlogByDate(allEntries);
-	return paginate(allEntriesByDate, { pageSize: 20 });
+	return paginate(sortDevlogByDate(await getAllDevlogEntries()), { pageSize: 20 });
 }) satisfies GetStaticPaths;
 
 interface Props {
@@ -22,21 +20,20 @@ const meta = {
 	title: "Devlog",
 	description: "A development diary capturing the daily texture of building things",
 };
-
 ---
 
 <PageLayout meta={meta}>
-	<h1 class="title mb-6">Devlog</h1>
-	<section aria-label="Devlog entries">
-		<ul class="space-y-8 text-start">
-			{
-				page.data.map((entry) => (
-					<li class="flex flex-col flex-wrap gap-2 sm:flex-row [&_q]:basis-full">
-						<DevlogPreview entry={entry} as="h2" />
-					</li>
-				))
-			}
-		</ul>
-		<Pagination page={page} prevText="← Newer Entries" nextText="Older Entries →" />
-	</section>
+	<h1 class="mb-14">Devlog</h1>
+	<ul class="rows">
+		{
+			page.data.map((entry) => (
+				<EntryRow
+					href={`/devlog/${entry.slug}/`}
+					title={entry.data.description}
+					date={entry.data.publishDate}
+				/>
+			))
+		}
+	</ul>
+	<Pagination page={page} prevText="Newer" nextText="Older" />
 </PageLayout>
