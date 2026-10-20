@@ -1,2 +1,7 @@
 [build]
   command = 'pnpm build'
+# Match Tile: Mini's privacy policy used to live under the old slug
+[[redirects]]
+  from = "/apps/mini-match/privacy"
+  to = "/apps/match-tile-mini/privacy"
+  status = 301

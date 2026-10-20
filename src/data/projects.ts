@@ -11,6 +11,7 @@ import shipLogo from "../assets/icons/ship_logo.png";
 import tabletIcon from "../assets/icons/tabletIcon.svg";
 import testDgtIcon from "../assets/icons/testDgtIcon.png";
 import tinyCrimesIcon from "../assets/icons/tinyCrimesIcon.png";
+import tinyTdIcon from "../assets/icons/tinyTdIcon.png";
 import tolkienLogo from "../assets/icons/tolkien_logo.svg";
 import toonliteLogo from "../assets/icons/toonlite_logo.svg";
 import whaleCoffeeIcon from "../assets/icons/whaleCoffeeIcon.png";
@@ -77,6 +78,14 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 					appStore("https://apps.apple.com/app/id6776382837"),
 					googlePlay("https://play.google.com/store/apps/details?id=com.aljrico.tinycrimes"),
 				],
+			},
+			{
+				slug: "tiny-td",
+				title: "Tiny TD",
+				period: "2026-present",
+				icon: tinyTdIcon,
+				iconAlt: "Tiny TD app icon",
+				links: [googlePlay("https://play.google.com/store/apps/details?id=com.aljrico.minitd")],
 			},
 			{
 				slug: "test-dgt",
