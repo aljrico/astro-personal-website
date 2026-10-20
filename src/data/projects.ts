@@ -150,7 +150,7 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 				status: "live",
 				icon: tolkienLogo,
 				iconAlt: "tolkien R package logo",
-				links: [github("tolkien"), cran("tolkien")],
+				links: [github("tolkien")],
 			},
 			{
 				slug: "planets",
@@ -177,7 +177,7 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 				status: "live",
 				icon: hpLogo,
 				iconAlt: "harrypotter R package logo",
-				links: [github("harrypotter")],
+				links: [github("harrypotter"), cran("harrypotter")],
 			},
 		],
 	},
