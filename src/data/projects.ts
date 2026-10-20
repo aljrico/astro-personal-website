@@ -31,8 +31,7 @@ export type Project = {
 	title: string;
 	/** Shown on the app page; its first year is the homepage row's year. */
 	period: string;
-	/** Derived from `period` only; TODO where the site doesn't say. */
-	status: "live" | "closed" | "ended" | "TODO";
+	status: "live" | "closed" | "ended";
 	/** Replaces `period` on the app page header only. */
 	subtitle?: string;
 	/** Local icons are optimised through astro:assets; strings are remote URLs. */
@@ -139,7 +138,7 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 				slug: "rfinance",
 				title: "rfinance",
 				period: "2020-2024",
-				status: "ended",
+				status: "live",
 				icon: rfinanceLogo,
 				iconAlt: "rfinance R package logo",
 				links: [github("rfinance"), cran("rfinance")],
@@ -148,7 +147,7 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 				slug: "tolkien",
 				title: "tolkien",
 				period: "2019",
-				status: "TODO",
+				status: "live",
 				icon: tolkienLogo,
 				iconAlt: "tolkien R package logo",
 				links: [github("tolkien"), cran("tolkien")],
@@ -157,7 +156,7 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 				slug: "planets",
 				title: "planets",
 				period: "2019",
-				status: "TODO",
+				status: "live",
 				icon: planetsLogo,
 				iconAlt: "planets R package logo",
 				links: [github("planets"), cran("planets")],
@@ -201,7 +200,7 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 				slug: "flama-coach",
 				title: "Mossos Coach",
 				period: "2026",
-				status: "TODO",
+				status: "live",
 				subtitle: "Oposicions a Mossos d'Esquadra · Convocatòria 2026",
 				icon: flamaIcon,
 				iconAlt: "Icona de Mossos Coach",
