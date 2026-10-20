@@ -85,7 +85,10 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 				period: "2026-present",
 				icon: tinyTdIcon,
 				iconAlt: "Tiny TD app icon",
-				links: [googlePlay("https://play.google.com/store/apps/details?id=com.aljrico.minitd")],
+				links: [
+					appStore("https://apps.apple.com/es/app/tiny-td-living-roads/id6809146749?l=en-GB"),
+					googlePlay("https://play.google.com/store/apps/details?id=com.aljrico.minitd"),
+				],
 			},
 			{
 				slug: "test-dgt",
