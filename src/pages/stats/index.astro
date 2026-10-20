@@ -11,31 +11,10 @@
 		<meta name="referrer" content="no-referrer" />
 		<meta name="theme-color" content="#f7f7f4" />
 		<title>Portfolio · Revenue</title>
+		<link rel="stylesheet" href="/styles/dashboard.css" />
 		<style>
-			@font-face {
-				font-family: Styrene;
-				src: url("/fonts/StyreneB-Regular.woff2");
-				font-display: swap;
-			}
-			@font-face {
-				font-family: Styrene;
-				src: url("/fonts/StyreneB-Bold.woff2");
-				font-weight: 700;
-				font-display: swap;
-			}
-			@font-face {
-				font-family: Tiempos;
-				src: url("/fonts/TiemposText-Bold.woff2");
-				font-weight: 700;
-				font-display: swap;
-			}
 			:root {
-				color-scheme: light;
-				--paper: #f7f7f4;
-				--ink: #26323d;
 				--muted: #687783;
-				--line: #e3e7e8;
-				--navy: #234766;
 				--green: #14815d;
 				--amber: #9b6514;
 			}
@@ -43,11 +22,7 @@
 				box-sizing: border-box;
 			}
 			body {
-				margin: 0;
-				background: var(--paper);
-				color: var(--ink);
-				font-family: Styrene, system-ui, sans-serif;
-				-webkit-font-smoothing: antialiased;
+				font-family: "Styrene B", system-ui, sans-serif;
 			}
 			main {
 				max-width: 1200px;
@@ -77,7 +52,7 @@
 			h1,
 			h2,
 			.amount {
-				font-family: Tiempos, Georgia, serif;
+				font-family: "Tiempos Text", Georgia, serif;
 			}
 			h1 {
 				font-size: 46px;
@@ -436,25 +411,36 @@
 			</section>
 		</main>
 		<script type="module" is:inline>
-			import * as Plot from "https://esm.sh/@observablehq/plot@0.6.17?bundle";
-			import { ranges, summarize, appendCurrentMonth } from "/scripts/revenue-portal.js";
+			import {
+				appendCurrentMonth,
+				coverage,
+				ranges,
+				summarize,
+				yesterday,
+			} from "/scripts/revenue-portal.js";
+			import {
+				consumeTokenFromHash,
+				fetchView,
+				forgetToken,
+				storedToken,
+				storeToken,
+			} from "/scripts/dashboard-auth.js";
+			// Plot loads alongside the first revenue fetch; load() awaits it before rendering.
+			let Plot;
+			const plotReady = import("https://esm.sh/@observablehq/plot@0.6.17?bundle").then(
+				(module) => (Plot = module),
+			);
 			const $ = (selector) => document.querySelector(selector);
-			const KEY = "verdoku-dashboard-key";
-			const endpoint = "https://lbitxwhhrohcjkbpbcrv.supabase.co/functions/v1/verdoku-dashboard";
 			const money = new Intl.NumberFormat("en", {
 				style: "currency",
 				currency: "EUR",
 				maximumFractionDigits: 2,
 			});
-			let token = "",
+			let token = consumeTokenFromHash() || storedToken(),
 				snapshot,
 				selection,
+				trendRows = [],
 				requestId = 0;
-			try {
-				token =
-					decodeURIComponent(location.hash.slice(1)).trim() || localStorage.getItem(KEY) || "";
-				if (location.hash) history.replaceState(null, "", location.pathname + location.search);
-			} catch {}
 			function element(tag, text, className) {
 				const el = document.createElement(tag);
 				if (text !== undefined) el.textContent = text;
@@ -462,42 +448,23 @@
 				return el;
 			}
 			const sourceName = { apple: "Apple", admob: "AdMob", revenuecat: "RevenueCat Android" };
-			function coverage(data, from, to, grain, provider, platform) {
-				const expected =
-					grain === "month"
-						? new Date(to + "T00:00:00Z").getUTCMonth() -
-						  new Date(from + "T00:00:00Z").getUTCMonth() +
-						  12 * (Number(to.slice(0, 4)) - Number(from.slice(0, 4))) +
-						  1
-						: Math.round((Date.parse(to) - Date.parse(from)) / 86400000) + 1;
-				const providers = (
-					provider === "all" ? ["apple", "admob", "revenuecat"] : [provider]
-				).filter(
-					(source) =>
-						(source !== "apple" || platform !== "android") &&
-						(source !== "revenuecat" || platform !== "ios"),
-				);
-				return providers.map((source) => ({
-					source,
-					count: data.reports.filter(
-						(r) => r.provider === source && r.period_start >= from && r.period_start <= to,
-					).length,
-					expected,
-				}));
-			}
 			function render() {
 				if (!snapshot) return;
 				const { from, to, priorFrom, priorTo, grain } = selection;
 				const platform = $("#platform").value,
 					provider = $("#provider").value;
+				// Monthly (all-history) views have no prior period to compare against.
+				const comparable = grain !== "month";
 				const current = summarize(snapshot, from, to, platform, provider);
-				const prior = summarize(snapshot, priorFrom, priorTo, platform, provider);
+				const prior = comparable && summarize(snapshot, priorFrom, priorTo, platform, provider);
 				const missing = coverage(snapshot, from, to, grain, provider, platform).filter(
 					(s) => s.count < s.expected,
 				);
-				const priorMissing = coverage(snapshot, priorFrom, priorTo, grain, provider, platform).some(
-					(s) => s.count < s.expected,
-				);
+				const priorMissing =
+					comparable &&
+					coverage(snapshot, priorFrom, priorTo, grain, provider, platform).some(
+						(s) => s.count < s.expected,
+					);
 				const hasReports = current.rows.some((row) => row.hasData);
 				const missingAndroidProjects =
 					platform !== "ios" && !["apple", "admob"].includes(provider)
@@ -517,13 +484,13 @@
 					? "Subtotal · incomplete coverage"
 					: "Developer proceeds + advertising";
 				$("#change").textContent =
+					!comparable ||
 					!hasReports ||
 					missing.length ||
 					priorMissing ||
 					current.unconverted.length ||
 					prior.unconverted.length ||
-					androidMissing ||
-					grain === "month"
+					androidMissing
 						? "—"
 						: prior.total === 0
 						? "—"
@@ -532,7 +499,7 @@
 								100
 						  ).toFixed(1)}%`;
 				$("#change-note").textContent =
-					grain === "month"
+					!comparable
 						? "Select daily dates for a period comparison"
 						: priorMissing || missing.length || androidMissing
 						? "Comparison needs complete coverage"
@@ -656,8 +623,7 @@
 					if (source.error) div.append(element("p", source.error));
 					sourceNode.append(div);
 				}
-				const plot = $("#trend");
-				plot.replaceChildren();
+				const projectNames = new Map(snapshot.projects.map((p) => [p.id, p.name]));
 				const grouped = new Map();
 				for (const row of current.included) {
 					if (row.amount_eur === null) continue;
@@ -665,11 +631,18 @@
 					const previous = grouped.get(key);
 					grouped.set(key, {
 						date: new Date(row.period_start + "T12:00:00Z"),
-						project: snapshot.projects.find((p) => p.id === row.project_id)?.name ?? row.project_id,
+						project: projectNames.get(row.project_id) ?? row.project_id,
 						value: (previous?.value ?? 0) + Number(row.amount_eur),
 					});
 				}
-				if (grouped.size)
+				trendRows = [...grouped.values()];
+				renderTrend();
+			}
+			// Only the chart depends on width, so resizing redraws just this.
+			function renderTrend() {
+				const plot = $("#trend");
+				plot.replaceChildren();
+				if (trendRows.length)
 					plot.append(
 						Plot.plot({
 							width: plot.clientWidth || 900,
@@ -681,12 +654,12 @@
 							marks: [
 								Plot.ruleY([0]),
 								Plot.rectY(
-									[...grouped.values()],
+									trendRows,
 									Plot.stackY({
 										x: "date",
 										y: "value",
 										fill: "project",
-										interval: grain === "month" ? "month" : "day",
+										interval: selection.grain === "month" ? "month" : "day",
 										tip: true,
 									}),
 								),
@@ -702,45 +675,32 @@
 				$("#loading").hidden = false;
 				try {
 					const preset = $("#period").value;
-					let nextSelection;
-					let grain = "day";
-					if (preset === "history") {
-						const now = new Date();
-						nextSelection = {
-							from: "2019-01-01",
-							to: new Date(now.getTime() - 86400000)
-								.toISOString()
-								.slice(0, 10),
-							priorFrom: "1900-01-01",
-							priorTo: "1900-01-01",
-							grain: "month",
-						};
-						grain = "month";
-					} else
-						nextSelection = {
-							...ranges(
-								preset === "custom" ? "30" : preset,
-								new Date(),
-								preset === "custom" ? { from: $("#from").value, to: $("#to").value } : {},
-							),
-							grain,
-						};
-					const url = new URL(endpoint);
-					url.search = new URLSearchParams({
-						view: "portfolio",
+					const grain = preset === "history" ? "month" : "day";
+					const nextSelection =
+						grain === "month"
+							? { from: "2019-01-01", to: yesterday(), grain }
+							: {
+									...ranges(
+										preset === "custom" ? "30" : preset,
+										new Date(),
+										preset === "custom" ? { from: $("#from").value, to: $("#to").value } : {},
+									),
+									grain,
+							  };
+					const fetchPortfolio = (params) =>
+						fetchView(
+							token,
+							{ view: "portfolio", ...params },
+							{ signal: AbortSignal.timeout(20000) },
+						);
+					const response = await fetchPortfolio({
 						from: grain === "month" ? nextSelection.from : nextSelection.priorFrom,
 						to: nextSelection.to,
 						grain,
-					}).toString();
-					const response = await fetch(url, {
-						headers: { Authorization: `Bearer ${token}` },
-						signal: AbortSignal.timeout(20000),
 					});
 					if (id !== requestId) return;
 					if (response.status === 401) {
-						try {
-							localStorage.removeItem(KEY);
-						} catch {}
+						forgetToken();
 						token = "";
 						$("#dashboard").hidden = true;
 						$("#access").hidden = false;
@@ -748,30 +708,32 @@
 					}
 					if (!response.ok)
 						throw new Error("Revenue is temporarily unavailable. Last loaded data is preserved.");
-						snapshot = await response.json();
-						if (grain === "month") {
-							const monthStart = nextSelection.to.slice(0, 7) + "-01";
-							if (!snapshot.reports.some((row) => row.period_start === monthStart)) {
-								url.search = new URLSearchParams({ view: "portfolio", from: monthStart,
-									to: nextSelection.to, grain: "day" }).toString();
-								const partial = await fetch(url, { headers: { Authorization: `Bearer ${token}` },
-									signal: AbortSignal.timeout(20000) });
-								if (!partial.ok) throw new Error("Current month is temporarily unavailable.");
-								const daily = await partial.json();
-								appendCurrentMonth(snapshot, daily, nextSelection.to);
-							}
-							const first = snapshot.totals.filter((row) => Number(row.amount) !== 0)
-								.map((row) => row.period_start).sort()[0] ||
-								snapshot.reports.map((row) => row.period_start).sort()[0];
-							if (first) nextSelection.from = first;
+					snapshot = await response.json();
+					if (grain === "month") {
+						const monthStart = nextSelection.to.slice(0, 7) + "-01";
+						if (!snapshot.reports.some((row) => row.period_start === monthStart)) {
+							const partial = await fetchPortfolio({
+								from: monthStart,
+								to: nextSelection.to,
+								grain: "day",
+							});
+							if (!partial.ok) throw new Error("Current month is temporarily unavailable.");
+							const daily = await partial.json();
+							appendCurrentMonth(snapshot, daily, nextSelection.to);
 						}
+						const first =
+							snapshot.totals
+								.filter((row) => Number(row.amount) !== 0)
+								.map((row) => row.period_start)
+								.sort()[0] || snapshot.reports.map((row) => row.period_start).sort()[0];
+						if (first) nextSelection.from = first;
+					}
+					await plotReady;
 					if (id !== requestId) return;
 					selection = nextSelection;
 					$("#access").hidden = true;
 					$("#dashboard").hidden = false;
-					try {
-						localStorage.setItem(KEY, token);
-					} catch {}
+					storeToken(token);
 					render();
 				} catch (error) {
 					if (id === requestId)
@@ -804,9 +766,7 @@
 				++requestId;
 				token = "";
 				snapshot = undefined;
-				try {
-					localStorage.removeItem(KEY);
-				} catch {}
+				forgetToken();
 				$("#access-key").value = "";
 				$("#dashboard").hidden = true;
 				$("#access").hidden = false;
@@ -814,7 +774,7 @@
 			let resizeTimer;
 			window.addEventListener("resize", () => {
 				clearTimeout(resizeTimer);
-				resizeTimer = setTimeout(render, 150);
+				resizeTimer = setTimeout(() => snapshot && renderTrend(), 150);
 			});
 			setInterval(() => {
 				if (token && document.visibilityState === "visible") void load();

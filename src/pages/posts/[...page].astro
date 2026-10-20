@@ -25,20 +25,6 @@ const meta = {
 	description: "Ready my collection of posts and the things that interest me",
 };
 
-const paginationProps = {
-	...(page.url.prev && {
-		prevUrl: {
-			url: page.url.prev,
-			text: `← Previous Posts`,
-		},
-	}),
-	...(page.url.next && {
-		nextUrl: {
-			url: page.url.next,
-			text: `Next Posts →`,
-		},
-	}),
-};
 ---
 
 <PageLayout meta={meta}>
@@ -54,7 +40,7 @@ const paginationProps = {
 					))
 				}
 			</ul>
-			<Pagination {...paginationProps} />
+			<Pagination page={page} prevText="← Previous Posts" nextText="Next Posts →" />
 		</section>
 		{
 			!!uniqueTags.length && (

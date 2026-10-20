@@ -6,6 +6,7 @@ import BaseHead from "@/components/BaseHead";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import SkipLink from "@/components/SkipLink";
+import KonamiConfetti from "@/components/KonamiConfetti";
 import { siteConfig } from "@/site-config";
 
 interface Props {
@@ -20,13 +21,7 @@ const {
 <html lang={siteConfig.lang}>
 	<head>
 		<BaseHead title={title} description={description} ogImage={ogImage} articleDate={articleDate} />
-		{
-			/* 
-			Fallback set to none in non-supporting browsers -> https://docs.astro.build/en/guides/view-transitions/#fallback-control
-			This is set to false by default in src/site.config.ts 
-			*/
-		}
-		{siteConfig.includeViewTransitions && <ViewTransitions fallback="none" />}
+		<ViewTransitions fallback="none" />
 	</head>
 	<body>
 		<SkipLink />
@@ -35,40 +30,6 @@ const {
 			<slot />
 		</main>
 		<Footer />
-		<script>
-			const konamiCode = [
-				"ArrowUp",
-				"ArrowUp",
-				"ArrowDown",
-				"ArrowDown",
-				"ArrowLeft",
-				"ArrowRight",
-				"ArrowLeft",
-				"ArrowRight",
-				"KeyB",
-				"KeyA",
-			];
-			let konamiIndex = 0;
-
-			document.addEventListener("keydown", (e) => {
-				if (e.code === konamiCode[konamiIndex]) {
-					konamiIndex++;
-					if (konamiIndex === konamiCode.length) {
-						konamiIndex = 0;
-						// Load confetti dynamically
-						import("https://cdn.skypack.dev/canvas-confetti").then((module) => {
-							const confetti = module.default;
-							confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-							setTimeout(
-								() => confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } }),
-								250,
-							);
-						});
-					}
-				} else {
-					konamiIndex = 0;
-				}
-			});
-		</script>
+		<KonamiConfetti />
 	</body>
 </html>

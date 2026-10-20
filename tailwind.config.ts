@@ -5,8 +5,6 @@ import plugin from "tailwindcss/plugin";
 export default {
 	content: ["./src/**/*.{astro,html,js,jsx,md,svelte,ts,tsx,vue}"],
 	corePlugins: {
-		// disable aspect ratio as per docs -> @tailwindcss/aspect-ratio
-		aspectRatio: false,
 		// disable some core plugins as they are included in the css, even when unused
 		touchAction: false,
 		ringOffsetWidth: false,
@@ -141,7 +139,6 @@ export default {
 	},
 	plugins: [
 		require("@tailwindcss/typography"),
-		require("@tailwindcss/aspect-ratio"),
 		plugin(function ({ addComponents }) {
 			addComponents({
 				".title": {

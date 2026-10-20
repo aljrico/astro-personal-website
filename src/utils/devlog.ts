@@ -1,11 +1,9 @@
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
+import { isPublished } from "./post";
 
-/** Note: this function filters out draft devlog entries based on the environment */
 export async function getAllDevlogEntries() {
-	return await getCollection("devlog", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
+	return await getCollection("devlog", isPublished);
 }
 
 export function sortDevlogByDate(entries: Array<CollectionEntry<"devlog">>) {

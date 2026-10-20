@@ -1,11 +1,13 @@
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 
-/** Note: this function filters out draft posts based on the environment */
+/** Drafts are visible in dev and hidden in production builds */
+export function isPublished({ data }: { data: { draft?: boolean } }) {
+	return import.meta.env.PROD ? data.draft !== true : true;
+}
+
 export async function getAllPosts() {
-	return await getCollection("post", ({ data }) => {
-		return import.meta.env.PROD ? data.draft !== true : true;
-	});
+	return await getCollection("post", isPublished);
 }
 
 export function sortMDByDate(posts: Array<CollectionEntry<"post">>) {

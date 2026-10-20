@@ -23,20 +23,6 @@ const meta = {
 	description: "A development diary capturing the daily texture of building things",
 };
 
-const paginationProps = {
-	...(page.url.prev && {
-		prevUrl: {
-			url: page.url.prev,
-			text: `← Newer Entries`,
-		},
-	}),
-	...(page.url.next && {
-		nextUrl: {
-			url: page.url.next,
-			text: `Older Entries →`,
-		},
-	}),
-};
 ---
 
 <PageLayout meta={meta}>
@@ -51,6 +37,6 @@ const paginationProps = {
 				))
 			}
 		</ul>
-		<Pagination {...paginationProps} />
+		<Pagination page={page} prevText="← Newer Entries" nextText="Older Entries →" />
 	</section>
 </PageLayout>

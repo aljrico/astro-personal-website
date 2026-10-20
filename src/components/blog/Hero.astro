@@ -21,7 +21,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 
 {
 	data.coverImage && (
-		<div class="aspect-h-9 aspect-w-16 mb-6">
+		<div class="mb-6 aspect-video">
 			<Image
 				src={data.coverImage.src}
 				alt={data.coverImage.alt}
@@ -54,7 +54,6 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 							class="cactus-link inline-block font-normal before:content-['#']"
 							aria-label={`View more blogs with the tag ${tag}`}
 							href={`/tags/${tag}/`}
-							data-pagefind-filter="tag"
 						>
 							{tag}
 						</a>

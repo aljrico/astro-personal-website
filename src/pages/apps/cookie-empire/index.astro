@@ -1,6 +1,5 @@
 ---
-import PageLayout from "@/layouts/Base";
-import { Icon } from "astro-icon";
+import AppLanding from "@/layouts/AppLanding";
 
 const meta = {
 	title: "Cookie Empire",
@@ -9,105 +8,56 @@ const meta = {
 };
 ---
 
-<PageLayout meta={meta}>
-	<div class="max-w-2xl">
-		<div class="mb-8 flex items-center gap-4">
-			<img
-				src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5e/15/4a/5e154ae1-c4c9-0b05-187f-918de949abb3/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-85-220.png/128x128bb.jpg"
-				alt="Cookie Empire app icon"
-				class="h-20 w-20 rounded-2xl"
-			/>
-			<div>
-				<h1 class="title mb-1 text-3xl">Cookie Empire</h1>
-				<p class="text-gray-500">2022-present</p>
-			</div>
-		</div>
-
-		<section class="mb-8">
-			<p class="mb-4">
-				After getting burned with React Native, I decided to go all-in on native development with
-				SwiftUI. Halfway through the classic <a
-					href="https://www.hackingwithswift.com/100/swiftui"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="project-link">100 Days of SwiftUI</a
-				>, while dumping another to-do app into the world, I started wondering: could I make a game
-				with this? What is the simplest game I can think of?
-			</p>
-			<p class="mb-4">
-				I considered <a
-					href="https://en.wikipedia.org/wiki/Pong"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="project-link">Pong</a
-				>, but the idea of something moving in real time sounded astronomically difficult to younger
-				me. So I decided to make a homage to the great <a
-					href="https://orteil.dashnet.org/cookieclicker/"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="project-link">Cookie Clicker</a
-				>. There are a gazillion Cookie Clicker clones on the App Store. Why not one more? At least
-				I could try to make mine tasteful and somewhat original. So I started tinkering with it,
-				falling in love with Swift and agonising over the best shade of brown for the cookie.
-			</p>
-			<p class="mb-4">
-				Some folks started playing it and giving me feedback, so I kept making it better, polishing
-				it and adding new features. What started as a SwiftUI exercise gradually spiralled into a
-				fully-fledged idle mobile game, with proper IAPs and ads, persistence across Apple devices
-				(a nightmare of an implementation), and a complete analytics backend with robust
-				progress-recovery systems.
-			</p>
-			<p class="mb-4">
-				I started shipping updates maniacally. The game ended up with a realistic stock market
-				simulator where players can day-trade with cookie ingredients, a FarmVille-style farming
-				minigame, prestige mechanics with ascension to heaven, a descent to hell, cryptic lore about
-				yokai and Lovecraftian entities, a narrative-based horror mine exploration minigame full of
-				wandering grandmas, and <a href="/apps/match-tile-mini" class="project-link"
-					>a complete tile match-3 minigame that later spun off into its own separate game</a
-				>.
-			</p>
-			<p>
-				The game grew way beyond what I intended, reaching 100k downloads on the App Store and
-				creating a <a
-					href="https://discord.com/invite/thqU7G8hXt"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="project-link">Discord community</a
-				> of nearly 1,000 members.
-			</p>
-		</section>
-
-		<div class="mb-12 flex flex-wrap gap-3">
-			<a
-				href="https://apps.apple.com/app/cookie-empire-idle-clicker/id6471402254"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
-			>
-				<Icon name="fa-brands:apple" class="h-5 w-5" />
-				 App Store
-			</a>
-			<a
-				href="https://discord.gg/thqU7G8hXt"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-bgColor transition-all hover:opacity-80"
-			>
-				<Icon name="fa-brands:discord" class="h-5 w-5" />
-				 Discord
-			</a>
-		</div>
-
-		<section>
-			<h2 class="title mb-4 text-xl">Links</h2>
-			<ul class="space-y-2">
-				<li>
-					<a href="/apps/cookie-empire/privacy" class="project-link">Privacy Policy</a>
-				</li>
-				<li>
-					<a href="/apps/cookie-empire/support" class="project-link">Support</a>
-				</li>
-			</ul>
-		</section>
-	</div>
-</PageLayout>
+<AppLanding slug="cookie-empire" {...meta}>
+	<p class="mb-4">
+		After getting burned with React Native, I decided to go all-in on native development with
+		SwiftUI. Halfway through the classic <a
+			href="https://www.hackingwithswift.com/100/swiftui"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="project-link">100 Days of SwiftUI</a
+		>, while dumping another to-do app into the world, I started wondering: could I make a game
+		with this? What is the simplest game I can think of?
+	</p>
+	<p class="mb-4">
+		I considered <a
+			href="https://en.wikipedia.org/wiki/Pong"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="project-link">Pong</a
+		>, but the idea of something moving in real time sounded astronomically difficult to younger
+		me. So I decided to make a homage to the great <a
+			href="https://orteil.dashnet.org/cookieclicker/"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="project-link">Cookie Clicker</a
+		>. There are a gazillion Cookie Clicker clones on the App Store. Why not one more? At least
+		I could try to make mine tasteful and somewhat original. So I started tinkering with it,
+		falling in love with Swift and agonising over the best shade of brown for the cookie.
+	</p>
+	<p class="mb-4">
+		Some folks started playing it and giving me feedback, so I kept making it better, polishing
+		it and adding new features. What started as a SwiftUI exercise gradually spiralled into a
+		fully-fledged idle mobile game, with proper IAPs and ads, persistence across Apple devices
+		(a nightmare of an implementation), and a complete analytics backend with robust
+		progress-recovery systems.
+	</p>
+	<p class="mb-4">
+		I started shipping updates maniacally. The game ended up with a realistic stock market
+		simulator where players can day-trade with cookie ingredients, a FarmVille-style farming
+		minigame, prestige mechanics with ascension to heaven, a descent to hell, cryptic lore about
+		yokai and Lovecraftian entities, a narrative-based horror mine exploration minigame full of
+		wandering grandmas, and <a href="/apps/match-tile-mini" class="project-link"
+			>a complete tile match-3 minigame that later spun off into its own separate game</a
+		>.
+	</p>
+	<p>
+		The game grew way beyond what I intended, reaching 100k downloads on the App Store and
+		creating a <a
+			href="https://discord.com/invite/thqU7G8hXt"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="project-link">Discord community</a
+		> of nearly 1,000 members.
+	</p>
+</AppLanding>

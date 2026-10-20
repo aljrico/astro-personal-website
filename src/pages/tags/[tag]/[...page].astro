@@ -32,20 +32,6 @@ const meta = {
 	description: `View all posts with the tag - ${tag}`,
 };
 
-const paginationProps = {
-	...(page.url.prev && {
-		prevUrl: {
-			url: page.url.prev,
-			text: `← Previous Tags`,
-		},
-	}),
-	...(page.url.next && {
-		nextUrl: {
-			url: page.url.next,
-			text: `Next Tags →`,
-		},
-	}),
-};
 ---
 
 <PageLayout meta={meta}>
@@ -64,6 +50,6 @@ const paginationProps = {
 				))
 			}
 		</ul>
-		<Pagination {...paginationProps} />
+		<Pagination page={page} prevText="← Previous Tags" nextText="Next Tags →" />
 	</section>
 </PageLayout>

@@ -9,7 +9,6 @@ import { remarkReadingTime } from "./src/utils/remark-reading-time";
 
 // https://astro.build/config
 export default defineConfig({
-	// ! Please remember to replace the following site property with your own domain
 	site: "https://aljrico.com/",
 	markdown: {
 		remarkPlugins: [remarkUnwrapImages, remarkReadingTime],
@@ -27,9 +26,6 @@ export default defineConfig({
 		sitemap({ filter: (page) => !page.includes("/stats/") }),
 		prefetch(),
 	],
-	image: {
-		domains: ["webmention.io"],
-	},
 	vite: {
 		plugins: [rawFonts([".ttf"])],
 		optimizeDeps: {

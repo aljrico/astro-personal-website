@@ -3,6 +3,9 @@ import type { CollectionEntry } from "astro:content";
 
 import BaseLayout from "./Base.astro";
 import FormattedDate from "@/components/FormattedDate";
+import Prose from "@/components/blog/Prose";
+import ScrollToTop from "@/components/blog/ScrollToTop";
+import { siteConfig } from "@/site-config";
 
 interface Props {
 	entry: CollectionEntry<"devlog">;
@@ -14,10 +17,6 @@ const {
 } = entry;
 const articleDate = publishDate.toISOString();
 const { remarkPluginFrontmatter } = await entry.render();
-
-const dateTimeOptions: Intl.DateTimeFormatOptions = {
-	month: "long",
-};
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const jsonLd = {
@@ -25,69 +24,26 @@ const jsonLd = {
 	"@type": "BlogPosting",
 	headline: title,
 	description,
-	datePublished: publishDate.toISOString(),
-	author: {
-		"@type": "Person",
-		name: "Alejandro Rico",
-		url: "https://aljrico.com",
-	},
+	datePublished: articleDate,
+	author: { "@type": "Person", name: siteConfig.author, url: Astro.site?.href },
 	url: canonicalURL.href,
 	mainEntityOfPage: canonicalURL.href,
 };
 ---
 
-<script>
-	const scrollBtn = document.getElementById("to-top-btn") as HTMLButtonElement;
-	const targetHeader = document.getElementById("devlog-hero") as HTMLDivElement;
-
-	function callback(entries: IntersectionObserverEntry[]) {
-		entries.forEach((entry) => {
-			scrollBtn.dataset.show = (!entry.isIntersecting).toString();
-		});
-	}
-
-	scrollBtn.addEventListener("click", () => {
-		document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
-	});
-
-	const observer = new IntersectionObserver(callback);
-	observer.observe(targetHeader);
-</script>
-
 <BaseLayout meta={{ title, description, articleDate }}>
 	<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	<article class="flex-grow break-words">
-		<div id="devlog-hero">
+		<div data-hero>
 			<h1 class="title mb-3 sm:mb-1">{title}</h1>
 			<div class="flex flex-wrap items-center gap-x-3 gap-y-2">
 				<p class="font-semibold">
-					<FormattedDate date={publishDate} dateTimeOptions={dateTimeOptions} /> /{" "}
+					<FormattedDate date={publishDate} dateTimeOptions={{ month: "long" }} /> /{" "}
 					{remarkPluginFrontmatter.minutesRead}
 				</p>
 			</div>
 		</div>
-		<div
-			class="prose prose-sm prose-cactus mt-12 prose-headings:font-serif prose-headings:font-bold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-accent prose-headings:before:content-['#'] prose-h2:text-2xl prose-h3:text-xl prose-th:before:content-none"
-		>
-			<slot />
-		</div>
+		<Prose><slot /></Prose>
 	</article>
-	<button
-		id="to-top-btn"
-		class="z-90 fixed bottom-8 end-4 flex h-10 w-10 translate-y-28 items-center justify-center rounded-full border-2 border-transparent bg-zinc-200 text-3xl opacity-0 transition-all duration-300 hover:border-zinc-400 data-[show=true]:translate-y-0 data-[show=true]:opacity-100 sm:end-8 sm:h-12 sm:w-12"
-		aria-label="Back to Top"
-		data-show="false"
-		><svg
-			xmlns="http://www.w3.org/2000/svg"
-			aria-hidden="true"
-			focusable="false"
-			fill="none"
-			viewBox="0 0 24 24"
-			stroke-width="2"
-			stroke="currentColor"
-			class="h-6 w-6"
-		>
-			<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"></path>
-		</svg>
-	</button>
+	<ScrollToTop />
 </BaseLayout>

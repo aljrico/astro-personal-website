@@ -1,0 +1,80 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@/layouts/Base";
+import AppButton from "@/components/app/AppButton";
+import ProjectIcon from "@/components/app/ProjectIcon";
+import { getProject, type LegalDoc } from "../data/projects";
+
+type Props = {
+	/** Key into src/data/projects.ts. */
+	slug: string;
+	description: string;
+	/** Page <title>; defaults to the project title. */
+	title?: string;
+	/** Links shown before the legal docs in the bottom nav. */
+	navLinks?: Array<{ href: string; label: string }>;
+};
+
+const { slug, description, title, navLinks = [] } = Astro.props;
+const project = getProject(slug);
+const links = project.links ?? [];
+
+const legalOrder: LegalDoc[] = ["privacy", "terms", "support"];
+const legalLabels = project.legalLabels ?? {
+	privacy: "Privacy Policy",
+	terms: "Terms of Use",
+	support: "Support",
+	nav: `${project.title} links`,
+};
+const legalDocs = (await getCollection("apps", (entry) => entry.slug.startsWith(`${slug}/`)))
+	.map((entry) => entry.slug.slice(slug.length + 1) as LegalDoc)
+	.filter((doc) => legalOrder.includes(doc))
+	.sort((a, b) => legalOrder.indexOf(a) - legalOrder.indexOf(b));
+const nav = [
+	...navLinks,
+	...legalDocs.map((doc) => ({ href: `/apps/${slug}/${doc}`, label: legalLabels[doc] })),
+];
+---
+
+<PageLayout meta={{ title: title ?? project.title, description }}>
+	<div class="max-w-2xl">
+		<div class="mb-8 flex items-center gap-4">
+			<ProjectIcon
+				icon={project.icon}
+				alt={project.iconAlt}
+				loading="eager"
+				class="h-20 w-20 rounded-2xl object-contain"
+			/>
+			<div>
+				<h1 class="title mb-1 text-3xl">{project.title}</h1>
+				<p class="text-gray-500">{project.subtitle ?? project.period}</p>
+			</div>
+		</div>
+
+		<section class={links.length > 0 || nav.length > 0 ? "mb-8" : undefined}>
+			<slot />
+		</section>
+
+		{
+			links.length > 0 && (
+				<div class:list={["flex flex-wrap gap-3", nav.length > 0 ? "mb-8" : "mb-12"]}>
+					{links.map((link) => (
+						<AppButton {...link} />
+					))}
+				</div>
+			)
+		}
+
+		{
+			nav.length > 0 && (
+				<nav aria-label={legalLabels.nav} class="flex flex-wrap gap-x-4 gap-y-2">
+					{nav.map(({ href, label }) => (
+						<a href={href} class="project-link">
+							{label}
+						</a>
+					))}
+				</nav>
+			)
+		}
+	</div>
+</PageLayout>

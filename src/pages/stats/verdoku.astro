@@ -13,47 +13,20 @@
 		<meta name="theme-color" content="#f7f7f4" />
 		<title>Murder Sudoku: Tiny Crimes · Live</title>
 		<script is:inline>
+			// Runs before modules load, so it repeats TOKEN_KEY from /scripts/dashboard-auth.js.
 			try {
 				const fromHash = decodeURIComponent(location.hash.slice(1)).trim();
 				if (fromHash || localStorage.getItem("verdoku-dashboard-key"))
 					document.documentElement.dataset.hasKey = "";
 			} catch {}
 		</script>
+		<link rel="stylesheet" href="/styles/dashboard.css" />
 		<style>
-			@font-face {
-				font-family: "Styrene B";
-				font-style: normal;
-				font-weight: 400;
-				font-display: swap;
-				src: url("/fonts/StyreneB-Regular.woff2") format("woff2");
-			}
-
-			@font-face {
-				font-family: "Styrene B";
-				font-style: normal;
-				font-weight: 600 800;
-				font-display: swap;
-				src: url("/fonts/StyreneB-Bold.woff2") format("woff2");
-			}
-
-			@font-face {
-				font-family: "Tiempos Text";
-				font-style: normal;
-				font-weight: 700;
-				font-display: swap;
-				src: url("/fonts/TiemposText-Bold.woff2") format("woff2");
-			}
-
 			:root {
-				color-scheme: light;
-				--paper: #f7f7f4;
 				--card: #ffffff;
-				--ink: #26323d;
 				--muted: #7d8a96;
 				--faint: #a5afb8;
-				--line: #e3e7e8;
 				--grid: #e9eef2;
-				--navy: #234766;
 				--red: hsl(351deg 66% 48%);
 				--green: #2abd88;
 				--amber: #d89024;
@@ -68,7 +41,6 @@
 			}
 
 			body {
-				margin: 0;
 				min-width: 320px;
 				font-family:
 					"Styrene B",
@@ -76,9 +48,6 @@
 					system-ui,
 					-apple-system,
 					sans-serif;
-				color: var(--ink);
-				background: var(--paper);
-				-webkit-font-smoothing: antialiased;
 			}
 
 			button,
@@ -1255,16 +1224,30 @@
 		</main>
 
 		<script type="module" is:inline>
-			import * as Plot from "https://esm.sh/@observablehq/plot@0.6.17?bundle";
 			import { summarizeBayesianMetrics } from "/scripts/bayesian-experiments.js";
 			import { evaluateExperimentDecision } from "/scripts/experiment-decisions.js";
+			import {
+				consumeTokenFromHash,
+				fetchView,
+				forgetToken,
+				storedToken,
+				storeToken,
+			} from "/scripts/dashboard-auth.js";
 
-			const endpoint = "https://lbitxwhhrohcjkbpbcrv.supabase.co/functions/v1/verdoku-dashboard";
+			// Plot is large; load it alongside the first snapshot fetch instead of
+			// before it. Every chart renders after load() has awaited plotReady.
+			let Plot;
+			const plotReady = import("https://esm.sh/@observablehq/plot@0.6.17?bundle").then(
+				(module) => (Plot = module),
+			);
 			// Telemetry before the 1.7.0 staged rollout completed is not trustworthy,
 			// so nothing earlier than this UTC day is ever plotted. Mirrors the floor
 			// in get_verdoku_dashboard_snapshot(); kept here so the page is correct
 			// even against an older snapshot.
 			const TRUSTED_FROM = "2026-07-01";
+			// Revenue series (cohort LTV, revenue by source) start later than the
+			// rest of the trusted telemetry.
+			const REVENUE_TRUSTED_FROM = "2026-07-14";
 			const number = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });
 			const compact = new Intl.NumberFormat("en", {
 				notation: "compact",
@@ -1330,43 +1313,7 @@
 			let experimentRosterSignature = "";
 			let experimentCountrySignature = "";
 			const experimentColors = new Map();
-
-			// The access key used to live permanently in location.hash, which leaks it
-			// into browser history, screenshots and screen shares. Private links still
-			// work, but the hash is consumed once and stripped; the key lives in
-			// localStorage from then on.
-			const TOKEN_STORAGE_KEY = "verdoku-dashboard-key";
-
-			function storedToken() {
-				try {
-					return localStorage.getItem(TOKEN_STORAGE_KEY) ?? "";
-				} catch {
-					return "";
-				}
-			}
-
-			function storeToken(token) {
-				try {
-					localStorage.setItem(TOKEN_STORAGE_KEY, token);
-				} catch {}
-			}
-
-			function forgetToken() {
-				try {
-					localStorage.removeItem(TOKEN_STORAGE_KEY);
-				} catch {}
-			}
-
-			function consumeTokenFromHash() {
-				let fromHash = "";
-				try {
-					fromHash = decodeURIComponent(location.hash.slice(1)).trim();
-				} catch {}
-				if (!fromHash) return "";
-				history.replaceState(null, "", location.pathname + location.search);
-				storeToken(fromHash);
-				return fromHash;
-			}
+			let posteriorCache;
 
 			function dashboardTabFromUrl() {
 				const tab = new URL(location.href).searchParams.get("tab");
@@ -1442,7 +1389,7 @@
 						marginRight: 12,
 						marginBottom: 30,
 						marginLeft: 43,
-						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
+						style: plotStyle(),
 						x: {
 							type: "utc",
 							label: null,
@@ -1503,18 +1450,8 @@
 					marginRight: 12,
 					marginBottom: 28,
 					marginLeft: options.marginLeft ?? 43,
-					style: {
-						background: "transparent",
-						color: "#7d8a96",
-						fontSize: options.fontSize ?? "10px",
-					},
-					x: {
-						type: "utc",
-						label: null,
-						ticks: options.xTicks ?? 5,
-						tickFormat: "%b %-d",
-						tickSize: 0,
-					},
+					style: plotStyle(options.fontSize),
+					x: dateAxis(options.xTicks ?? 5),
 					y: {
 						domain: yDomain,
 						label: null,
@@ -1549,9 +1486,30 @@
 				});
 			}
 
+			// Noon UTC keeps a "YYYY-MM-DD" day on the same calendar date in any time zone.
+			function utcNoon(day) {
+				return new Date(`${day}T12:00:00Z`);
+			}
+
 			// "2026-07-12" -> "Jul 12", read as UTC so the label never slips a day.
 			function dayLabel(day) {
-				return typeof day === "string" ? shortDate.format(new Date(`${day}T12:00:00Z`)) : "";
+				return typeof day === "string" ? shortDate.format(utcNoon(day)) : "";
+			}
+
+			// Preferred keys first, in their order, then any others alphabetically.
+			function orderKeys(available, preferred) {
+				return [
+					...preferred.filter((key) => available.has(key)),
+					...[...available].filter((key) => !preferred.includes(key)).sort(),
+				];
+			}
+
+			function plotStyle(fontSize = "10px") {
+				return { background: "transparent", color: "#7d8a96", fontSize };
+			}
+
+			function dateAxis(ticks) {
+				return { type: "utc", label: null, ticks, tickFormat: "%b %-d", tickSize: 0 };
 			}
 
 			// Authoritative peak over every trusted complete day, not the max of the
@@ -1568,7 +1526,7 @@
 			function renderRetention(rows, series = []) {
 				const parse = (row, dayN) => ({
 					...row,
-					date: new Date(`${row.cohort_day}T12:00:00Z`),
+					date: utcNoon(row.cohort_day),
 					day_n: Number(row.day_n ?? dayN),
 					cohort_size: Number(row.cohort_size),
 					returned: Number(row.returned),
@@ -1644,7 +1602,7 @@
 					if (!dayNs.includes(dayN) || !Array.isArray(entry?.points)) return [];
 					return entry.points.map((point) => ({
 						...point,
-						date: new Date(`${point.cohort_day}T12:00:00Z`),
+						date: utcNoon(point.cohort_day),
 						series: `D${dayN}`,
 						day_n: dayN,
 						cohort_size: Number(point.cohort_size),
@@ -1666,8 +1624,8 @@
 						marginRight: 12,
 						marginBottom: 28,
 						marginLeft: 48,
-						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
-						x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+						style: plotStyle(),
+						x: dateAxis(5),
 						y: {
 							label: null,
 							grid: true,
@@ -1715,14 +1673,10 @@
 			}
 
 			function setOptions(select, values, selected) {
-				select.replaceChildren(
-					...values.map((value) => {
-						const option = document.createElement("option");
-						option.value = value;
-						option.textContent = value;
-						option.selected = value === selected;
-						return option;
-					}),
+				labeledOptions(
+					select,
+					values.map((value) => ({ value, label: value })),
+					selected,
 				);
 			}
 
@@ -1790,7 +1744,7 @@
 					...row,
 					app_key: row.app_key ?? PRIMARY_APP_KEY,
 					app_label: row.app_label ?? "Murder Sudoku",
-					date: new Date(`${row.day}T12:00:00Z`),
+					date: utcNoon(row.day),
 					rating: row.rating == null ? null : Number(row.rating),
 					rating_count: row.rating_count == null ? null : Number(row.rating_count),
 				}));
@@ -1810,8 +1764,8 @@
 							marginRight: 12,
 							marginBottom: 28,
 							marginLeft: 48,
-							style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
-							x: { type: "utc", label: null, ticks: 6, tickFormat: "%b %-d", tickSize: 0 },
+							style: plotStyle(),
+							x: dateAxis(6),
 							color: {
 								domain: selectedApps.map((app) => app.app_label),
 								range: selectedApps.map((app) => appColor(app.app_key)),
@@ -1865,7 +1819,7 @@
 						...row,
 						app_key: row.app_key ?? PRIMARY_APP_KEY,
 						app_label: row.app_label ?? "Murder Sudoku",
-						date: new Date(`${row.day}T12:00:00Z`),
+						date: utcNoon(row.day),
 						rank,
 						search_limit: searchLimit,
 					};
@@ -1902,8 +1856,8 @@
 						marginRight: 12,
 						marginBottom: 28,
 						marginLeft: 48,
-						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
-						x: { type: "utc", label: null, ticks: 6, tickFormat: "%b %-d", tickSize: 0 },
+						style: plotStyle(),
+						x: dateAxis(6),
 						color: {
 							domain: selectedApps.map((app) => app.app_label),
 							range: selectedApps.map((app) => appColor(app.app_key)),
@@ -1956,34 +1910,43 @@
 			async function fetchAso(token, country, keyword) {
 				const cacheKey = `${country}\u0000${keyword}`;
 				if (asoCache.has(cacheKey)) return asoCache.get(cacheKey);
-				const url = new URL(endpoint);
-				url.searchParams.set("view", "aso");
-				url.searchParams.set("country", country);
-				url.searchParams.set("keyword", keyword);
-				const response = await fetch(url, {
-					headers: { Authorization: `Bearer ${token}` },
-					cache: "no-store",
-				});
+				const response = await fetchView(
+					token,
+					{ view: "aso", country, keyword },
+					{ cache: "no-store" },
+				);
 				if (!response.ok) throw new Error("App Store history is unavailable.");
 				const data = await response.json();
 				asoCache.set(cacheKey, data);
 				return data;
 			}
 
-			async function loadInitialAso(token) {
+			// Fetch one App Store view, draw it, then report its collection date or the error.
+			async function showAso(token, country, keyword, draw) {
+				const status = document.querySelector("#aso-updated");
 				try {
-					const data = await fetchAso(token, "US", "sudoku");
+					const data = await fetchAso(token, country, keyword);
+					draw(data);
+					status.textContent = `collected ${shortDate.format(new Date(data.generated_at))}`;
+				} catch (error) {
+					status.textContent = error.message;
+				}
+			}
+
+			function loadInitialAso(token) {
+				return showAso(token, "US", "sudoku", (data) => {
 					setOptions(appStoreCountry, data.countries, data.country);
 					setOptions(keywordName, data.keywords, data.keyword);
 					renderRatings(data);
 					renderKeywordRank(data);
-					const generated = new Date(data.generated_at);
-					document.querySelector("#aso-updated").textContent = `collected ${shortDate.format(
-						generated,
-					)}`;
-				} catch (error) {
-					document.querySelector("#aso-updated").textContent = error.message;
-				}
+				});
+			}
+
+			function refreshAsoSelection({ includeRatings = false } = {}) {
+				return showAso(storedToken(), appStoreCountry.value, keywordName.value, (data) => {
+					if (includeRatings) renderRatings(data);
+					renderKeywordRank(data);
+				});
 			}
 
 			function labeledOptions(select, values, selected) {
@@ -2060,10 +2023,6 @@
 						data.filters.country,
 					);
 				} else experimentCountry.value = data.filters.country;
-			}
-
-			function experimentPlotStyle() {
-				return { background: "transparent", color: "#7d8a96", fontSize: "10px" };
 			}
 
 			function renderExperimentHealth(data) {
@@ -2296,6 +2255,36 @@
 				);
 			}
 
+			// 8000 posterior draws per metric is the expensive part of this tab, so
+			// redraws of the same snapshot (resize, tab switch) reuse the last result.
+			function experimentPosterior(data) {
+				const experiment = data.experiment;
+				const seed =
+					`${experiment.experiment_key}|${data.filters?.platform}|${data.filters?.country}|` +
+					`${data.bayesian_revision}|${data.bayesian_refreshed_at}`;
+				if (
+					posteriorCache?.seed === seed &&
+					posteriorCache.inputs === data.bayesian_inputs &&
+					posteriorCache.policy === data.decision_policy
+				) {
+					return posteriorCache.result;
+				}
+				const posteriorMetrics = summarizeBayesianMetrics(data.bayesian_inputs ?? [], {
+					controlArm: experiment.control_arm,
+					treatmentArm: experiment.treatment_arm,
+					draws: 8000,
+					seed,
+				});
+				const decision = evaluateExperimentDecision(posteriorMetrics, data.decision_policy);
+				posteriorCache = {
+					seed,
+					inputs: data.bayesian_inputs,
+					policy: data.decision_policy,
+					result: { posteriorMetrics, decision },
+				};
+				return posteriorCache.result;
+			}
+
 			function renderExperiment(data) {
 				experimentSnapshot = data;
 				experimentColors.clear();
@@ -2360,7 +2349,7 @@
 							marginRight: 10,
 							marginBottom: 28,
 							marginLeft: 126,
-							style: experimentPlotStyle(),
+							style: plotStyle(),
 							x: { label: null, grid: true, ticks: 4, tickSize: 0 },
 							y: { label: null, tickSize: 0 },
 							color: {
@@ -2383,15 +2372,7 @@
 				document.querySelector("#experiment-allocation-note").textContent =
 					"assigned: active 3d · exposed: experiment-to-date";
 
-				const posteriorMetrics = summarizeBayesianMetrics(data.bayesian_inputs ?? [], {
-					controlArm: experiment.control_arm,
-					treatmentArm: experiment.treatment_arm,
-					draws: 8000,
-					seed:
-						`${experiment.experiment_key}|${data.filters?.platform}|${data.filters?.country}|` +
-						`${data.bayesian_revision}|${data.bayesian_refreshed_at}`,
-				});
-				const decision = evaluateExperimentDecision(posteriorMetrics, data.decision_policy);
+				const { posteriorMetrics, decision } = experimentPosterior(data);
 				renderExperimentDecision(data, posteriorMetrics, decision);
 				renderExperimentEffects(posteriorMetrics, decision);
 
@@ -2416,7 +2397,7 @@
 							marginRight: 12,
 							marginBottom: 28,
 							marginLeft: 160,
-							style: experimentPlotStyle(),
+							style: plotStyle(),
 							x: {
 								domain: [0, 100],
 								label: null,
@@ -2465,7 +2446,7 @@
 							marginRight: 12,
 							marginBottom: 30,
 							marginLeft: 105,
-							style: experimentPlotStyle(),
+							style: plotStyle(),
 							x: { label: null, grid: true, tickFormat: (value) => `${value}%`, tickSize: 0 },
 							y: { label: null, tickSize: 0 },
 							marks: [
@@ -2494,42 +2475,36 @@
 			}
 
 			async function fetchExperiment(token, experiment, platform, country) {
-				const url = new URL(endpoint);
-				url.searchParams.set("view", "experiments");
-				url.searchParams.set("experiment", experiment);
-				url.searchParams.set("platform", platform);
-				url.searchParams.set("country", country);
-				const response = await fetch(url, {
-					headers: { Authorization: `Bearer ${token}` },
-					cache: "no-store",
-				});
+				const response = await fetchView(
+					token,
+					{ view: "experiments", experiment, platform, country },
+					{ cache: "no-store" },
+				);
 				if (!response.ok) throw new Error("Experiment results are unavailable.");
 				return response.json();
 			}
 
-			async function loadInitialExperiments(token) {
+			async function showExperiment(token, experiment, platform, country) {
 				try {
-					const data = await fetchExperiment(token, "hint_offer_choice", "all", "all");
-					renderExperiment(data);
+					renderExperiment(await fetchExperiment(token, experiment, platform, country));
 				} catch (error) {
 					document.querySelector("#experiment-updated").textContent = error.message;
 				}
 			}
 
+			function loadInitialExperiments(token) {
+				return showExperiment(token, "hint_offer_choice", "all", "all");
+			}
+
 			async function refreshExperimentSelection() {
 				if (!experimentName.value) return;
-				try {
-					document.querySelector("#experiment-updated").textContent = "loading…";
-					const data = await fetchExperiment(
-						storedToken(),
-						experimentName.value,
-						experimentPlatform.value || "all",
-						experimentCountry.value || "all",
-					);
-					renderExperiment(data);
-				} catch (error) {
-					document.querySelector("#experiment-updated").textContent = error.message;
-				}
+				document.querySelector("#experiment-updated").textContent = "loading…";
+				await showExperiment(
+					storedToken(),
+					experimentName.value,
+					experimentPlatform.value || "all",
+					experimentCountry.value || "all",
+				);
 			}
 
 			function renderPlots(data) {
@@ -2543,7 +2518,7 @@
 					const revenue = Number(row.revenue_usd ?? iapRevenue + adRevenue);
 					return {
 						...row,
-						date: new Date(`${row.day}T12:00:00Z`),
+						date: utcNoon(row.day),
 						dau,
 						ios_dau: Number(row.ios_dau),
 						android_dau: Number(row.android_dau),
@@ -2566,19 +2541,19 @@
 						country_dau: Array.isArray(row.country_dau) ? row.country_dau : [],
 					};
 				});
-				const playerMix = rows.flatMap((row) => [
-					{ ...row, series: "Existing", value: row.existing_players },
-					{ ...row, series: "New", value: row.new_players },
+				const playerMix = rows.flatMap(({ date, existing_players, new_players }) => [
+					{ date, series: "Existing", value: existing_players },
+					{ date, series: "New", value: new_players },
 				]);
 				const revenueBySource = rows.flatMap((row) => [
-					{ ...row, series: "IAP", value: row.iap_revenue_usd, total: row.revenue_usd },
-					{ ...row, series: "Ads", value: row.ad_revenue_usd, total: row.revenue_usd },
+					{ date: row.date, series: "IAP", value: row.iap_revenue_usd, total: row.revenue_usd },
+					{ date: row.date, series: "Ads", value: row.ad_revenue_usd, total: row.revenue_usd },
 				]);
 				const revenueByPlatform = rows.flatMap((row) => {
 					const total = row.ios_revenue_usd + row.android_revenue_usd;
 					return [
-						{ ...row, series: "iOS", value: row.ios_revenue_usd, total },
-						{ ...row, series: "Android", value: row.android_revenue_usd, total },
+						{ date: row.date, series: "iOS", value: row.ios_revenue_usd, total },
+						{ date: row.date, series: "Android", value: row.android_revenue_usd, total },
 					];
 				});
 				const revenueSourceLabels = {
@@ -2601,77 +2576,58 @@
 					source: row.source,
 					value: Number(row.revenue_usd),
 				}));
-				const availableRevenueSources = new Set(rawRevenueSources.map((row) => row.source));
-				const preferredRevenueSources = [
-					"ads",
-					"remove_ads",
-					"hints",
-					"islands",
-					"grove",
-					"farmyard",
-					"other_iap",
-				];
-				const revenueSourceKeys = [
-					...preferredRevenueSources.filter((key) => availableRevenueSources.has(key)),
-					...[...availableRevenueSources]
-						.filter((key) => !preferredRevenueSources.includes(key))
-						.sort(),
-				];
+				const revenueSourceKeys = orderKeys(
+					new Set(rawRevenueSources.map((row) => row.source)),
+					Object.keys(revenueSourceLabels),
+				);
 				const revenueSourceValues = new Map(
 					rawRevenueSources.map((row) => [`${row.day}:${row.source}`, row.value]),
 				);
-				const revenueSourceDays = rows.filter((row) => row.day >= "2026-07-14");
-				const revenueSources = revenueSourceDays.flatMap((day) => {
-					const values = revenueSourceKeys.map((source) => ({
-						date: day.date,
-						day: day.day,
-						source,
-						series: revenueLabel(source),
-						value: revenueSourceValues.get(`${day.day}:${source}`) ?? 0,
-					}));
-					const total = values.reduce((sum, row) => sum + row.value, 0);
-					return values.map((row) => ({
-						...row,
-						total,
-						share: total ? row.value / total : 0,
-					}));
-				});
+				const sourceRevenue = (day, source) =>
+					revenueSourceValues.get(`${day.day}:${source}`) ?? 0;
+				const revenuePerDau = (day, source) =>
+					day.dau ? sourceRevenue(day, source) / day.dau : 0;
+				const revenueSourceDays = rows.filter((row) => row.day >= REVENUE_TRUSTED_FROM);
+				// One row per day and source, carrying that day's total and the source's share of it.
+				const shareRows = (keys, valueOf) =>
+					revenueSourceDays.flatMap((day) => {
+						const values = keys.map((source) => ({
+							date: day.date,
+							day: day.day,
+							source,
+							series: revenueLabel(source),
+							value: valueOf(day, source),
+						}));
+						const total = values.reduce((sum, row) => sum + row.value, 0);
+						return values.map((row) => ({
+							...row,
+							total,
+							share: total ? row.value / total : 0,
+						}));
+					});
+				const revenueSources = shareRows(revenueSourceKeys, sourceRevenue);
 				const nonEnvironmentRevenueSources = new Set(["ads", "remove_ads", "hints", "other_iap"]);
 				const revenueEnvironmentKeys = revenueSourceKeys.filter(
 					(source) => !nonEnvironmentRevenueSources.has(source),
 				);
-				const revenueEnvironments = revenueSourceDays.flatMap((day) => {
-					const values = revenueEnvironmentKeys.map((source) => ({
-						date: day.date,
-						day: day.day,
-						source,
-						series: revenueLabel(source),
-						value: day.dau ? (revenueSourceValues.get(`${day.day}:${source}`) ?? 0) / day.dau : 0,
-					}));
-					const total = values.reduce((sum, row) => sum + row.value, 0);
-					return values.map((row) => ({
-						...row,
-						total,
-						share: total ? row.value / total : 0,
-					}));
-				});
+				const revenueEnvironments = shareRows(revenueEnvironmentKeys, revenuePerDau);
 				const hintsRevenue = revenueSourceDays.map((day) => ({
 					date: day.date,
 					day: day.day,
-					value: day.dau ? (revenueSourceValues.get(`${day.day}:hints`) ?? 0) / day.dau : 0,
+					value: revenuePerDau(day, "hints"),
 				}));
 				const caseBreakdowns = (data.case_breakdowns ?? []).map((row) => ({
 					...row,
-					date: new Date(`${row.day}T12:00:00Z`),
+					date: utcNoon(row.day),
 				}));
-				const breakdownSeries = (field, labels, preferredKeys) => {
-					const availableKeys = new Set(
-						caseBreakdowns.flatMap((day) => (day[field] ?? []).map((entry) => entry.key)),
+				// `labels` order is also the preferred stacking order.
+				const breakdownSeries = (field, labels) => {
+					const keys = orderKeys(
+						new Set(
+							caseBreakdowns.flatMap((day) => (day[field] ?? []).map((entry) => entry.key)),
+						),
+						Object.keys(labels),
 					);
-					const keys = [
-						...preferredKeys.filter((key) => availableKeys.has(key)),
-						...[...availableKeys].filter((key) => !preferredKeys.includes(key)).sort(),
-					];
 					return {
 						keys,
 						domain: keys.map((key) => labels[key] ?? key),
@@ -2690,33 +2646,31 @@
 						}),
 					};
 				};
-				const environments = breakdownSeries(
-					"environments",
-					{
-						nextDoor: "Next Door",
-						islands: "Dead Man's Cove",
-						grove: "Grove in Pink",
-						farmyard: "Farmyard",
-						unknown: "Unknown",
-					},
-					["nextDoor", "islands", "grove", "farmyard", "unknown"],
-				);
-				const difficulties = breakdownSeries(
-					"difficulties",
-					{ easy: "Easy", medium: "Medium", hard: "Hard", free: "Free", unknown: "Unknown" },
-					["easy", "medium", "hard", "free", "unknown"],
-				);
+				const environments = breakdownSeries("environments", {
+					nextDoor: "Next Door",
+					islands: "Dead Man's Cove",
+					grove: "Grove in Pink",
+					farmyard: "Farmyard",
+					unknown: "Unknown",
+				});
+				const difficulties = breakdownSeries("difficulties", {
+					easy: "Easy",
+					medium: "Medium",
+					hard: "Hard",
+					free: "Free",
+					unknown: "Unknown",
+				});
 				const platformDays = rows.filter((row) => row.ios_dau + row.android_dau > 0);
 				const platform = platformDays.flatMap((row) => {
 					const total = row.ios_dau + row.android_dau;
 					return [
-						{ ...row, series: "iOS", value: row.ios_dau, total },
-						{ ...row, series: "Android", value: row.android_dau, total },
+						{ date: row.date, series: "iOS", value: row.ios_dau, total },
+						{ date: row.date, series: "Android", value: row.android_dau, total },
 					];
 				});
 				const countries = rows.flatMap((row) =>
 					row.country_dau.map((country) => ({
-						...row,
+						date: row.date,
 						series: country.country,
 						value: Number(country.dau),
 					})),
@@ -2765,8 +2719,8 @@
 							marginRight: 12,
 							marginBottom: 28,
 							marginLeft: 43,
-							style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
-							x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+							style: plotStyle(),
+							x: dateAxis(5),
 							y: {
 								label: null,
 								grid: true,
@@ -2827,8 +2781,8 @@
 						marginRight: 12,
 						marginBottom: 28,
 						marginLeft: 43,
-						style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
-						x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+						style: plotStyle(),
+						x: dateAxis(5),
 						y: { label: null, grid: true, zero: true, ticks: 4, tickSize: 0 },
 						color: {
 							domain: ["Existing", "New"],
@@ -2876,7 +2830,7 @@
 					if (plot) replacePlot(selector, plot);
 					else node.replaceChildren();
 				};
-				const stackedArea = (selector, source, color) => {
+				const stackedArea = (selector, source, color, options = {}) => {
 					const node = document.querySelector(selector);
 					if (!source.length) {
 						node.replaceChildren();
@@ -2886,13 +2840,13 @@
 						selector,
 						Plot.plot({
 							width: node.clientWidth || 320,
-							height: 190,
+							height: options.height ?? 190,
 							marginTop: 34,
 							marginRight: 12,
 							marginBottom: 28,
-							marginLeft: 43,
-							style: { background: "transparent", color: "#7d8a96", fontSize: "10px" },
-							x: { type: "utc", label: null, ticks: 5, tickFormat: "%b %-d", tickSize: 0 },
+							marginLeft: options.marginLeft ?? 43,
+							style: plotStyle(options.fontSize),
+							x: dateAxis(options.xTicks ?? 5),
 							y: {
 								label: null,
 								grid: true,
@@ -2916,10 +2870,12 @@
 											fillOpacity: 1,
 											curve: "monotone-x",
 											tip: true,
-											title: (row) =>
-												`${shortDate.format(row.date)} · ${row.series}: ${(100 * row.share).toFixed(
-													1,
-												)}% · ${number.format(row.value)} solves`,
+											title:
+												options.title ??
+												((row) =>
+													`${shortDate.format(row.date)} · ${row.series}: ${(
+														100 * row.share
+													).toFixed(1)}% · ${number.format(row.value)} solves`),
 										},
 									),
 								),
@@ -3022,66 +2978,30 @@
 					currency: "USD",
 					maximumFractionDigits: 2,
 				});
-				const revenueSourceAreaNode = document.querySelector("#revenue-source-area-plot");
-				if (revenueSources.length) {
-					const sourceColors = {
-						ads: "#2a9d8f",
-						remove_ads: "#d89024",
-						hints: "#3a86a8",
-						islands: "#7b61a8",
-						grove: "#d65d9e",
-						farmyard: "#df7956",
-						other_iap: "#b8c0c7",
-					};
-					replacePlot(
-						"#revenue-source-area-plot",
-						Plot.plot({
-							width: revenueSourceAreaNode.clientWidth || 320,
-							height: 150,
-							marginTop: 34,
-							marginRight: 12,
-							marginBottom: 28,
-							marginLeft: 38,
-							style: { background: "transparent", color: "#7d8a96", fontSize: "9px" },
-							x: { type: "utc", label: null, ticks: 3, tickFormat: "%b %-d", tickSize: 0 },
-							y: {
-								label: null,
-								grid: true,
-								domain: [0, 1],
-								ticks: 5,
-								tickSize: 0,
-								tickFormat: (value) => `${Math.round(value * 100)}%`,
-							},
-							color: {
-								domain: revenueSourceKeys.map(revenueLabel),
-								range: revenueSourceKeys.map((key) => sourceColors[key] ?? "#5b7894"),
-								legend: true,
-							},
-							marks: [
-								Plot.ruleY([0, 1], { stroke: "#dfe5e8" }),
-								Plot.areaY(
-									revenueSources,
-									Plot.stackY(
-										{ order: revenueSourceKeys.map(revenueLabel) },
-										{
-											x: "date",
-											y: "share",
-											z: "series",
-											fill: "series",
-											fillOpacity: 1,
-											curve: "monotone-x",
-											tip: true,
-											title: (row) =>
-												`${shortDate.format(row.date)} · ${row.series}: ${(100 * row.share).toFixed(
-													1,
-												)}% · ${sourceMoney.format(row.value)} of ${sourceMoney.format(row.total)}`,
-										},
-									),
-								),
-							],
-						}),
-					);
-				} else revenueSourceAreaNode.replaceChildren();
+				const sourceColors = {
+					ads: "#2a9d8f",
+					remove_ads: "#d89024",
+					hints: "#3a86a8",
+					islands: "#7b61a8",
+					grove: "#d65d9e",
+					farmyard: "#df7956",
+					other_iap: "#b8c0c7",
+				};
+				stackedArea(
+					"#revenue-source-area-plot",
+					revenueSources,
+					{
+						domain: revenueSourceKeys.map(revenueLabel),
+						range: revenueSourceKeys.map((key) => sourceColors[key] ?? "#5b7894"),
+					},
+					{
+						...monetisationLineOptions,
+						title: (row) =>
+							`${shortDate.format(row.date)} · ${row.series}: ${(100 * row.share).toFixed(
+								1,
+							)}% · ${sourceMoney.format(row.value)} of ${sourceMoney.format(row.total)}`,
+					},
+				);
 
 				const revenueEnvironmentNode = document.querySelector("#revenue-environment-plot");
 				if (revenueEnvironments.length) {
@@ -3124,7 +3044,7 @@
 			function renderStickiness(rows) {
 				const parsed = rows.map((row) => ({
 					...row,
-					date: new Date(`${row.day}T12:00:00Z`),
+					date: utcNoon(row.day),
 					dau: Number(row.dau),
 					wau: Number(row.wau),
 					dau_wau_pct: row.dau_wau_pct == null ? null : Number(row.dau_wau_pct),
@@ -3178,44 +3098,42 @@
 				);
 			}
 
+			function onOrAfter(value, from) {
+				return typeof value === "string" && value.slice(0, 10) >= from;
+			}
+
+			// Keep each series' points from `from` on, dropping series left empty.
+			function floorSeries(series, from) {
+				return (series ?? [])
+					.map((entry) => ({
+						...entry,
+						points: (entry.points ?? []).filter((point) => onOrAfter(point.cohort_day, from)),
+					}))
+					.filter((entry) => entry.points.length);
+			}
+
 			function applyTrustFloor(data) {
-				const trusted = (value) => typeof value === "string" && value.slice(0, 10) >= TRUSTED_FROM;
+				const trusted = (value) => onOrAfter(value, TRUSTED_FROM);
 				return {
 					...data,
 					series: (data.series ?? []).filter((row) => trusted(row.day)),
 					retention: (data.retention ?? []).filter((row) => trusted(row.cohort_day)),
-					retention_series: (data.retention_series ?? [])
-						.map((entry) => ({
-							...entry,
-							points: (entry.points ?? []).filter((point) => trusted(point.cohort_day)),
-						}))
-						.filter((entry) => entry.points.length),
-					cohort_revenue_series: (data.cohort_revenue_series ?? [])
-						.map((entry) => ({
-							...entry,
-							points: (entry.points ?? []).filter(
-								(point) => typeof point.cohort_day === "string" && point.cohort_day >= "2026-07-14",
-							),
-						}))
-						.filter((entry) => entry.points.length),
-					mix_adjusted_cohort_revenue_series: (data.mix_adjusted_cohort_revenue_series ?? [])
-						.map((entry) => ({
-							...entry,
-							points: (entry.points ?? []).filter(
-								(point) => typeof point.cohort_day === "string" && point.cohort_day >= "2026-07-14",
-							),
-						}))
-						.filter((entry) => entry.points.length),
-					revenue_sources: (data.revenue_sources ?? []).filter(
-						(row) => typeof row.day === "string" && row.day >= "2026-07-14",
+					retention_series: floorSeries(data.retention_series, TRUSTED_FROM),
+					cohort_revenue_series: floorSeries(data.cohort_revenue_series, REVENUE_TRUSTED_FROM),
+					mix_adjusted_cohort_revenue_series: floorSeries(
+						data.mix_adjusted_cohort_revenue_series,
+						REVENUE_TRUSTED_FROM,
+					),
+					revenue_sources: (data.revenue_sources ?? []).filter((row) =>
+						onOrAfter(row.day, REVENUE_TRUSTED_FROM),
 					),
 					stickiness: (data.stickiness ?? []).filter((row) => trusted(row.day)),
 					peak_dau: trusted(data.peak_dau?.day) ? data.peak_dau : null,
 				};
 			}
 
-			function render(data) {
-				data = applyTrustFloor(data);
+			// Charts only: safe to call again on resize without touching freshness state.
+			function renderOverviewCharts(data) {
 				renderHourlyPlayers(data);
 				renderPeak(data.peak_dau);
 				renderRetention(data.retention, data.retention_series);
@@ -3227,14 +3145,23 @@
 				});
 				renderStickiness(data.stickiness ?? []);
 				renderPlots(data);
-				document.querySelector("#footnotes").innerHTML = data.notes
-					.map((note) => `<li>${note}</li>`)
-					.join("");
+			}
+
+			function renderFreshness(data) {
 				const generated = new Date(data.generated_at);
 				updatedAt.textContent = `updated ${new Intl.RelativeTimeFormat("en", {
 					numeric: "auto",
 				}).format(-Math.max(0, Math.round((Date.now() - generated.getTime()) / 60000)), "minute")}`;
 				liveStatus.dataset.state = "live";
+			}
+
+			function render(data) {
+				data = applyTrustFloor(data);
+				renderOverviewCharts(data);
+				document.querySelector("#footnotes").innerHTML = data.notes
+					.map((note) => `<li>${note}</li>`)
+					.join("");
+				renderFreshness(data);
 				lastRenderedWidth = document.body.clientWidth;
 				snapshot = data;
 			}
@@ -3244,10 +3171,7 @@
 				liveStatus.dataset.state = "loading";
 				let data;
 				try {
-					const response = await fetch(endpoint, {
-						headers: { Authorization: `Bearer ${token}` },
-						cache: "no-store",
-					});
+					const response = await fetchView(token, {}, { cache: "no-store" });
 					if (!response.ok) {
 						// Don't keep a rejected key around to fail again on every refresh.
 						if (response.status === 401) forgetToken();
@@ -3256,6 +3180,7 @@
 						);
 					}
 					data = await response.json();
+					await plotReady;
 				} catch (error) {
 					liveStatus.dataset.state = "error";
 					if (first || !snapshot) {
@@ -3274,7 +3199,12 @@
 				dashboard.hidden = false;
 				errorMessage.textContent = "";
 				try {
-					render(data);
+					// The 60s poll usually returns the snapshot already on screen.
+					if (snapshot && data.generated_at && data.generated_at === snapshot.generated_at) {
+						renderFreshness(data);
+					} else {
+						render(data);
+					}
 					if (activeDashboardTab === "aso" && !ratingSnapshot) void loadInitialAso(token);
 					if (activeDashboardTab === "experiments" && !experimentSnapshot) {
 						void loadInitialExperiments(token);
@@ -3300,20 +3230,6 @@
 				document.documentElement.dataset.hasKey = "";
 				load(token, { first: true });
 			});
-
-			async function refreshAsoSelection({ includeRatings = false } = {}) {
-				try {
-					const data = await fetchAso(storedToken(), appStoreCountry.value, keywordName.value);
-					if (includeRatings) renderRatings(data);
-					renderKeywordRank(data);
-					const generated = new Date(data.generated_at);
-					document.querySelector("#aso-updated").textContent = `collected ${shortDate.format(
-						generated,
-					)}`;
-				} catch (error) {
-					document.querySelector("#aso-updated").textContent = error.message;
-				}
-			}
 
 			for (const [index, button] of dashboardTabs.entries()) {
 				button.addEventListener("click", () => {
@@ -3341,16 +3257,14 @@
 				void refreshAsoSelection({ includeRatings: true });
 			});
 			keywordName.addEventListener("change", () => void refreshAsoSelection());
-			experimentName.addEventListener("change", () => {
-				experimentCountrySignature = "";
-				experimentCountry.value = "all";
-				void refreshExperimentSelection();
-			});
-			experimentPlatform.addEventListener("change", () => {
-				experimentCountrySignature = "";
-				experimentCountry.value = "all";
-				void refreshExperimentSelection();
-			});
+			// A new experiment or platform has its own country list, so start from "all".
+			for (const select of [experimentName, experimentPlatform]) {
+				select.addEventListener("change", () => {
+					experimentCountrySignature = "";
+					experimentCountry.value = "all";
+					void refreshExperimentSelection();
+				});
+			}
 			experimentCountry.addEventListener("change", () => void refreshExperimentSelection());
 
 			document.addEventListener("visibilitychange", () => {
@@ -3364,18 +3278,8 @@
 
 			new ResizeObserver(() => {
 				if (snapshot && Math.abs(document.body.clientWidth - lastRenderedWidth) > 30) {
-					if (activeDashboardTab === "overview") {
-						renderHourlyPlayers(snapshot);
-						renderRetention(snapshot.retention, snapshot.retention_series);
-						renderCohortRevenue(snapshot.cohort_revenue_series);
-						renderCohortRevenue(snapshot.mix_adjusted_cohort_revenue_series, {
-							selector: "#mix-adjusted-cohort-ltv-plot",
-							colors: ["#c7e9c0", "#a1d99b", "#74c476", "#31a354", "#006d2c"],
-							mixAdjusted: true,
-						});
-						renderStickiness(snapshot.stickiness ?? []);
-						renderPlots(snapshot);
-					} else if (activeDashboardTab === "aso") {
+					if (activeDashboardTab === "overview") renderOverviewCharts(snapshot);
+					else if (activeDashboardTab === "aso") {
 						if (ratingSnapshot) renderRatings(ratingSnapshot);
 						if (keywordSnapshot) renderKeywordRank(keywordSnapshot);
 					} else if (experimentSnapshot) {

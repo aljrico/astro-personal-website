@@ -1,5 +1,6 @@
 ---
-const url = new URL(Astro.request.url);
+import { siteConfig } from "@/site-config";
+const url = Astro.url;
 ---
 
 <header
@@ -12,6 +13,6 @@ const url = new URL(Astro.request.url);
 		class="title text-2xl hover:opacity-80"
 		aria-current={url.pathname === "/" ? "page" : false}
 	>
-		Alejandro Rico
+		{siteConfig.author}
 	</a>
 </header>

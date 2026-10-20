@@ -1,0 +1,32 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { Image } from "astro:assets";
+import type { Project } from "../../data/projects";
+
+type Props = {
+	icon: Project["icon"];
+	alt: string;
+	class: string;
+	loading?: HTMLAttributes<"img">["loading"];
+};
+
+// 2x the largest display size (h-20 = 80px on app pages).
+const SIZE = 160;
+const { icon, alt, class: className, loading = "lazy" } = Astro.props;
+---
+
+{
+	typeof icon === "string" ? (
+		<img
+			src={icon}
+			alt={alt}
+			width={SIZE}
+			height={SIZE}
+			loading={loading}
+			decoding="async"
+			class={className}
+		/>
+	) : (
+		<Image src={icon} alt={alt} width={SIZE} format="webp" loading={loading} class={className} />
+	)
+}
