@@ -59,6 +59,29 @@
 		text-decoration: none;
 	}
 
+	/* A thin, faded underline that fades in and rises into place on hover. It's always there but
+	   transparent, so it can animate. The arrow is inline-block, so it isn't underlined. */
+	a:not(:has(img, svg)) {
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 7px;
+		text-decoration-color: transparent;
+		transition:
+			text-decoration-color 0.12s ease-out,
+			text-underline-offset 0.12s ease-out;
+	}
+
+	a:not(:has(img, svg)):hover {
+		text-underline-offset: 4px;
+		text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		a:not(:has(img, svg)) {
+			transition: none;
+		}
+	}
+
 	/* Links are marked by a small accent arrow instead of an underline. An SVG mask, not the ↗
 	   glyph, because the latin font subsets don't include U+2197. */
 	a:not(:has(img, svg))::after {
@@ -228,6 +251,29 @@
 		height: 20px;
 	}
 
+	/* A section label that links to the full list, with a straight arrow that nudges right on hover. */
+	.label .more {
+		color: inherit;
+	}
+
+	.label .more::after {
+		width: 1em;
+		height: 1em;
+		margin-left: 0.4em;
+		vertical-align: -0.15em;
+		-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 6h8M6.5 2.5 10 6 6.5 9.5'/%3E%3C/svg%3E");
+		mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 6h8M6.5 2.5 10 6 6.5 9.5'/%3E%3C/svg%3E");
+		transition: transform 0.2s ease;
+	}
+
+	.label .more:hover {
+		text-decoration: none;
+	}
+
+	.label .more:hover::after {
+		transform: translateX(3px);
+	}
+
 	.muted,
 	.muted a {
 		color: var(--muted);
@@ -249,8 +295,9 @@
 		color: var(--muted);
 	}
 
-	/* Rows: an 88px date column, then the title, optionally a status on the right. */
+	/* Rows: the title, then a date or status on the right (tags still use the .when column). */
 	.rows {
+		--row-title-size: 15px;
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -273,16 +320,21 @@
 	.rows .what {
 		min-width: 0;
 		font-family: var(--font-heading);
+		font-size: var(--row-title-size);
 	}
 
 	/* Icon rows (links, projects): icon, title, optional year range on the right. */
+	/* Icon and date sit on the title's first line, so wrapped titles still read cleanly. */
 	.rows li.iconed {
 		gap: 10px;
-		align-items: center;
+		align-items: baseline;
 	}
 
 	.rows .icon {
 		flex: 0 0 15px;
+		align-self: flex-start;
+		/* Centres the 15px icon in the title's first line box. */
+		margin-top: calc((var(--row-title-size) * 1.6 - 15px) / 2);
 		width: 15px;
 		height: 15px;
 		color: var(--ink);
@@ -478,13 +530,6 @@
 		font-weight: 500;
 	}
 
-	.indent {
-		display: inline-block;
-		margin-top: 8px;
-		margin-left: 112px;
-		color: var(--muted);
-	}
-
 	/* Long-form text: posts, devlog entries, legal pages, app pages. */
 	.post-body {
 		line-height: 1.65;
@@ -508,10 +553,6 @@
 	.post-body > h2,
 	.post-body > h3 {
 		margin-top: 44px;
-	}
-
-	.post-body a {
-		text-decoration: none;
 	}
 
 	.post-body ul,

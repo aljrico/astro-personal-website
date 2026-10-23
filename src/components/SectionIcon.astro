@@ -2,11 +2,15 @@
 // Project types: lucide-animated (MIT, https://github.com/pqoqubbw/icons), with the hover
 // animations ported to looping CSS in global.css.
 // Socials: Font Awesome Free 6.7.2 brands (CC BY 4.0, https://fontawesome.com/license/free).
-export type SectionIconName = "games" | "open-source" | "commercial" | "github" | "linkedin" | "x";
+// Astro 3 can only hoist a single-line exported type, so keep this on one line.
+// prettier-ignore
+export type SectionIconName = "games" | "open-source" | "commercial" | "post" | "github" | "linkedin" | "x";
 
 type Props = { name: SectionIconName };
 
+// Outline icons. Posts use Lucide's feather (ISC) and stay still.
 const animated: Partial<Record<SectionIconName, string>> = {
+	post: '<path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z" /><path d="M16 8 2 22" /><path d="M17.5 15H9" />',
 	// bot: the eyes blink.
 	games:
 		'<path d="M12 8V4H8" /><rect height="12" rx="2" width="16" x="4" y="8" /><path d="M2 14h2" /><path d="M20 14h2" /><line class="eye" x1="15" x2="15" y1="13" y2="15" /><line class="eye" x1="9" x2="9" y1="13" y2="15" />',

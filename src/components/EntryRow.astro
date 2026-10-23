@@ -1,4 +1,5 @@
 ---
+import SectionIcon from "@/components/SectionIcon";
 import { monthYear } from "@/utils";
 
 interface Props {
@@ -10,7 +11,8 @@ interface Props {
 const { href, title, date } = Astro.props;
 ---
 
-<li>
-	<time class="when" datetime={date.toISOString()}>{monthYear(date)}</time>
+<li class="iconed">
+	<SectionIcon name="post" />
 	<a class="what" href={href}>{title}</a>
+	<time class="status" datetime={date.toISOString()}>{monthYear(date)}</time>
 </li>
