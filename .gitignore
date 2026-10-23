@@ -24,7 +24,6 @@ pnpm-debug.log*
 *.pem
 .cache
 .astro
-AGENTS.md
 
 # Local Netlify folder
 .netlify

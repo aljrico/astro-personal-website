@@ -98,6 +98,11 @@
 		margin-top: 56px;
 	}
 
+	/* The homepage name is set in the body face, not the heading one. */
+	.name {
+		font-family: var(--font-body);
+	}
+
 	.muted,
 	.muted a {
 		color: var(--muted);
