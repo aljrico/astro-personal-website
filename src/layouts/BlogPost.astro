@@ -38,9 +38,9 @@ const jsonLd = {
 <BaseLayout meta={{ title, description, articleDate, ogImage: socialImage }}>
 	<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 	<article>
-		<header class="mb-14">
+		<header class="post-header">
+			<FormattedDate class="post-date" date={publishDate} />
 			<h1>{title}</h1>
-			<FormattedDate class="muted block" date={publishDate} />
 		</header>
 		<div class="post-body">
 			<slot />

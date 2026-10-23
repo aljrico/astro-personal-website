@@ -712,7 +712,34 @@
 	}
 
 	/* Long-form text: posts, devlog entries, legal pages, app pages. */
+	/* Post header: a small mono date above a large title. */
+	.post-header {
+		margin-bottom: var(--section-gap);
+	}
+
+	.post-date {
+		display: block;
+		font-family: var(--font-mono);
+		font-size: 13px;
+		color: var(--muted);
+	}
+
+	.post-header h1 {
+		margin-top: 10px;
+		font-size: 46px;
+		font-weight: 700;
+		line-height: 1.08;
+		letter-spacing: -0.025em;
+	}
+
+	@media (max-width: 520px) {
+		.post-header h1 {
+			font-size: 36px;
+		}
+	}
+
 	.post-body {
+		font-size: 16px;
 		line-height: 1.65;
 	}
 
