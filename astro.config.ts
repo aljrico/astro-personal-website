@@ -4,6 +4,8 @@ import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 import fs from "fs";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 import remarkUnwrapImages from "remark-unwrap-images";
 import { remarkReadingTime } from "./src/utils/remark-reading-time";
 
@@ -11,7 +13,9 @@ import { remarkReadingTime } from "./src/utils/remark-reading-time";
 export default defineConfig({
 	site: "https://aljrico.com/",
 	markdown: {
-		remarkPlugins: [remarkUnwrapImages, remarkReadingTime],
+		// Math is $$...$$ only, inline or block: single dollars are prices in the newer posts.
+		remarkPlugins: [remarkUnwrapImages, remarkReadingTime, [remarkMath, { singleDollarTextMath: false }]],
+		rehypePlugins: [rehypeKatex],
 		remarkRehype: { footnoteLabelProperties: { className: [""] } },
 		// Code is set in plain ink: no highlighting theme.
 		syntaxHighlight: false,
