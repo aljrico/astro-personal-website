@@ -69,8 +69,10 @@
 		margin-left: 0.25em;
 		vertical-align: -0.02em;
 		background-color: var(--accent);
-		-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 9 9 3M4.5 3H9v4.5'/%3E%3C/svg%3E") center / contain no-repeat;
-		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 9 9 3M4.5 3H9v4.5'/%3E%3C/svg%3E") center / contain no-repeat;
+		-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 9 9 3M4.5 3H9v4.5'/%3E%3C/svg%3E")
+			center / contain no-repeat;
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 9 9 3M4.5 3H9v4.5'/%3E%3C/svg%3E")
+			center / contain no-repeat;
 	}
 
 	strong,
@@ -148,9 +150,9 @@
 		color: var(--muted);
 	}
 
-	/* The shimmer LLM "thinking" labels use: a lighter band sweeps across the whole line. A mask
-	   rather than a gradient fill, so every word keeps its own colour. */
-	.eyebrow .line {
+	/* The shimmer LLM "thinking" labels use: a lighter band sweeps across the text. A mask rather
+	   than a gradient fill, so every word keeps its own colour. Used by the tagline and "now". */
+	.shimmer {
 		-webkit-mask: linear-gradient(100deg, #000 35%, rgb(0 0 0 / 0.35) 50%, #000 65%) 0 0 / 250% 100%;
 		mask: linear-gradient(100deg, #000 35%, rgb(0 0 0 / 0.35) 50%, #000 65%) 0 0 / 250% 100%;
 		animation: shimmer 2.4s linear infinite;
@@ -188,7 +190,7 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.eyebrow .line {
+		.shimmer {
 			animation: none;
 			-webkit-mask: none;
 			mask: none;
@@ -283,7 +285,182 @@
 		flex: 0 0 15px;
 		width: 15px;
 		height: 15px;
-		color: var(--accent);
+		color: var(--ink);
+	}
+
+	/* Looping versions of the lucide-animated hover animations (see SectionIcon.astro). */
+	.icon-anim * {
+		transform-box: fill-box;
+		transform-origin: center;
+	}
+
+	/* Each digit has two layers: "a" shows first, "b" flips in over it, then back. 3% of 4s is the
+	   original 0.12s flip. */
+	.icon-open-source .bin-a {
+		animation: bin-a 4s ease-in-out infinite both;
+	}
+
+	.icon-open-source .bin-b {
+		animation: bin-b 4s ease-in-out infinite both;
+	}
+
+	.icon-open-source .c1 {
+		animation-delay: 0.06s;
+	}
+
+	.icon-open-source .c2 {
+		animation-delay: 0.12s;
+	}
+
+	.icon-open-source .c3 {
+		animation-delay: 0.18s;
+	}
+
+	@keyframes bin-a {
+		0%,
+		56%,
+		100% {
+			transform: none;
+			opacity: 1;
+		}
+		3%,
+		50% {
+			transform: rotateX(-90deg);
+			opacity: 0;
+		}
+		53% {
+			transform: rotateX(90deg);
+			opacity: 0;
+		}
+	}
+
+	@keyframes bin-b {
+		0%,
+		3% {
+			transform: rotateX(90deg);
+			opacity: 0;
+		}
+		6%,
+		50% {
+			transform: none;
+			opacity: 1;
+		}
+		53%,
+		100% {
+			transform: rotateX(-90deg);
+			opacity: 0;
+		}
+	}
+
+	.icon-games .eye {
+		animation: blink 3s ease-in-out infinite;
+	}
+
+	/* The original 0.5s blink after a 0.2s delay, then a long pause. */
+	@keyframes blink {
+		0%,
+		7%,
+		24%,
+		100% {
+			transform: none;
+		}
+		15% {
+			transform: scaleY(0.1);
+		}
+	}
+
+	.icon-commercial .sq {
+		animation: 2.4s ease-in-out infinite;
+	}
+
+	.icon-commercial .sq-1 {
+		animation-name: sq-right;
+	}
+
+	.icon-commercial .sq-2 {
+		animation-name: sq-down;
+	}
+
+	.icon-commercial .sq-3 {
+		animation-name: sq-left;
+	}
+
+	.icon-commercial .sq-4 {
+		animation-name: sq-up;
+	}
+
+	@keyframes sq-right {
+		0%,
+		33%,
+		100% {
+			transform: none;
+		}
+		13%,
+		20% {
+			transform: translateX(11px);
+		}
+	}
+
+	@keyframes sq-down {
+		0%,
+		33%,
+		100% {
+			transform: none;
+		}
+		13%,
+		20% {
+			transform: translateY(11px);
+		}
+	}
+
+	@keyframes sq-left {
+		0%,
+		33%,
+		100% {
+			transform: none;
+		}
+		13%,
+		20% {
+			transform: translateX(-11px);
+		}
+	}
+
+	@keyframes sq-up {
+		0%,
+		33%,
+		100% {
+			transform: none;
+		}
+		13%,
+		20% {
+			transform: translateY(-11px);
+		}
+	}
+
+	/* Ongoing projects: the icon and "now" lean slightly towards the accent. */
+	.rows li.active {
+		--active-ink: var(--accent);
+	}
+
+	.rows li.active .icon,
+	.rows li.active .now {
+		color: var(--active-ink);
+	}
+
+	/* Only ongoing projects (the ones ending in "now") move; the rest hold their first frame. */
+	.rows li:not(.active) .icon-anim * {
+		animation-play-state: paused;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.icon-anim * {
+			animation: none !important;
+		}
+
+		/* Without the flip, only the first binary layer should show. */
+		.icon-open-source .bin-b {
+			opacity: 0;
+		}
 	}
 
 	.rows .status {
@@ -296,6 +473,7 @@
 	}
 
 	.rows .status .now {
+		display: inline-block;
 		color: var(--ink);
 		font-weight: 500;
 	}
@@ -335,7 +513,6 @@
 	.post-body a {
 		text-decoration: none;
 	}
-
 
 	.post-body ul,
 	.post-body ol {

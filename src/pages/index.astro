@@ -10,11 +10,11 @@ import { sections } from "../data/projects";
 import type { SectionIconName } from "@/components/SectionIcon";
 
 const latestPosts = sortMDByDate(await getAllPosts()).slice(0, 5);
-// "2026-present" -> 2026 to now, "Feb-Oct 2022" -> 2022 alone, "2020-2024" stays as is.
+// "2026-present" (or "2026-now") -> 2026 to now, "Feb-Oct 2022" -> 2022 alone, "2020-2024" stays as is.
 const yearRange = (period: string) => {
 	const years = period.match(/\d{4}/g) ?? [];
 	const start = years[0] ?? "";
-	const ongoing = /present/i.test(period);
+	const ongoing = /present|now/i.test(period);
 	const end = ongoing ? "now" : years.at(-1);
 	return { start, end: end && end !== start ? end : undefined, ongoing };
 };
@@ -52,7 +52,7 @@ const projects = sections
 			<Image src={avatar} alt="" width={160} format="webp" loading="eager" class="avatar" />
 			<p class="eyebrow" data-swap>
 				<span class="sr-only">{tagline}</span>
-				<span class="line" aria-hidden="true"
+				<span class="shimmer" aria-hidden="true"
 					>Making <span class="slot">fun</span> things <span class="slot">profitable</span>…</span
 				>
 			</p>
@@ -79,13 +79,13 @@ const projects = sections
 				projects.map(({ slug, title, period, kind }) => {
 					const { start, end, ongoing } = yearRange(period);
 					return (
-						<li class="iconed">
+						<li class:list={["iconed", { active: ongoing }]}>
 							<SectionIcon name={kind} />
 							<a class="what" href={`/apps/${slug}`}>
 								{title}
 							</a>
 							<span class="status">
-								{[start, end && "-", end && (ongoing ? <span class="now">{end}</span> : end)]}
+								{[start, end && "-", end && (ongoing ? <span class="now shimmer">{end}</span> : end)]}
 							</span>
 						</li>
 					);
