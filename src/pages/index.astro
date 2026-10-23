@@ -1,12 +1,25 @@
 ---
 import PageLayout from "@/layouts/Base";
 import EntryRow from "@/components/EntryRow";
+import SectionIcon from "@/components/SectionIcon";
 import { getAllPosts, sortMDByDate } from "@/utils";
 import { siteConfig } from "@/site-config";
 import { sections } from "../data/projects";
 
 const latestPosts = sortMDByDate(await getAllPosts()).slice(0, 5);
-const startYear = (period: string) => period.match(/\d{4}/)?.[0] ?? "";
+// "2026-present" -> 2026 to now, "Feb-Oct 2022" -> 2022 alone, "2020-2024" stays as is.
+const yearRange = (period: string) => {
+	const years = period.match(/\d{4}/g) ?? [];
+	const start = years[0] ?? "";
+	const ongoing = /present/i.test(period);
+	const end = ongoing ? "now" : years.at(-1);
+	return { start, end: end && end !== start ? end : undefined, ongoing };
+};
+
+// One list, newest first; the section icon tells the kind of project apart.
+const projects = sections
+	.flatMap(({ icon, projects }) => projects.map((project) => ({ ...project, kind: icon })))
+	.sort((a, b) => Number(yearRange(b.period).start) - Number(yearRange(a.period).start));
 ---
 
 <PageLayout meta={{ title: siteConfig.title }} backLink={false}>
@@ -30,26 +43,27 @@ const startYear = (period: string) => period.match(/\d{4}/)?.[0] ?? "";
 			not doing either, I make my own games. Based near Barcelona.
 		</p>
 	</section>
-	{
-		sections.map(({ heading, projects }) => (
-			<section class="block" aria-labelledby={`label-${heading}`}>
-				<h2 class="label" id={`label-${heading}`}>
-					{heading}
-				</h2>
-				<ul class="rows">
-					{projects.map(({ slug, title, period, status }) => (
-						<li>
-							<span class="when">{startYear(period)}</span>
+	<section class="block" aria-labelledby="label-projects">
+		<h2 class="label" id="label-projects">Projects</h2>
+		<ul class="rows">
+			{
+				projects.map(({ slug, title, period, kind }) => {
+					const { start, end, ongoing } = yearRange(period);
+					return (
+						<li class="project">
+							<SectionIcon name={kind} />
 							<a class="what" href={`/apps/${slug}`}>
 								{title}
 							</a>
-							<span class="status">{status}</span>
+							<span class="status">
+								{[start, end && "-", end && (ongoing ? <span class="now">{end}</span> : end)]}
+							</span>
 						</li>
-					))}
-				</ul>
-			</section>
-		))
-	}
+					);
+				})
+			}
+		</ul>
+	</section>
 	<section class="block" aria-labelledby="label-writing">
 		<h2 class="label" id="label-writing">Writing</h2>
 		<ul class="rows">

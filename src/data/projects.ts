@@ -23,13 +23,15 @@ export type ProjectLink = {
 	disabled?: boolean;
 };
 
+import type { SectionIconName } from "../components/SectionIcon.astro";
+
 export type LegalDoc = "privacy" | "terms" | "support";
 
 export type Project = {
 	/** Folder under src/pages/apps/ and prefix of its legal docs in src/content/apps/. */
 	slug: string;
 	title: string;
-	/** Shown on the app page; its first year is the homepage row's year. */
+	/** Shown on the app page; its years are the homepage row's range. */
 	period: string;
 	status: "live" | "closed" | "ended";
 	/** Replaces `period` on the app page header only. */
@@ -59,9 +61,10 @@ const cran = (pkg: string): ProjectLink => ({
 	label: "CRAN",
 });
 
-export const sections: Array<{ heading: string; projects: Project[] }> = [
+export const sections: Array<{ heading: string; icon: SectionIconName; projects: Project[] }> = [
 	{
 		heading: "Games",
+		icon: "games",
 		projects: [
 			{
 				slug: "tiny-crimes",
@@ -90,7 +93,7 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 			{
 				slug: "match-tile-mini",
 				title: "Match Tile: Mini",
-				period: "2023-present",
+				period: "2023-2026",
 				status: "live",
 				icon: miniMatchIcon,
 				iconAlt: "Match Tile: Mini app icon",
@@ -124,6 +127,7 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 	},
 	{
 		heading: "Open source",
+		icon: "open-source",
 		projects: [
 			{
 				slug: "toonlite",
@@ -182,7 +186,8 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 		],
 	},
 	{
-		heading: "Businesses",
+		heading: "Commercial Projects",
+		icon: "commercial",
 		projects: [
 			{
 				slug: "test-dgt",
@@ -199,7 +204,7 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 			{
 				slug: "flama-coach",
 				title: "Mossos Coach",
-				period: "2026",
+				period: "2026-present",
 				status: "live",
 				subtitle: "Oposicions a Mossos d'Esquadra · Convocatòria 2026",
 				icon: flamaIcon,
@@ -224,9 +229,7 @@ export const sections: Array<{ heading: string; projects: Project[] }> = [
 				status: "closed",
 				icon: shipLogo,
 				iconAlt: "Coffee Galley ship icon",
-				links: [
-					{ href: "#", label: "Shopify App Store", disabled: true },
-				],
+				links: [{ href: "#", label: "Shopify App Store", disabled: true }],
 			},
 			{
 				slug: "the-whale-coffee",
