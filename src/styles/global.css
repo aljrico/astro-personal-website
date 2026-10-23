@@ -244,6 +244,7 @@
 		margin: 0;
 		font-family: var(--font-body);
 		font-size: 28px;
+		font-weight: 600;
 		line-height: 1.2;
 		letter-spacing: -0.02em;
 	}
@@ -297,10 +298,18 @@
 		color: var(--muted);
 	}
 
-	.back {
-		display: inline-block;
-		margin-bottom: 56px;
-		color: var(--muted);
+	/* The site header links home; the page starts a section's gap below it, except on the
+	   homepage, where the bio reads as part of the header. */
+	a.intro {
+		color: inherit;
+	}
+
+	main {
+		margin-top: 56px;
+	}
+
+	main:has(> .home-intro) {
+		margin-top: 16px;
 	}
 
 	.label {

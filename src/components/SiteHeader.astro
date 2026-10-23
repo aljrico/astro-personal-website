@@ -1,0 +1,85 @@
+---
+import { Image } from "astro:assets";
+import { siteConfig } from "@/site-config";
+import avatar from "../assets/avatar.jpg";
+---
+
+<!--
+	Avatar, rotating tagline and name, on every page and linking home. It persists across view
+	transitions, so the tagline keeps its place in the rotation instead of restarting per page.
+-->
+<a
+	href="/"
+	class="intro"
+	aria-label={`${siteConfig.author}, home`}
+	transition:persist="site-header"
+>
+	<Image src={avatar} alt="" width={160} format="webp" loading="eager" class="avatar" />
+	<p class="eyebrow" data-swap aria-hidden="true">
+		<span class="shimmer"
+			>Making <span class="slot">fun</span> things <span class="slot">profitable</span>…</span
+		>
+	</p>
+	<p class="name">{siteConfig.author}</p>
+</a>
+
+<script>
+	// The tagline rotates: "Making fun things profitable…", then "fun" and "profitable" trade
+	// places (each slot animates to its next word's width so the line glides), then two joke
+	// lines, then back. Without JS, or with reduced motion, it stays on the first line.
+	const jokes = [
+		"Shipping bugs to production…",
+		"Overfitting the stock market…",
+		"Rolling back last night's update…",
+		"Approximating a cow as a sphere…",
+		"Watching 2M players ignore the tutorial…",
+	];
+	const HOLD = 3200;
+	const FADE = 250;
+
+	const line = document.querySelector<HTMLElement>("[data-swap]");
+	const text = line?.querySelector<HTMLElement>(".shimmer");
+	if (line && text && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+		const tagline = text.innerHTML;
+		const slots = () => Array.from(text.querySelectorAll<HTMLElement>(".slot"));
+		const words = slots().map((slot) => slot.textContent ?? "");
+		const ruler = document.createElement("span");
+		ruler.className = "slot";
+		ruler.style.cssText = "position:absolute;left:0;top:0;visibility:hidden;width:auto";
+		line.append(ruler);
+		const widthOf = (word: string) => {
+			ruler.textContent = word;
+			return `${ruler.getBoundingClientRect().width}px`;
+		};
+		const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+		const fadeSwap = async (els: HTMLElement[], change: () => void) => {
+			els.forEach((el) => el.classList.add("out"));
+			await wait(FADE);
+			change();
+			els.forEach((el) => el.classList.remove("out"));
+		};
+		const showTagline = () => {
+			text.innerHTML = tagline;
+			slots().forEach((slot, i) => (slot.style.width = widthOf(words[i]!)));
+		};
+
+		document.fonts.ready.then(async () => {
+			showTagline();
+			for (let next = 0; ; ) {
+				await wait(HOLD);
+				await fadeSwap(slots(), () =>
+					slots().forEach((slot, i) => {
+						slot.textContent = words[1 - i]!;
+						slot.style.width = widthOf(words[1 - i]!);
+					}),
+				);
+				for (let i = 0; i < 2; i++, next = (next + 1) % jokes.length) {
+					await wait(HOLD);
+					await fadeSwap([text], () => (text.textContent = jokes[next]!));
+				}
+				await wait(HOLD);
+				await fadeSwap([text], showTagline);
+			}
+		});
+	}
+</script>

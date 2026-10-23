@@ -4,13 +4,10 @@ import EntryRow from "@/components/EntryRow";
 import SectionIcon from "@/components/SectionIcon";
 import { getAllPosts, sortMDByDate, yearRange } from "@/utils";
 import { siteConfig } from "@/site-config";
-import { Image } from "astro:assets";
-import avatar from "../assets/avatar.jpg";
 import { sections } from "../data/projects";
 import type { SectionIconName } from "@/components/SectionIcon";
 
 const latestPosts = sortMDByDate(await getAllPosts()).slice(0, 5);
-const tagline = "Making fun things profitable, and profitable things fun";
 
 const socials: Array<{ label: string; href: string; icon: SectionIconName }> = [
 	{ label: "GitHub", href: "https://github.com/aljrico", icon: "github" },
@@ -24,7 +21,7 @@ const projects = sections
 	.sort((a, b) => Number(yearRange(b.period).start) - Number(yearRange(a.period).start));
 ---
 
-<PageLayout meta={{ title: siteConfig.title }} backLink={false}>
+<PageLayout meta={{ title: siteConfig.title }}>
 	<script
 		is:inline
 		type="application/ld+json"
@@ -38,18 +35,9 @@ const projects = sections
 			sameAs: socials.map(({ href }) => href),
 		})}
 	/>
-	<section class="block">
-		<div class="intro">
-			<Image src={avatar} alt="" width={160} format="webp" loading="eager" class="avatar" />
-			<p class="eyebrow" data-swap>
-				<span class="sr-only">{tagline}</span>
-				<span class="shimmer" aria-hidden="true"
-					>Making <span class="slot">fun</span> things <span class="slot">profitable</span>…</span
-				>
-			</p>
-			<h1 class="name">{siteConfig.author}</h1>
-		</div>
-		<p class="mt-4">
+	<section class="block home-intro">
+		<h1 class="sr-only">{siteConfig.author}</h1>
+		<p>
 			I run analytics for one of the most-played games on Roblox. Outside work I make small mobile
 			games, run a public portfolio on <a href="https://etoro.tw/3Xxoov9" rel="sponsored noopener"
 				>eToro</a
@@ -102,63 +90,3 @@ const projects = sections
 	</section>
 </PageLayout>
 
-<script>
-	// The tagline rotates: "Making fun things profitable…", then "fun" and "profitable" trade
-	// places (each slot animates to its next word's width so the line glides), then two joke
-	// lines, then back. Without JS, or with reduced motion, it stays on the first line.
-	const jokes = [
-		"Shipping bugs to production…",
-		"Overfitting the stock market…",
-		"Rolling back last night's update…",
-		"Approximating a cow as a sphere…",
-		"Watching 2M players ignore the tutorial…",
-	];
-	const HOLD = 3200;
-	const FADE = 250;
-
-	const line = document.querySelector<HTMLElement>("[data-swap]");
-	const text = line?.querySelector<HTMLElement>(".shimmer");
-	if (line && text && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-		const tagline = text.innerHTML;
-		const slots = () => [...text.querySelectorAll<HTMLElement>(".slot")];
-		const words = slots().map((slot) => slot.textContent ?? "");
-		const ruler = document.createElement("span");
-		ruler.className = "slot";
-		ruler.style.cssText = "position:absolute;left:0;top:0;visibility:hidden;width:auto";
-		line.append(ruler);
-		const widthOf = (word: string) => {
-			ruler.textContent = word;
-			return `${ruler.getBoundingClientRect().width}px`;
-		};
-		const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-		const fadeSwap = async (els: HTMLElement[], change: () => void) => {
-			els.forEach((el) => el.classList.add("out"));
-			await wait(FADE);
-			change();
-			els.forEach((el) => el.classList.remove("out"));
-		};
-		const showTagline = () => {
-			text.innerHTML = tagline;
-			slots().forEach((slot, i) => (slot.style.width = widthOf(words[i]!)));
-		};
-
-		document.fonts.ready.then(async () => {
-			showTagline();
-			for (let next = 0; ; ) {
-				await wait(HOLD);
-				await fadeSwap(slots(), () =>
-					slots().forEach((slot, i) => {
-						slot.textContent = words[1 - i]!;
-						slot.style.width = widthOf(words[1 - i]!);
-					}),
-				);
-				for (let i = 0; i < 2; i++, next = (next + 1) % jokes.length) {
-					await wait(HOLD);
-					await fadeSwap([text], () => (text.textContent = jokes[next]!));
-				}
-				await wait(HOLD);
-				await fadeSwap([text], showTagline);
-			}
-		});
-	}
-</script>
