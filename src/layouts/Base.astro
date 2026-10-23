@@ -25,7 +25,10 @@ const {
 	<body>
 		<SkipLink />
 		<div class="page">
-			<SiteHeader />
+			<header class="site-header">
+				<SiteHeader />
+				<slot name="header" />
+			</header>
 			<main id="main">
 				<slot />
 			</main>

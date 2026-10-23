@@ -1,0 +1,9 @@
+---
+import { yearRange } from "@/utils";
+
+type Props = { period: string };
+
+const { start, end, ongoing } = yearRange(Astro.props.period);
+---
+
+{[start, end && "-", end && (ongoing ? <span class="now shimmer">{end}</span> : end)]}

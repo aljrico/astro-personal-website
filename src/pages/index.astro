@@ -2,6 +2,7 @@
 import PageLayout from "@/layouts/Base";
 import EntryRow from "@/components/EntryRow";
 import SectionIcon from "@/components/SectionIcon";
+import YearRange from "@/components/YearRange";
 import { getAllPosts, sortMDByDate, yearRange } from "@/utils";
 import { siteConfig } from "@/site-config";
 import { sections } from "../data/projects";
@@ -35,7 +36,7 @@ const projects = sections
 			sameAs: socials.map(({ href }) => href),
 		})}
 	/>
-	<section class="block home-intro">
+	<section slot="header">
 		<h1 class="sr-only">{siteConfig.author}</h1>
 		<p>
 			I run analytics for one of the most-played games on Roblox. Outside work I make small mobile
@@ -58,15 +59,14 @@ const projects = sections
 		<ul class="rows">
 			{
 				projects.map(({ slug, title, period, kind }) => {
-					const { start, end, ongoing } = yearRange(period);
 					return (
-						<li class:list={["iconed", { active: ongoing }]}>
+						<li class:list={["iconed", { active: yearRange(period).ongoing }]}>
 							<SectionIcon name={kind} />
 							<a class="what" href={`/apps/${slug}`}>
 								{title}
 							</a>
 							<span class="status">
-								{[start, end && "-", end && (ongoing ? <span class="now shimmer">{end}</span> : end)]}
+								<YearRange period={period} />
 							</span>
 						</li>
 					);
