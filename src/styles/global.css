@@ -404,20 +404,65 @@
 		}
 	}
 
-	.icon-games .eye {
-		animation: blink 3s ease-in-out infinite;
+	/* Each card is the same 10x14 rect centred on the origin, placed by translate + rotate. The
+	   fanned positions are measured from Lucide's playing-cards-fan. Cards are filled with the page
+	   colour so the front ones hide the ones behind. */
+	.icon-games .card {
+		fill: var(--paper);
+		transform-box: view-box;
+		transform-origin: 0 0;
+		/* An overshooting ease on each move gives the cards a little spring. */
+		animation: 2.4s cubic-bezier(0.34, 1.6, 0.5, 1) infinite;
 	}
 
-	/* The original 0.5s blink after a 0.2s delay, then a long pause. */
-	@keyframes blink {
+	.icon-games .card-back {
+		transform: translate(7.86px, 11.57px) rotate(-10.5deg);
+		animation-name: card-back;
+	}
+
+	.icon-games .card-mid {
+		transform: translate(13px, 9px);
+		animation-name: card-mid;
+	}
+
+	.icon-games .card-front {
+		transform: translate(15.26px, 14.22px) rotate(23.3deg);
+		animation-name: card-front;
+	}
+
+	@keyframes card-back {
 		0%,
-		7%,
-		24%,
+		65%,
 		100% {
-			transform: none;
+			transform: translate(7.86px, 11.57px) rotate(-10.5deg);
 		}
-		15% {
-			transform: scaleY(0.1);
+		20%,
+		45% {
+			transform: translate(12px, 12px) rotate(-2deg);
+		}
+	}
+
+	@keyframes card-mid {
+		0%,
+		65%,
+		100% {
+			transform: translate(13px, 9px) rotate(0deg);
+		}
+		20%,
+		45% {
+			transform: translate(12px, 12px) rotate(0deg);
+		}
+	}
+
+	@keyframes card-front {
+		0%,
+		65%,
+		100% {
+			transform: translate(15.26px, 14.22px) rotate(23.3deg);
+		}
+		20%,
+		45% {
+			transform: translate(12px, 12px) rotate(2deg);
 		}
 	}
 

@@ -11,9 +11,10 @@ type Props = { name: SectionIconName };
 // Outline icons. Posts use Lucide's feather (ISC) and stay still.
 const animated: Partial<Record<SectionIconName, string>> = {
 	post: '<path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z" /><path d="M16 8 2 22" /><path d="M17.5 15H9" />',
-	// bot: the eyes blink.
+	// playing-cards-fan (lucide-static 1.61.0, ISC), redrawn as three whole cards so they can move:
+	// they gather into a deck and fan back out.
 	games:
-		'<path d="M12 8V4H8" /><rect height="12" rx="2" width="16" x="4" y="8" /><path d="M2 14h2" /><path d="M20 14h2" /><line class="eye" x1="15" x2="15" y1="13" y2="15" /><line class="eye" x1="9" x2="9" y1="13" y2="15" />',
+		'<rect class="card card-back" x="-5" y="-7" width="10" height="14" rx="2" /><rect class="card card-mid" x="-5" y="-7" width="10" height="14" rx="2" /><rect class="card card-front" x="-5" y="-7" width="10" height="14" rx="2" />',
 	// binary: the digits flip one by one, 01/10 to 10/01 and back.
 	"open-source":
 		'<rect class="bin-a c0" height="6" rx="2" width="4" x="6" y="4" /><g class="bin-b c0"><path d="M6 4h2v6" /><path d="M6 10h4" /></g><g class="bin-a c1"><path d="M14 4h2v6" /><path d="M14 10h4" /></g><rect class="bin-b c1" height="6" rx="2" width="4" x="14" y="4" /><g class="bin-a c2"><path d="M6 14h2v6" /><path d="M6 20h4" /></g><rect class="bin-b c2" height="6" rx="2" width="4" x="6" y="14" /><rect class="bin-a c3" height="6" rx="2" width="4" x="14" y="14" /><g class="bin-b c3"><path d="M14 14h2v6" /><path d="M14 20h4" /></g>',
