@@ -707,12 +707,4 @@
 		color: var(--muted);
 	}
 
-	.footer {
-		margin-top: 56px;
-		color: var(--muted);
-	}
-
-	.footer a {
-		color: var(--muted);
-	}
 }
