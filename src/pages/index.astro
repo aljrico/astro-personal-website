@@ -4,7 +4,10 @@ import EntryRow from "@/components/EntryRow";
 import SectionIcon from "@/components/SectionIcon";
 import { getAllPosts, sortMDByDate } from "@/utils";
 import { siteConfig } from "@/site-config";
+import { Image } from "astro:assets";
+import avatar from "../assets/avatar.jpg";
 import { sections } from "../data/projects";
+import type { SectionIconName } from "@/components/SectionIcon";
 
 const latestPosts = sortMDByDate(await getAllPosts()).slice(0, 5);
 // "2026-present" -> 2026 to now, "Feb-Oct 2022" -> 2022 alone, "2020-2024" stays as is.
@@ -15,6 +18,14 @@ const yearRange = (period: string) => {
 	const end = ongoing ? "now" : years.at(-1);
 	return { start, end: end && end !== start ? end : undefined, ongoing };
 };
+
+const tagline = "Making fun things profitable, and profitable things fun";
+
+const socials: Array<{ label: string; href: string; icon: SectionIconName }> = [
+	{ label: "GitHub", href: "https://github.com/aljrico", icon: "github" },
+	{ label: "LinkedIn", href: "https://www.linkedin.com/in/aljrico", icon: "linkedin" },
+	{ label: "X", href: "https://x.com/aljrico", icon: "x" },
+];
 
 // One list, newest first; the section icon tells the kind of project apart.
 const projects = sections
@@ -31,17 +42,35 @@ const projects = sections
 			"@type": "Person",
 			name: siteConfig.author,
 			url: "https://aljrico.com",
-			jobTitle: "Data Lead",
-			description: "Data lead at a gaming studio. Game developer. Based near Barcelona.",
-			sameAs: ["https://github.com/aljrico", "https://x.com/aljrico"],
+			jobTitle: "Analytics Lead",
+			description: "Analytics lead at a gaming studio. Game developer. Based near Barcelona.",
+			sameAs: socials.map(({ href }) => href),
 		})}
 	/>
 	<section class="block">
-		<h1 class="name">{siteConfig.author}</h1>
+		<div class="intro">
+			<Image src={avatar} alt="" width={160} format="webp" loading="eager" class="avatar" />
+			<p class="eyebrow" data-swap>
+				<span class="sr-only">{tagline}</span>
+				<span class="line" aria-hidden="true"
+					>Making <span class="slot">fun</span> things <span class="slot">profitable</span>…</span
+				>
+			</p>
+			<h1 class="name">{siteConfig.author}</h1>
+		</div>
 		<p class="mt-4">
-			Data lead at a gaming studio. I also like studying companies and the stock market. When I'm
-			not doing either, I make my own games. Based near Barcelona.
+			Analytics lead at a gaming studio. I also like studying companies and the stock market. When
+			I'm not doing either, I make my own games. Based near Barcelona.
 		</p>
+		<nav class="socials" aria-label="Elsewhere">
+			{
+				socials.map(({ label, href, icon }) => (
+					<a href={href} aria-label={label} title={label}>
+						<SectionIcon name={icon} />
+					</a>
+				))
+			}
+		</nav>
 	</section>
 	<section class="block" aria-labelledby="label-projects">
 		<h2 class="label" id="label-projects">Projects</h2>
@@ -50,7 +79,7 @@ const projects = sections
 				projects.map(({ slug, title, period, kind }) => {
 					const { start, end, ongoing } = yearRange(period);
 					return (
-						<li class="project">
+						<li class="iconed">
 							<SectionIcon name={kind} />
 							<a class="what" href={`/apps/${slug}`}>
 								{title}
@@ -84,3 +113,39 @@ const projects = sections
 		<a href="https://x.com/aljrico">X</a>
 	</footer>
 </PageLayout>
+
+<script>
+	// "fun" and "profitable" trade places every few seconds. Each slot animates to the width of
+	// its next word so the line glides instead of jumping. Without JS, or with reduced motion,
+	// the line stays as "Making fun things profitable".
+	const line = document.querySelector<HTMLElement>("[data-swap]");
+	const slots = [...(line?.querySelectorAll<HTMLElement>(".slot") ?? [])];
+	if (line && slots.length === 2 && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+		const words = slots.map((slot) => slot.textContent ?? "");
+		const ruler = document.createElement("span");
+		ruler.className = "slot";
+		ruler.style.cssText = "position:absolute;visibility:hidden;width:auto";
+		line.append(ruler);
+		const widthOf = (word: string) => {
+			ruler.textContent = word;
+			return `${ruler.getBoundingClientRect().width}px`;
+		};
+
+		document.fonts.ready.then(() => {
+			slots.forEach((slot, i) => (slot.style.width = widthOf(words[i]!)));
+			let flipped = false;
+			setInterval(() => {
+				flipped = !flipped;
+				slots.forEach((slot) => slot.classList.add("out"));
+				setTimeout(() => {
+					slots.forEach((slot, i) => {
+						const word = words[flipped ? 1 - i : i]!;
+						slot.textContent = word;
+						slot.style.width = widthOf(word);
+						slot.classList.remove("out");
+					});
+				}, 250);
+			}, 3200);
+		});
+	}
+</script>

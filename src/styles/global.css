@@ -61,7 +61,7 @@
 
 	/* Links are marked by a small accent arrow instead of an underline. An SVG mask, not the ↗
 	   glyph, because the latin font subsets don't include U+2197. */
-	a:not(:has(img))::after {
+	a:not(:has(img, svg))::after {
 		content: "";
 		display: inline-block;
 		width: 0.7em;
@@ -98,9 +98,132 @@
 		margin-top: 56px;
 	}
 
-	/* The homepage name is set in the body face, not the heading one. */
+	/* Homepage header: avatar beside the name, which is set in the body face. */
+	.intro {
+		display: grid;
+		grid-template-columns: 80px 1fr;
+		grid-template-areas:
+			"avatar eyebrow"
+			"avatar name";
+		align-content: center;
+		column-gap: 20px;
+	}
+
+	/* On phones the tagline is too long for the column beside the avatar. */
+	@media (max-width: 520px) {
+		.intro {
+			grid-template-areas:
+				"avatar name"
+				"eyebrow eyebrow";
+			align-items: center;
+		}
+
+		.intro .eyebrow {
+			margin: 16px 0 0;
+		}
+
+		.intro .name {
+			align-self: center;
+		}
+	}
+
+	.avatar {
+		grid-area: avatar;
+		width: 80px;
+		height: 80px;
+		border-radius: 18px;
+		box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent);
+		object-fit: cover;
+	}
+
+	/* Tagline above the name. */
+	.eyebrow {
+		grid-area: eyebrow;
+		align-self: end;
+		margin: 0 0 4px;
+		font-family: var(--font-mono);
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--muted);
+	}
+
+	/* The shimmer LLM "thinking" labels use: a lighter band sweeps across the whole line. A mask
+	   rather than a gradient fill, so every word keeps its own colour. */
+	.eyebrow .line {
+		-webkit-mask: linear-gradient(100deg, #000 35%, rgb(0 0 0 / 0.35) 50%, #000 65%) 0 0 / 250% 100%;
+		mask: linear-gradient(100deg, #000 35%, rgb(0 0 0 / 0.35) 50%, #000 65%) 0 0 / 250% 100%;
+		animation: shimmer 2.4s linear infinite;
+	}
+
+	/* The two swapping words. */
+	.eyebrow .slot {
+		display: inline-block;
+		overflow: hidden;
+		vertical-align: bottom;
+		white-space: nowrap;
+		color: var(--accent);
+		transition:
+			width 0.4s ease,
+			opacity 0.25s ease,
+			filter 0.25s ease,
+			transform 0.25s ease;
+	}
+
+	.eyebrow .slot.out {
+		opacity: 0;
+		filter: blur(3px);
+		transform: translateY(0.25em);
+	}
+
+	@keyframes shimmer {
+		from {
+			-webkit-mask-position: 100% 0;
+			mask-position: 100% 0;
+		}
+		to {
+			-webkit-mask-position: -150% 0;
+			mask-position: -150% 0;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.eyebrow .line {
+			animation: none;
+			-webkit-mask: none;
+			mask: none;
+		}
+	}
+
 	.name {
+		grid-area: name;
+		align-self: start;
+		margin: 0;
 		font-family: var(--font-body);
+		font-size: 28px;
+		line-height: 1.2;
+		letter-spacing: -0.02em;
+	}
+
+	/* Icon-only social links under the intro. */
+	.socials {
+		display: flex;
+		gap: 16px;
+		margin-top: 20px;
+	}
+
+	.socials a {
+		display: flex;
+		color: var(--accent);
+	}
+
+	.socials a:hover {
+		opacity: 0.7;
+	}
+
+	.socials .icon {
+		width: 20px;
+		height: 20px;
 	}
 
 	.muted,
@@ -150,8 +273,8 @@
 		font-family: var(--font-heading);
 	}
 
-	/* Project rows: section icon, title, year range on the right. */
-	.rows li.project {
+	/* Icon rows (links, projects): icon, title, optional year range on the right. */
+	.rows li.iconed {
 		gap: 10px;
 		align-items: center;
 	}
