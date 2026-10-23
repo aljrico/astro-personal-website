@@ -60,7 +60,9 @@ const projects = sections
 		</div>
 		<p class="mt-4">
 			I run analytics for one of the most-played games on Roblox. Outside work I make small mobile
-			games, invest, write about tech companies and nerd out about science. Usually near Barcelona.
+			games, run a public portfolio on <a href="https://etoro.tw/3Xxoov9" rel="sponsored noopener"
+				>eToro</a
+			>, write about tech companies and nerd out about science. Usually near Barcelona.
 		</p>
 		<nav class="socials" aria-label="Elsewhere">
 			{
@@ -114,37 +116,62 @@ const projects = sections
 </PageLayout>
 
 <script>
-	// "fun" and "profitable" trade places every few seconds. Each slot animates to the width of
-	// its next word so the line glides instead of jumping. Without JS, or with reduced motion,
-	// the line stays as "Making fun things profitable".
+	// The tagline rotates: "Making fun things profitable…", then "fun" and "profitable" trade
+	// places (each slot animates to its next word's width so the line glides), then two joke
+	// lines, then back. Without JS, or with reduced motion, it stays on the first line.
+	const jokes = [
+		"Shipping bugs to production…",
+		"Overfitting the stock market…",
+		"Rolling back last night's update…",
+		"Approximating a cow as a sphere…",
+		"Watching 2M players ignore the tutorial…",
+	];
+	const HOLD = 3200;
+	const FADE = 250;
+
 	const line = document.querySelector<HTMLElement>("[data-swap]");
-	const slots = [...(line?.querySelectorAll<HTMLElement>(".slot") ?? [])];
-	if (line && slots.length === 2 && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-		const words = slots.map((slot) => slot.textContent ?? "");
+	const text = line?.querySelector<HTMLElement>(".shimmer");
+	if (line && text && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+		const tagline = text.innerHTML;
+		const slots = () => [...text.querySelectorAll<HTMLElement>(".slot")];
+		const words = slots().map((slot) => slot.textContent ?? "");
 		const ruler = document.createElement("span");
 		ruler.className = "slot";
-		ruler.style.cssText = "position:absolute;visibility:hidden;width:auto";
+		ruler.style.cssText = "position:absolute;left:0;top:0;visibility:hidden;width:auto";
 		line.append(ruler);
 		const widthOf = (word: string) => {
 			ruler.textContent = word;
 			return `${ruler.getBoundingClientRect().width}px`;
 		};
+		const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+		const fadeSwap = async (els: HTMLElement[], change: () => void) => {
+			els.forEach((el) => el.classList.add("out"));
+			await wait(FADE);
+			change();
+			els.forEach((el) => el.classList.remove("out"));
+		};
+		const showTagline = () => {
+			text.innerHTML = tagline;
+			slots().forEach((slot, i) => (slot.style.width = widthOf(words[i]!)));
+		};
 
-		document.fonts.ready.then(() => {
-			slots.forEach((slot, i) => (slot.style.width = widthOf(words[i]!)));
-			let flipped = false;
-			setInterval(() => {
-				flipped = !flipped;
-				slots.forEach((slot) => slot.classList.add("out"));
-				setTimeout(() => {
-					slots.forEach((slot, i) => {
-						const word = words[flipped ? 1 - i : i]!;
-						slot.textContent = word;
-						slot.style.width = widthOf(word);
-						slot.classList.remove("out");
-					});
-				}, 250);
-			}, 3200);
+		document.fonts.ready.then(async () => {
+			showTagline();
+			for (let next = 0; ; ) {
+				await wait(HOLD);
+				await fadeSwap(slots(), () =>
+					slots().forEach((slot, i) => {
+						slot.textContent = words[1 - i]!;
+						slot.style.width = widthOf(words[1 - i]!);
+					}),
+				);
+				for (let i = 0; i < 2; i++, next = (next + 1) % jokes.length) {
+					await wait(HOLD);
+					await fadeSwap([text], () => (text.textContent = jokes[next]!));
+				}
+				await wait(HOLD);
+				await fadeSwap([text], showTagline);
+			}
 		});
 	}
 </script>

@@ -143,8 +143,10 @@
 			align-items: center;
 		}
 
+		/* Shrinks on narrow phones so the longest tagline (40 characters) stays on one line. */
 		.intro .eyebrow {
 			margin: 16px 0 0;
+			font-size: min(14px, 3.6vw);
 		}
 
 		.intro .name {
@@ -179,6 +181,22 @@
 		-webkit-mask: linear-gradient(100deg, #000 35%, rgb(0 0 0 / 0.35) 50%, #000 65%) 0 0 / 250% 100%;
 		mask: linear-gradient(100deg, #000 35%, rgb(0 0 0 / 0.35) 50%, #000 65%) 0 0 / 250% 100%;
 		animation: shimmer 2.4s linear infinite;
+	}
+
+	/* The whole tagline, which rotates between lines. */
+	.eyebrow > .shimmer {
+		display: inline-block;
+		white-space: nowrap;
+		transition:
+			opacity 0.25s ease,
+			filter 0.25s ease,
+			transform 0.25s ease;
+	}
+
+	.eyebrow > .shimmer.out {
+		opacity: 0;
+		filter: blur(3px);
+		transform: translateY(0.25em);
 	}
 
 	/* The two swapping words. */
