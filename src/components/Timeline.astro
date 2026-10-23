@@ -1,0 +1,41 @@
+---
+import { yearRange } from "@/utils";
+
+type Item = {
+	/** "2022-present", "2018-2019" or "2017". Leave empty for undated items. */
+	period?: string;
+	title: string;
+	href?: string;
+	/** Company, school or venue, after the title in muted ink. */
+	org?: string;
+	where?: string;
+	note?: string;
+};
+
+type Props = { items: Item[] };
+
+const { items } = Astro.props;
+---
+
+<ol class="timeline">
+	{
+		items.map(({ period, title, href, org, where, note }) => {
+			const { start, end, ongoing } = yearRange(period ?? "");
+			return (
+				<li class:list={{ current: ongoing }}>
+					{start && (
+						<p class="when">
+							{[start, end && "-", end && (ongoing ? <span class="now shimmer">{end}</span> : end)]}
+						</p>
+					)}
+					<p class="what">
+						{href ? <a href={href}>{title}</a> : title}
+						{org && <span class="org">· {org}</span>}
+					</p>
+					{where && <p class="where">{where}</p>}
+					{note && <p class="note">{note}</p>}
+				</li>
+			);
+		})
+	}
+</ol>

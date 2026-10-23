@@ -314,6 +314,124 @@
 	}
 
 	/* Rows: the title, then a date or status on the right (tags still use the .when column). */
+	/* CV timeline: a dot per entry joined by a hairline, filled in accent while ongoing. Each
+	   entry is a mono year range, the title with its org in muted ink, then place and a note. */
+	.timeline {
+		margin: 16px 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.timeline li {
+		position: relative;
+		padding: 0 0 28px 28px;
+	}
+
+	.timeline li:last-child {
+		padding-bottom: 0;
+	}
+
+	.timeline li::before {
+		content: "";
+		position: absolute;
+		top: 4.5px;
+		left: 0;
+		box-sizing: border-box;
+		width: 11px;
+		height: 11px;
+		border: 1.5px solid var(--accent);
+		border-radius: 50%;
+		background: var(--paper);
+	}
+
+	/* Undated entries centre the dot on the title instead. */
+	.timeline li:not(:has(.when))::before {
+		top: 6.5px;
+	}
+
+	.timeline li.current::before {
+		background: var(--accent);
+	}
+
+	.timeline li:not(:last-child)::after {
+		content: "";
+		position: absolute;
+		top: 20px;
+		bottom: 0;
+		left: 5px;
+		width: 1px;
+		background: color-mix(in srgb, var(--ink) 15%, transparent);
+	}
+
+	.timeline p {
+		margin: 0;
+	}
+
+	.timeline .when {
+		font-family: var(--font-mono);
+		font-size: 13px;
+		line-height: 20px;
+		color: var(--muted);
+	}
+
+	.timeline .now {
+		display: inline-block;
+		font-weight: 500;
+		color: var(--accent);
+	}
+
+	.timeline .what {
+		font-family: var(--font-heading);
+		font-size: 16px;
+		line-height: 1.5;
+	}
+
+	/* nowrap keeps the dot with its org when the title wraps. */
+	.timeline .org {
+		margin-left: 0.35em;
+		white-space: nowrap;
+		color: var(--muted);
+	}
+
+	.timeline .where,
+	.timeline .note {
+		font-size: 14px;
+		line-height: 1.55;
+		color: var(--muted);
+	}
+
+	.timeline .note {
+		margin-top: 6px;
+	}
+
+	.cv-aside {
+		margin: 28px 0 0;
+		font-size: 14px;
+	}
+
+	.skills {
+		margin: 16px 0 0;
+	}
+
+	.skills div {
+		display: grid;
+		grid-template-columns: 104px 1fr;
+		gap: 12px;
+	}
+
+	.skills div + div {
+		margin-top: 8px;
+	}
+
+	.skills dt {
+		font-family: var(--font-heading);
+	}
+
+	.skills dd {
+		margin: 0;
+		color: var(--muted);
+	}
+
 	.rows {
 		--row-title-size: 15px;
 		margin: 0;

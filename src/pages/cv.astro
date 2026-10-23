@@ -1,96 +1,172 @@
 ---
 import PageLayout from "@/layouts/Base";
+import Timeline from "@/components/Timeline";
+import { getProject } from "../data/projects";
 
 const meta = {
 	title: "CV",
 	description: "Alejandro Jimenez Rico's CV",
 };
+
+const experience = [
+	{
+		period: "2022-present",
+		title: "Senior Data Analyst",
+		org: "Uplift Games",
+		where: "Remote",
+		note: "Own analytics for Roblox's most-visited game, with 2M peak CCU and 40B+ visits. Built the analytics stack and established the A/B testing practice from scratch. Led forecasting, economy balancing, and exploit detection. Partner with product and game teams on live ops, economy design, and growth.",
+	},
+	{
+		period: "2019-present",
+		title: "Popular Investor",
+		org: "eToro",
+		where: "Remote",
+		note: "Run a public portfolio that other investors copy with their own money. Value-first stock picking, backed by fundamentals and machine learning. Passed CISI Level 3 to reach the Elite tier.",
+	},
+	{
+		period: "2019-2022",
+		title: "Senior Data Scientist",
+		org: "Mango Solutions",
+		where: "London, UK",
+		note: "Technical lead for enterprise analytics tools built with R and Shiny. Set coding and technical standards and mentored junior developers. Spoke at R conferences, ran workshops, and represented the technical side in sales and scoping.",
+	},
+	{
+		period: "2019",
+		title: "Product Manager & Data Analyst",
+		org: "Supersolid",
+		where: "London, UK",
+		note: "Hybrid role: owned product strategy and analytics for the flagship game (100k DAU). Reported to CEO, led cross-functional prioritisation, built the A/B testing practice.",
+	},
+	{
+		period: "2018-2019",
+		title: "Research Scientist",
+		org: "Cass Business School",
+		where: "London, UK",
+		note: "High-performance simulations (R + C++) and ML research applied to stock market prediction.",
+	},
+	{
+		period: "2018",
+		title: "Junior Data Scientist",
+		org: "Socialpoint",
+		where: "Barcelona, ES",
+		note: "A/B test analysis, LTV modelling, and ML for mobile games with 100M+ downloads.",
+	},
+	{
+		period: "2017",
+		title: "Data & Risk Analyst",
+		org: "Caixa d'Enginyers",
+		where: "Barcelona, ES",
+		note: "Applied mathematical methods to risk indicators in R. Worked with complex datasets on limited computing resources. Automated periodic risk reports in VBA, so they went out faster and more accurately.",
+	},
+];
+
+const talks = [
+	{
+		period: "2021",
+		title: "Introduction to Shiny",
+		href: "https://www.bigmarker.com/Mango-Solutions/EARL-Workshop-1",
+		org: "EARL 2021",
+		where: "Online workshop",
+		note: "Hosted this workshop at Enterprise Applications of the R Language. It covered app structure, inputs, outputs, reactivity, and layout, and assumed no prior Shiny knowledge.",
+	},
+	{
+		period: "2021",
+		title: "Why Shiny? Opinions from a Shiny developer",
+		href: "https://www.r-bloggers.com/2021/06/why-shiny-opinions-from-a-shiny-developer/",
+		org: "Mango Solutions",
+		where: "Interview, republished on R-bloggers",
+	},
+];
+
+// Dates come from src/data/projects.ts, so ongoing products light up like on the homepage.
+const products = [
+	{
+		slug: "tiny-crimes",
+		note: "Built and operate a cross-platform logic game that reached 30,000 downloads in its first two months and now serves about 3,000 daily active users. Built in Flutter around a procedural engine that generates and verifies uniquely solvable puzzles.",
+	},
+	{
+		slug: "test-dgt",
+		note: "Built and shipped a driving theory app with 2,600+ illustrated questions, adaptive lessons, exam simulations, and offline support. Engineered a multi-agent content pipeline for generation, fact-checking, adjudication, and quality control.",
+	},
+	{
+		slug: "flama-coach",
+		note: "Built a subscription study app with 3,500+ questions, adaptive practice, exam simulations, and offline support. Created the content pipeline from official legal texts through production delivery.",
+	},
+	{
+		slug: "cookie-empire",
+		note: "Built and operate an iOS idle game with 100k+ downloads and a Discord community of nearly 1,000 players. Own product, SwiftUI development, monetisation, live ops, analytics, and A/B testing.",
+	},
+].map(({ slug, note }) => {
+	const { title, period } = getProject(slug);
+	return { period, title, href: `/apps/${slug}`, note };
+});
+
+const education = [
+	{ period: "2021", title: "International Certificate in Wealth and Investment Management", org: "CISI" },
+	{ period: "2017-2018", title: "MSc Data Science & Mathematical Modelling", org: "UAB", where: "Barcelona, ES" },
+	{ period: "2016-2017", title: "MSc Financial Mathematics", org: "UAB", where: "Barcelona, ES" },
+	{ period: "2012-2016", title: "BSc Physics", org: "UAB", where: "Barcelona, ES" },
+];
+
+const skills = [
+	["Product", "strategy, experimentation, retention, monetisation, live ops"],
+	["Data", "SQL, BigQuery, ClickHouse, Looker, R, Python, machine learning"],
+	["Engineering", "Swift, SwiftUI, Flutter, TypeScript, C++, AI and agent systems"],
+];
 ---
 
 <PageLayout meta={meta}>
-	<div class="max-w-2xl">
-		<section class="mb-12">
-			<p class="mb-4">
-				Product and analytics lead for large-scale games. 8+ years using analytics, experimentation, and ML to shape product strategy. Independently built consumer apps with 130k+ downloads.
-			</p>
-			<p class="flex flex-wrap gap-x-3 text-sm text-gray-500">
-				<a href="mailto:aljrico@gmail.com">aljrico@gmail.com</a>
-				<a href="https://github.com/aljrico" target="_blank" rel="noopener noreferrer">github.com/aljrico</a>
-			</p>
-		</section>
+	<section class="block">
+		<p>
+			Product and analytics lead for large-scale games. 8+ years using analytics, experimentation,
+			and ML to shape product strategy. Independently built consumer apps with 130k+ downloads.
+		</p>
+		<p class="muted mt-4">
+			<a href="mailto:aljrico@gmail.com">aljrico@gmail.com</a> · <a
+				href="https://github.com/aljrico"
+				target="_blank"
+				rel="noopener noreferrer">github.com/aljrico</a
+			>
+		</p>
+	</section>
 
-		<section class="mb-12">
-			<h2 class="title mb-4 text-xl">Experience</h2>
-			<ul class="space-y-6">
-				<li>
-					<div class="font-semibold">Uplift Games</div>
-					<div class="text-sm text-gray-500">Senior Data Analyst · 2022–present · Remote</div>
-					<p class="mt-1">Own analytics for Roblox's most-visited game, with 2M peak CCU and 40B+ visits. Built the analytics stack and established the A/B testing practice from scratch. Led forecasting, economy balancing, and exploit detection. Partner with product and game teams on live ops, economy design, and growth.</p>
-				</li>
-				<li>
-					<div class="font-semibold">Mango Solutions</div>
-					<div class="text-sm text-gray-500">Senior Data Scientist · 2019–2022 · London</div>
-					<p class="mt-1">Technical lead for enterprise analytics tools built with R and Shiny. Set coding and technical standards and mentored junior developers. Spoke at R conferences, ran workshops, and represented the technical side in sales and scoping.</p>
-				</li>
-				<li>
-					<div class="font-semibold">Supersolid</div>
-					<div class="text-sm text-gray-500">Product Manager & Data Analyst · 2019 · London</div>
-					<p class="mt-1">Hybrid role: owned product strategy and analytics for the flagship game (100k DAU). Reported to CEO, led cross-functional prioritisation, built the A/B testing practice.</p>
-				</li>
-				<li>
-					<div class="font-semibold">Cass Business School</div>
-					<div class="text-sm text-gray-500">Research Scientist · 2018–2019 · London</div>
-					<p class="mt-1">High-performance simulations (R + C++) and ML research applied to stock market prediction.</p>
-				</li>
-				<li>
-					<div class="font-semibold">Socialpoint</div>
-					<div class="text-sm text-gray-500">Junior Data Scientist · 2018 · Barcelona</div>
-					<p class="mt-1">A/B test analysis, LTV modelling, and ML for mobile games with 100M+ downloads.</p>
-				</li>
-				<li>
-					<div class="font-semibold">Caixa d'Enginyers</div>
-					<div class="text-sm text-gray-500">Data & Risk Analyst · 2017 · Barcelona</div>
-					<p class="mt-1">Applied mathematical methods to risk indicators in R. Worked with complex datasets on limited computing resources. Automated periodic risk reports in VBA, so they went out faster and more accurately.</p>
-				</li>
-			</ul>
-		</section>
+	<section class="block" aria-labelledby="label-experience">
+		<h2 class="label" id="label-experience">Experience</h2>
+		<Timeline items={experience} />
+	</section>
 
-		<section class="mb-12">
-			<h2 class="title mb-4 text-xl">Talks</h2>
-			<ul class="space-y-3">
-				<li><a href="https://www.bigmarker.com/Mango-Solutions/EARL-Workshop-1" target="_blank" rel="noopener noreferrer">Introduction to Shiny</a>: hosted this online workshop at EARL 2021 (Enterprise Applications of the R Language), 6 September 2021. It covered app structure, inputs, outputs, reactivity, and layout, and assumed no prior Shiny knowledge.</li>
-				<li><a href="https://www.r-bloggers.com/2021/06/why-shiny-opinions-from-a-shiny-developer/" target="_blank" rel="noopener noreferrer">Why Shiny? Opinions from a Shiny developer</a>: interviewed by Mango Solutions ahead of the workshop. Republished on R-bloggers, 24 June 2021.</li>
-			</ul>
-		</section>
+	<section class="block" aria-labelledby="label-products">
+		<h2 class="label" id="label-products">Independent products</h2>
+		<Timeline items={products} />
+		<p class="muted cv-aside">
+			Earlier: <a href="/apps/coffee-galley">Coffee Galley</a>, a fully automated Shopify fulfilment
+			app built in R; <a href="/apps/match-tile-mini">Match Tile: Mini</a>; <a
+				href="/apps/pizza-clicker">Pizza Clicker</a
+			>; and two open-source R visualisation packages.
+		</p>
+	</section>
 
-		<section class="mb-12">
-			<h2 class="title mb-4 text-xl">Independent Products</h2>
-			<ul class="space-y-3">
-				<li><a href="/apps/tiny-crimes">Tiny Crimes</a>: built and operate a cross-platform logic game that reached 30,000 downloads in its first two months and now serves about 3,000 daily active users. Built in Flutter around a procedural engine that generates and verifies uniquely solvable puzzles.</li>
-				<li><a href="/apps/cookie-empire">Cookie Empire</a>: built and operate an iOS idle game with 100k+ downloads and a Discord community of nearly 1,000 players. Own product, SwiftUI development, monetisation, live ops, analytics, and A/B testing.</li>
-				<li><a href="/apps/test-dgt">Test DGT</a>: built and shipped a driving theory app with 2,600+ illustrated questions, adaptive lessons, exam simulations, and offline support. Engineered a multi-agent content pipeline for generation, fact-checking, adjudication, and quality control.</li>
-				<li><a href="/apps/flama-coach">Mossos Coach</a>: built a subscription study app with 3,500+ questions, adaptive practice, exam simulations, and offline support. Created the content pipeline from official legal texts through production delivery.</li>
-				<li>Earlier projects: <a href="/apps/coffee-galley">Coffee Galley</a>, a fully automated Shopify fulfilment app built in R; <a href="/apps/match-tile-mini">Match Tile: Mini</a>; <a href="/apps/pizza-clicker">Pizza Clicker</a>; and two open-source R visualisation packages.</li>
-			</ul>
-		</section>
+	<section class="block" aria-labelledby="label-talks">
+		<h2 class="label" id="label-talks">Talks</h2>
+		<Timeline items={talks} />
+	</section>
 
-		<section class="mb-12">
-			<h2 class="title mb-4 text-xl">Skills</h2>
-			<ul class="space-y-1 text-sm text-gray-500">
-				<li><span class="font-semibold text-textColor">Product:</span> strategy, experimentation, retention, monetisation, live ops</li>
-				<li><span class="font-semibold text-textColor">Data:</span> SQL, BigQuery, ClickHouse, Looker, R, Python, machine learning</li>
-				<li><span class="font-semibold text-textColor">Engineering:</span> Swift, SwiftUI, Flutter, TypeScript, C++, AI and agent systems</li>
-			</ul>
-		</section>
+	<section class="block" aria-labelledby="label-education">
+		<h2 class="label" id="label-education">Education</h2>
+		<Timeline items={education} />
+	</section>
 
-		<section>
-			<h2 class="title mb-4 text-xl">Education</h2>
-			<ul class="space-y-1 text-sm">
-				<li>MSc Data Science & Mathematical Modelling, UAB</li>
-				<li>MSc Financial Mathematics, UAB</li>
-				<li>BSc Physics, UAB</li>
-				<li>International Certificate in Wealth and Investment Management, CISI</li>
-			</ul>
-		</section>
-	</div>
+	<section class="block" aria-labelledby="label-skills">
+		<h2 class="label" id="label-skills">Skills</h2>
+		<dl class="skills">
+			{
+				skills.map(([area, list]) => (
+					<div>
+						<dt>{area}</dt>
+						<dd>{list}</dd>
+					</div>
+				))
+			}
+		</dl>
+	</section>
 </PageLayout>

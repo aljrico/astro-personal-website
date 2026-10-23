@@ -22,3 +22,15 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 export function monthYear(date: Date) {
 	return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 }
+
+/**
+ * A period string as a year range: "2026-present" (or "2026-now") is 2026 to now, "Feb-Oct 2022"
+ * is 2022 alone, "2020-2024" stays as is. Ongoing periods drive the accent and shimmer.
+ */
+export function yearRange(period: string) {
+	const years = period.match(/\d{4}/g) ?? [];
+	const start = years[0] ?? "";
+	const ongoing = /present|now/i.test(period);
+	const end = ongoing ? "now" : years.at(-1);
+	return { start, end: end && end !== start ? end : undefined, ongoing };
+}
