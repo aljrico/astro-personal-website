@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
 
-// The design is one serif at one size, ink on paper. The theme below is deliberately tiny so that
+// The design is one size, ink on paper. The theme below is deliberately tiny so that
 // leftover utility classes can't reintroduce sizes, colours, borders, radii or shadows.
 const ink = "var(--ink)";
 const muted = "var(--muted)";
@@ -40,9 +40,10 @@ export default {
 			gray: { 400: muted, 500: muted, 600: muted },
 		},
 		fontFamily: {
-			serif: ['"Source Serif 4 Variable"', '"Source Serif 4"', "Georgia", "serif"],
-			sans: ['"Source Serif 4 Variable"', '"Source Serif 4"', "Georgia", "serif"],
-			mono: ['"Source Code Pro"', "ui-monospace", "monospace"],
+			heading: "var(--font-heading)",
+			serif: "var(--font-heading)",
+			sans: "var(--font-body)",
+			mono: "var(--font-mono)",
 		},
 	},
 	plugins: [

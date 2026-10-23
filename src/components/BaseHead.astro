@@ -2,7 +2,8 @@
 import type { SiteMeta } from "@/types";
 import { siteConfig } from "@/site-config";
 import "../styles/global.css";
-import serifLatin from "@fontsource-variable/source-serif-4/files/source-serif-4-latin-opsz-normal.woff2?url";
+import interLatin from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+import dmSansLatin from "@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2?url";
 
 type Props = SiteMeta;
 
@@ -17,8 +18,9 @@ const socialImageURL = new URL(ogImage ? ogImage : "/social-card.png", Astro.url
 <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-{/* Preload the Latin body face; the rest load on demand */}
-<link rel="preload" href={serifLatin} as="font" type="font/woff2" crossorigin />
+{/* Preload the Latin body and heading faces; mono and italic load on demand */}
+<link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={dmSansLatin} as="font" type="font/woff2" crossorigin />
 
 <title>{siteTitle}</title>
 

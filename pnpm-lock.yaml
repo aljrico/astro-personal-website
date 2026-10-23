@@ -20,12 +20,15 @@ dependencies:
   '@astrojs/tailwind':
     specifier: ^5.0.1
     version: 5.0.1(astro@3.2.3)(tailwindcss@3.3.3)
-  '@fontsource-variable/source-serif-4':
-    specifier: ^5.3.1
-    version: 5.3.1
-  '@fontsource/source-code-pro':
-    specifier: ^5.3.1
-    version: 5.3.1
+  '@fontsource-variable/dm-sans':
+    specifier: ^5.3.0
+    version: 5.3.0
+  '@fontsource-variable/inter':
+    specifier: ^5.3.0
+    version: 5.3.0
+  '@fontsource/ibm-plex-mono':
+    specifier: ^5.3.0
+    version: 5.3.0
   astro:
     specifier: 3.2.3
     version: 3.2.3
@@ -995,12 +998,16 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@fontsource-variable/source-serif-4@5.3.1:
-    resolution: {integrity: sha512-4Rtay22SC4lMvw11r/+9kxANB6P3M0X8s1NudBC2v0J1KU2y3DcMoNcT3lBoZ/CqLirzf+StlO6UlJilyrvaUg==}
+  /@fontsource-variable/dm-sans@5.3.0:
+    resolution: {integrity: sha512-BpUG5bqePiDFMBM4ZtLSlPdAIOM990uB1dlXzIf4aw21yQR7BmykedLXXXMqGWsR18aMLOsbWccwJNh3ztTQaA==}
     dev: false
 
-  /@fontsource/source-code-pro@5.3.1:
-    resolution: {integrity: sha512-qsJEkwJWXYP/9clmtt3BsIlZ+Lr4cuRgNAgu0vyZdCgESMRMhRkAmEFFHHNM81VdeURqg5D5+Rr3bALDFav78A==}
+  /@fontsource-variable/inter@5.3.0:
+    resolution: {integrity: sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==}
+    dev: false
+
+  /@fontsource/ibm-plex-mono@5.3.0:
+    resolution: {integrity: sha512-eTgnZjZEGk1QtD3ZstF+Vclo2HLAni8YMy34/DxllwZvyz1lR/1RF/xTiAquOBO7MvqBx8D2Ig2WCPMVfdZu7Q==}
     dev: false
 
   /@humanwhocodes/config-array@0.11.11:
