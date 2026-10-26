@@ -24,7 +24,7 @@ export default defineConfig({
 		tailwind({
 			applyBaseStyles: false,
 		}),
-		sitemap({ filter: (page) => !page.includes("/stats/") }),
+		sitemap(),
 		prefetch(),
 	],
 	vite: {
