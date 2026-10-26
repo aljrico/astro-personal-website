@@ -32,11 +32,8 @@ export default {
 			paper: "var(--paper)",
 			codebg: "var(--codebg)",
 			// Legacy names still used by a few hand-built pages map onto the two inks.
-			textColor: ink,
 			"accent-2": ink,
 			accent: ink,
-			link: ink,
-			bgColor: "var(--paper)",
 			gray: { 400: muted, 500: muted, 600: muted },
 		},
 		fontFamily: {
