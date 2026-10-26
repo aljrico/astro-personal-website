@@ -14,7 +14,7 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
 
 ## Information Collection and Use
 
-For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information. Any such personally identifiable information is retained on your device and is not collected by me, except as described below for consent-based advertising attribution, anonymous aggregate analytics, and the optional Daily Challenge leaderboard.
+For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information. Any such personally identifiable information is retained on your device and is not collected by me, except as described below for consent-based advertising attribution, pseudonymous product analytics (which you can turn off in Settings), Apple Search Ads attribution on iOS, and the optional Daily Challenge leaderboard.
 
 The app does use third-party services that may collect information used to identify you.
 
@@ -39,9 +39,19 @@ Tiny Crimes uses AdMob to show ads. The Google Mobile Ads SDK may automatically 
 
 ## Analytics
 
-The app collects pseudonymous product analytics to understand how the game is used and to run A/B experiments that help me improve it. This includes app interactions, session timestamps, app and platform version, a coarse country derived from your device language, and a random identifier created for this app installation. No account or login is required, and this analytics does not collect your name, email, contacts, photos, precise location, or Android advertising ID.
+The app collects pseudonymous product analytics to understand how the game is used, balance puzzle difficulty, fix bugs, and run A/B experiments. This includes app interactions (such as puzzles started, solved, or abandoned, solve times, hints, and settings changes), session timestamps, app and platform version, a coarse country derived from your device language and region setting (not your IP address or location), the experiment groups your installation is in, and a random identifier created for this app installation. It also records when an ad is shown, the revenue reported for it, and in-app purchases (product, price, and currency), so I can understand how the game is funded. No account or login is required, and this analytics does not collect your name, email, contacts, photos, precise location, or advertising identifiers (IDFA or Android advertising ID).
 
-Analytics events and the app-scoped install identifier are sent over an encrypted connection to my backend, provided by Supabase. They are used only for product analytics and experiments. They are not used for cross-app tracking, are not joined to advertising identifiers or purchases, and are not shared with advertising partners.
+Analytics events and the app-scoped install identifier are sent over an encrypted connection to my backend, provided by Supabase. They are used only for product analytics and experiments. They are not used for cross-app tracking, are not joined to advertising identifiers or to your RevenueCat purchase identity or leaderboard account, and are not shared with advertising partners.
+
+Individual analytics events are deleted from my backend after 32 days. The install identifier is stored on your device until you uninstall the app.
+
+### Turning analytics off
+
+You can stop analytics at any time in the app: open **Settings**, and under **Privacy** turn off **Share usage analytics**. It takes effect immediately and stays off after you restart the app. While it is off, no analytics events are sent, and events still waiting on your device are deleted. Events sent before you turned it off are removed by the 32-day deletion above. Turning analytics off does not affect gameplay, purchases, or the Daily Challenge leaderboard. You can turn it back on from the same switch.
+
+### Apple Search Ads attribution (iOS only)
+
+On iOS, shortly after installation, the app asks Apple for an attribution token and sends it, together with the install identifier, to my backend. My backend uses the token to ask Apple whether the install came from an Apple Search Ads campaign and, if so, which campaign, ad group, and keyword. This helps me measure my own App Store ads. No advertising identifier (IDFA) is used and no tracking permission is required. It happens once per installation (retried on a few later launches if Apple has no answer yet) and is not shared with other advertising partners.
 
 ## Purchases
 
@@ -99,7 +109,7 @@ These Services do not address anyone under the age of 13. I do not knowingly col
 
 I may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy on this page.
 
-This policy is effective as of 2026-07-30
+This policy is effective as of 2026-10-26
 
 ## Contact Us
 
