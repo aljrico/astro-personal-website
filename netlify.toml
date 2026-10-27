@@ -5,3 +5,8 @@
   from = "/apps/mini-match/privacy"
   to = "/apps/match-tile-mini/privacy"
   status = 301
+
+[[redirects]]
+  from = "/posts/cookie-empire/"
+  to = "/apps/cookie-empire/privacy"
+  status = 301
