@@ -14,7 +14,11 @@ The terms used in this Privacy Policy have the same meanings as in our Terms and
 
 ## Information Collection and Use
 
-For a better experience, while using our Service, I may require you to provide us with certain personally identifiable information. The information that I request will be retained on your device and is not collected by me in any way.
+Cookie Empire collects pseudonymous player and installation identifiers, gameplay interactions, scores, purchase history, and diagnostic information to run the game, provide leaderboards, fulfil purchases, and understand performance and usage. These records can be sent to our backend; they are not limited to your device. Leaderboard aliases and scores can be visible to other players.
+
+You can play without creating an account with an email address or password. The app uses an automatically generated identity for online features. Purchase history is collected when you make or restore purchases; purchases are not required to play.
+
+Advertising services may collect device identifiers, app interactions, diagnostics, and IP addresses, which can be used to estimate approximate location. They use this information for advertising, analytics, and fraud prevention. Data is transmitted using encrypted connections.
 
 The app does use third-party services that may collect information used to identify you.
 
@@ -22,6 +26,8 @@ Link to the privacy policy of third-party service providers used by the app
 
 - [Google Play Services](https://www.google.com/policies/privacy/)
 - [AdMob](https://support.google.com/admob/answer/6128543?hl=en)
+- [RevenueCat](https://www.revenuecat.com/privacy/) processes purchase information to provide in-app purchases.
+- [Supabase](https://supabase.com/privacy) provides backend infrastructure for game services and analytics.
 
 ## Log Data
 
@@ -60,8 +66,8 @@ These Services do not address anyone under the age of 13. I do not knowingly col
 
 I may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. I will notify you of any changes by posting the new Privacy Policy on this page.
 
-This policy is effective as of 2023-11-11
+This policy was updated on 2026-10-27.
 
 ## Contact Us
 
-If you have any questions or suggestions about my Privacy Policy, do not hesitate to contact me [here](https://twitter.com/aljrico)
+For privacy questions, contact [aljrico@gmail.com](mailto:aljrico@gmail.com).
