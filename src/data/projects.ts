@@ -9,6 +9,7 @@ import planetsLogo from "../assets/icons/planets_logo.png";
 import rfinanceLogo from "../assets/icons/rfinance_logo.png";
 import shipLogo from "../assets/icons/ship_logo.png";
 import tabletIcon from "../assets/icons/tabletIcon.svg";
+import tentativelyIcon from "../assets/icons/tentativelyIcon.png";
 import testDgtIcon from "../assets/icons/testDgtIcon.png";
 import tinyCrimesIcon from "../assets/icons/tinyCrimesIcon.png";
 import tinyTdIcon from "../assets/icons/tinyTdIcon.png";
@@ -66,6 +67,14 @@ export const sections: Array<{ heading: string; icon: SectionIconName; projects:
 		heading: "Games",
 		icon: "games",
 		projects: [
+			{
+				slug: "tentatively",
+				title: "Tentatively",
+				period: "2026-present",
+				status: "live",
+				icon: tentativelyIcon,
+				iconAlt: "Tentatively app icon",
+			},
 			{
 				slug: "tiny-crimes",
 				title: "Tiny Crimes",
