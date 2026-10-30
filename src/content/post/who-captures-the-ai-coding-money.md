@@ -1,5 +1,5 @@
 ---
-title: "Every Developer Uses AI. Who Captures the Money?"
+title: "Who Gets Paid When Every Developer Uses AI?"
 publishDate: "20 May 2026"
 description: "Nearly every developer on earth is using AI coding tools. The real money isn't in the apps you've heard of."
 tags: ["ai", "business", "investing"]
