@@ -80,26 +80,33 @@ const talks = [
 
 // Dates come from src/data/projects.ts, so ongoing products light up like on the homepage.
 const products = [
+	...[
+		{
+			slug: "tiny-crimes",
+			note: "Built and operate a cross-platform logic game that reached 30,000 downloads in its first two months and now serves about 3,000 daily active users. Built in Flutter around a procedural engine that generates and verifies uniquely solvable puzzles.",
+		},
+		{
+			slug: "test-dgt",
+			note: "Built and shipped a driving theory app with 2,600+ illustrated questions, adaptive lessons, exam simulations, and offline support. Engineered a multi-agent content pipeline for generation, fact-checking, adjudication, and quality control.",
+		},
+		{
+			slug: "flama-coach",
+			note: "Built a subscription study app with 3,500+ questions, adaptive practice, exam simulations, and offline support. Created the content pipeline from official legal texts through production delivery.",
+		},
+		{
+			slug: "cookie-empire",
+			note: "Built and operate an iOS idle game with 100k+ downloads and a Discord community of nearly 1,000 players. Own product, SwiftUI development, monetisation, live ops, analytics, and A/B testing.",
+		},
+	].map(({ slug, note }) => {
+		const { title, period } = getProject(slug);
+		return { period, title, href: `/apps/${slug}`, note };
+	}),
 	{
-		slug: "tiny-crimes",
-		note: "Built and operate a cross-platform logic game that reached 30,000 downloads in its first two months and now serves about 3,000 daily active users. Built in Flutter around a procedural engine that generates and verifies uniquely solvable puzzles.",
+		period: "2020-2022",
+		title: "Weirwood AI",
+		note: "Co-founded an ML-powered fintech startup. FinTen served fundamentals extracted from SEC filings through an API with Python and TypeScript clients. I built the machine learning behind Jarvis, an AI portfolio generator.",
 	},
-	{
-		slug: "test-dgt",
-		note: "Built and shipped a driving theory app with 2,600+ illustrated questions, adaptive lessons, exam simulations, and offline support. Engineered a multi-agent content pipeline for generation, fact-checking, adjudication, and quality control.",
-	},
-	{
-		slug: "flama-coach",
-		note: "Built a subscription study app with 3,500+ questions, adaptive practice, exam simulations, and offline support. Created the content pipeline from official legal texts through production delivery.",
-	},
-	{
-		slug: "cookie-empire",
-		note: "Built and operate an iOS idle game with 100k+ downloads and a Discord community of nearly 1,000 players. Own product, SwiftUI development, monetisation, live ops, analytics, and A/B testing.",
-	},
-].map(({ slug, note }) => {
-	const { title, period } = getProject(slug);
-	return { period, title, href: `/apps/${slug}`, note };
-});
+];
 
 const education = [
 	{ period: "2021", title: "International Certificate in Wealth and Investment Management", org: "CISI" },
