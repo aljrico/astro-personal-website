@@ -75,6 +75,14 @@ I wrote that in October 2021, in the middle of a downturn. Everything was down: 
 
 It's noise, and noise should be ignored.
 
+## Looking back: so when should you change your mind?
+
+Rereading this in 2026, there's a trap in everything above. If price drops are never evidence, you can never be wrong. Every loss becomes "just noise", and you hold a dying company forever while feeling disciplined about it.
+
+The answer is to go back to the coin. You don't learn the coin is unfair by watching tosses. You learn it by inspecting the coin again. In investing, that means the business. Are margins shrinking? Are customers leaving? Did the thing your thesis depended on stop being true?
+
+So write down, when you buy, what would make you sell. Not a price. A fact about the business. I sold Tesla when I stopped believing its CEO was focused on running it, not because the stock fell. If that fact changes, change your mind. If only the price changes, toss another coin.
+
 ---
 
 *Not investment advice.*

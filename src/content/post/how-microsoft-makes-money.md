@@ -9,7 +9,7 @@ tags: ["microsoft", "business", "strategy"]
 
 For years, I was a Microsoft hater. Windows was weird, Office was way too expensive and clumsy, and then, of course, there was the Windows Phone disaster. For some reason I was convinced Microsoft was a failure, doomed sooner or later. No company can get away with such consistently bad products in the long run.
 
-Then I got an office job for the first time. It blew my mind. We were deep in the Microsoft ecosystem. Azure, Office, GitHub, VS Code, LinkedIn, Teams, Exchange email, you name it. Anything and everything Microsoft. And I realised how finely tuned all of it is for employers and big corporations. A walled garden taller than anything Apple can dream of. **I learned that the machinery of large companies is oiled with Microsoft's products.**
+Then I got an office job for the first time. It blew my mind. We were deep in the Microsoft ecosystem. Azure, Office, GitHub, VS Code, LinkedIn, Teams, Exchange email. Anything and everything Microsoft. And I realised how finely tuned all of it is for employers and big corporations. A walled garden taller than anything Apple can dream of. **I learned that the machinery of large companies is oiled with Microsoft's products.**
 
 ## Get them at home, win them at work
 
@@ -23,7 +23,7 @@ Xbox, on the other hand, has been a real disappointment for the last few years. 
 
 ## The Death Star
 
-Microsoft is underrated. It came to dominate cybersecurity by bundling the Defender suite into its licences. It won the opening round of the AI race with its exclusive partnership with OpenAI. It utterly commands the office suite market. It's clawing more cloud market share by the day, as one of only two real competitors in the space. It crushed Slack and beat Salesforce in office communications by making Teams free with its licences. And if it gets gaming in order, it's well positioned there too: Activision Blizzard has been badly mismanaged for years, while owning arguably the most valuable set of franchises in the industry.
+Microsoft is underrated. It came to dominate cybersecurity by bundling the Defender suite into its licences. It won the opening round of the AI race with its exclusive partnership with OpenAI. It utterly commands the office suite market. It's clawing more cloud market share by the day, as one of the two leaders in the space. It overtook Slack, which Salesforce ended up buying, by making Teams free with its licences. And if it gets gaming in order, it's well positioned there too: Activision Blizzard has been badly mismanaged for years, while owning arguably the most valuable set of franchises in the industry.
 
 **This company is the Death Star.** And every year it keeps gobbling up new spaces and expanding its business.
 

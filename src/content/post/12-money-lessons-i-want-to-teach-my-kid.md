@@ -10,7 +10,7 @@ tags: ["investing", "personal-finance", "parenting"]
 I wrote this list in 2023, before I had a kid of my own. Now I do. These are the lessons I'd hammer into their brain, so they never start losing money in the first place.
 
 **1. Stop hoarding cash.**
-Inflation erodes its value. You may think it's safe, but it's not. It won't disappear overnight, but every day it's worth a little less. Don't fool yourself into thinking it's safe.
+Keep a few months of expenses aside for emergencies. Beyond that, cash loses to inflation. It won't disappear overnight, but every year it buys a little less. It feels safe. It isn't.
 
 **2. Save a percentage of everything you earn.**
 The exact number doesn't matter. Pick one you can stick to. It's a personal decision, and nobody can tell you what percentage you should be saving. Be a grown-up and promise yourself a savings rate you can keep.
@@ -39,8 +39,8 @@ Easier said than done. We're all emotional. Stop pretending you're different. We
 **10. Live below your means.**
 The only realistic way to build wealth is to save consistently, and the only way to do that is to spend less than you earn. That's true whatever your income. Someone can earn ten times your salary and still be broke.
 
-**11. Be a jack of all trades.**
-No field of knowledge is completely disconnected from the others. No expert ever fully understands their own field without learning about others. Clear thinking comes from learning across many disciplines.
+**11. Learn things that have nothing to do with money.**
+Most good investment decisions come from understanding how a business actually works, not from knowing finance. Read about physics, history, engineering, people. Every field you learn gives you another way to spot when a story doesn't add up.
 
 **12. Inaction can be the wisest action.**
 Finance punishes overactivity. The more you do, the worse you'll tend to perform. Investing is a game where you move your pieces once a year, not once a week.

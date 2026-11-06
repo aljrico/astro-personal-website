@@ -47,7 +47,7 @@ This time there's no room for games. The message to the Chinese authorities is c
 
 What will the Chinese government do? Nobody knows. I don't envy them. They're in a really tough spot.
 
-My guess is they'll come up with some legal shenanigans to allow "flexible" debt repayments that keep the company alive, while tightening control over its management. And even if they don't, I don't see the credit crunch spreading outside China. So I wouldn't worry about the global economy.
+My guess is they'll find a legal workaround to allow "flexible" debt repayments that keep the company alive, while tightening control over its management. And even if they don't, I don't see the credit crunch spreading outside China. So I wouldn't worry about the global economy.
 
 ## Looking back
 

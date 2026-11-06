@@ -79,6 +79,12 @@ These are the questions to ask yourself before you invest in these companies.
 
 The only way to make sense of the numbers is to understand their context. It doesn't matter how refined and complicated your calculations are. Without context, they mean nothing.
 
+## Looking back
+
+Amazon, the cheapest company in my PEG table, lost money in 2022. A $2.7 billion net loss, its first annual loss since 2014, mostly from writing down its stake in Rivian. So much for 30-50% earnings growth.
+
+That's the point of this post, made for me by reality. The PEG looked great because the growth estimate looked great. The estimate was wrong. The ratio was only ever as good as the guess underneath it.
+
 ---
 
 *Not investment advice.*

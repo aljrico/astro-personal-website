@@ -23,7 +23,7 @@ As a whole, SpaceX swung from $791 million of net profit in 2024 to a $4.94 bill
 
 Two numbers are easy to mix up here (I mixed them up myself). xAI's 2025 operating loss was $6.4 billion. Capex is a different line: $12.7 billion in 2025, and AI capex alone hit $7.7 billion in Q1 2026, which annualises north of $30 billion. Losses and capex aren't the same thing, but both are cash leaving the building. Elon intends to fund that buildout with this IPO.
 
-Run the maths: $30B+ a year of AI capex plus xAI's losses, against Starlink's ~$4.4B of operating income and ~18,700 bitcoins on the balance sheet. Roughly two to two and a half years of runway at the current pace. And the pace is accelerating. A risky place to be.
+Run the maths. The IPO brings in $75 billion. AI capex alone is running at $30 billion or more a year. Starlink's ~$4.4 billion of operating income and the ~18,700 bitcoins on the balance sheet barely dent that. So the IPO money buys roughly two to two and a half years at the current pace, and the pace is accelerating. A risky place to be.
 
 ## The valuation
 
@@ -39,7 +39,7 @@ Purely on the business, buying SpaceX means buying Starlink at a price where all
 
 ## The Elon factor
 
-And that's before the Elon factor. He owns Class B shares with 82%+ of the voting power. The only person who could remove him as CEO is himself. This is his company, his project, his dream. Let's be real: this isn't investing in a company in the traditional sense. Starlink's cash funds xAI's bet, and public shareholders have zero say in that capital allocation. It's a bet on Elon, his vision, and his ability to shape the future.
+And that's before the Elon factor. He owns Class B shares with more than 80% of the voting power. The only person who could remove him as CEO is himself. This is his company, his project, his dream. Let's be real: this isn't investing in a company in the traditional sense. Starlink's cash funds xAI's bet, and public shareholders have zero say in that capital allocation. It's a bet on Elon, his vision, and his ability to shape the future.
 
 ## Two things in its favour
 
@@ -51,7 +51,7 @@ Second, the float. Only ~4% of the company trades (roughly $70 billion of stock)
 
 ## So what are you buying?
 
-Strip away the noise and SpaceX is: Starlink, the fastest-growing internet service on the planet, with structurally shrinking ARPU. Grok, burning tens of billions a year against $3.2 billion of revenue. The X platform, plus bitcoin on the balance sheet. All controlled by one man with 82%+ of the votes, and priced at more than double independent fair value estimates.
+Strip away the noise and SpaceX is: Starlink, the fastest-growing internet service on the planet, with structurally shrinking ARPU. Grok, burning tens of billions a year against $3.2 billion of revenue. The X platform, plus bitcoin on the balance sheet. All controlled by one man with more than 80% of the votes, and priced at more than double independent fair value estimates.
 
 Buying SpaceX is, essentially, buying a ticket to ride along with whatever Elon wants to do next. Make of that what you will.
 

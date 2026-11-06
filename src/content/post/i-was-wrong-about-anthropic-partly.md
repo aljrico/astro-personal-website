@@ -63,7 +63,8 @@ Let that last one sink in. Apple had $62.4B in cash and short-term securities at
 **Spending**
 
 - $8.95B of compute and infrastructure expenses in H1
-- $265.6B of future compute and infrastructure commitments, over 1 to 20 years
+- $265.6B of fixed or minimum compute and infrastructure commitments as of 30 June, over 1 to 20 years
+- About $245B more in new and amended agreements signed after 30 June
 
 **The flywheel**
 
@@ -79,15 +80,15 @@ The S-1 lists five core advantages: mission, talent, research, compute and enter
 
 ### "But they lost $80.7 BILLION?"
 
-Yes, in H1 2026. Sounds apocalyptic. It mostly isn't. $72.4B of it is the change in fair value of convertible notes and similar instruments, mainly Amazon's. When Anthropic's valuation goes up, those notes are worth more, and the accounting books that as a loss. No cash leaves the building. The actual operating loss for the half was $693M: a loss in Q1, a profit in Q2.
+Yes, in H1 2026. Sounds apocalyptic. It mostly isn't. $72.4B of it is the change in fair value of convertible notes and similar instruments, Amazon's among them. When Anthropic's valuation goes up, those notes are worth more, and the accounting books that as a loss. Another $8.8B comes from marking other financial instruments to market. No cash leaves the building for either. The actual operating loss for the half was $693M: a loss in Q1, a profit in Q2. Interest on the cash pile, $1.1B, more than covered it.
 
 ### What I still believed
 
 The bankruptcy call was wrong. The commoditisation call was still open.
 
 1. Hard coding work needs the best model. Most coding just needs a model that's good enough, and then it's all about cost and speed.
-2. That second tier goes to whoever delivers inference at the highest volume and lowest cost. That means vertical integration, and Google, Meta and SpaceX are building their own. Anthropic still mostly rents.
-3. $265.6B of commitments is a hell of a fixed cost if token prices collapse.
+2. That second tier goes to whoever delivers inference at the highest volume and lowest cost. That means vertical integration, and Google, Meta and SpaceX are building their own. The S-1 says Anthropic is starting to build its own data centres and lease chips directly, but most of its compute is still rented.
+3. Half a trillion dollars of commitments is a hell of a fixed cost if token prices collapse.
 
 A 900% NRR tells you how good things are today. It doesn't tell you how sticky customers will be when a model that's 10x cheaper does the job 95% as well.
 
@@ -97,7 +98,7 @@ A Founder LLC owned by the seven co-founders holds a fixed 50.1% of the votes. T
 
 ### The price
 
-In May I wrote that "when (if) they go public, all expectations will be priced the hell in." There was no price range yet when I wrote this. When it shows up, the question is whether it prices in the $265.6B of commitments too, or just the 14x and the 900%.
+In May I wrote that "when (if) they go public, all expectations will be priced the hell in." There was no price range yet when I wrote this. When it shows up, the question is whether it prices in the commitments too, or just the 14x and the 900%.
 
 ## 3. The update: Opus 5.5 (30 October 2026)
 
@@ -105,7 +106,7 @@ The biggest change in my perspective came from the release of Opus 5.5.
 
 In many posts I've argued that AI models might become a commodity. If that happens, it's terrible news for Anthropic, because in a commodity market vertical integration is what matters: the only differentiation left is inference cost and speed, and Anthropic is notoriously behind on both.
 
-But they proved my worry partly wrong by releasing a model so much better than the competition that most power users moved from OpenAI to Anthropic. I say partly because some of the model's advantage doesn't come only from smarts. It also comes from speed and cost efficiency, which makes things fuzzy. They delivered a model that's smarter and more efficient at the same time, and users rationally moved to it.
+But they proved my worry partly wrong by releasing a model so much better than the competition that a lot of power users moved from OpenAI to Anthropic. I say partly because some of the model's advantage doesn't come only from smarts. It also comes from speed and cost efficiency, which makes things fuzzy. They delivered a model that's smarter and more efficient at the same time, and users rationally moved to it.
 
 If they moved because the model is smarter, my point was wrong: model differentiation is still what moves the market. If they moved because it's more efficient, my point about commoditisation still holds, and my worry that Anthropic was behind on efficiency was the part that was wrong. In all honesty, it's probably a mix of both. Which tells you how fast this landscape keeps changing.
 

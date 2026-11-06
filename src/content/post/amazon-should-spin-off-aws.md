@@ -43,6 +43,8 @@ I guess time will tell.
 
 Time told. Amazon never spun off AWS, and the bigger plans turned out to be AI. AWS's cash went into data centres and chips for the AI boom, including Amazon's multi-billion-dollar bet on Anthropic.
 
+I also got one thing wrong in the argument itself. I said retail no longer needed AWS's cash. The very year I wrote this, 2022, Amazon's North America and International segments lost about $2.8 billion and $7.7 billion of operating income, while AWS made $22.8 billion. Retail did need the cash after all, at least that year.
+
 ---
 
 *Not investment advice.*

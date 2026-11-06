@@ -28,15 +28,17 @@ People have been trying to squeeze money out of financial markets for as long as
 - **Fundamental analysis** tries to understand an asset through its business and financial situation.
 - **Technical analysis** tries to find patterns in price history that predict where the market goes next.
 
-Simons had a different approach, built on his mathematical edge. He looked for *statistically significant moneymaking strategies*, using a three-step test:
+Simons had a different approach, built on his mathematical edge. He looked for statistically significant patterns:
 
-1. Find an anomalous pattern in historical data.
-2. It has to be statistically significant, non-random and consistent over time.
-3. It has to be explainable.
+1. Find an anomaly in historical data.
+2. Check that it's statistically significant, not random, and consistent over time.
+3. Trade it, many times, with a small edge each time.
 
-When most people hear this, they think of moving averages, stochastic indicators and similar shenanigans. But Simons didn't only use price history. His datasets included revenue history, debt, macroeconomic data, everything he could get his hands on.
+When most people hear this, they think of moving averages, stochastic indicators and other chart tricks. But Simons didn't only use price history. He collected every dataset he could get his hands on.
 
-To do it, he decided not to hire finance experts. Only scientists. The approach had to be precise, reliable and strictly scientific.
+The surprising part is what he didn't require: a reason. When I first wrote this, I said the patterns had to be explainable. I was wrong. According to Gregory Zuckerman's book on Renaissance, *The Man Who Solved the Market*, by 1997 more than half the signals the team found were ones they couldn't fully explain. They traded them anyway, as long as the data held up. That's a scientist's humility applied to money. And it's part of why the signals lasted. Other investors avoid patterns they can't explain, so nobody competes them away.
+
+To do it, he decided not to hire finance experts. Only scientists: mathematicians, physicists, code breakers.
 
 ## The results
 
@@ -50,11 +52,19 @@ The results were outstanding. Medallion's returns before fees:
 
 It kept going. In 2000, while the Nasdaq was crashing, Medallion made about 128% before fees. In 2008, while the S&P 500 lost 38%, it made about 152%.
 
-While most investors relied on old-fashioned research, instinct and intuition, Simons bet everything on a scientific approach: digging through vast amounts of data, using mathematics and statistics, and building his own computer models.
+While most investors relied on old-fashioned research, instinct and intuition, Simons bet everything on a scientific approach: digging through vast amounts of data, using mathematics and statistics, and building his own computer models. As he told a colleague early on: "If we have enough data, I know we can make predictions."
 
-He has been a real inspiration to me and to many others. In his own words: "There are patterns in the market, I know we can find them."
+## Why this is a story about how hard it is
 
-When I wrote this, I was working as a data scientist, using machine learning to find patterns in financial statements to guide investment decisions.
+Here's the part people skip. You couldn't buy Medallion. Simons realised it would stop working if it got too big, so he kept handing profits back to cap its size. Renaissance limited outside investors more and more, and by 2005 only insiders were left.
+
+Renaissance did launch funds that outsiders could buy. Same software, same senior team, but slower strategies that could hold far more money. They did nothing like Medallion. In 2020 Medallion gained 76%, while Renaissance's biggest public fund lost about 20% in a year the S&P 500 went up.
+
+So the best quant shop in history found an edge, and that edge only worked at a limited size. Push more money through it and it disappears. The same firm couldn't make it work for the rest of us.
+
+That's the lesson I take from Simons. Beating the market is possible. Somebody did it. But it took a room full of the best scientists alive, decades of data, a fund kept deliberately small, and a willingness to trade signals nobody could explain. If that's what it takes, an index fund is a perfectly respectable choice.
+
+He has been a real inspiration to me and to many others. When I wrote this, I was working as a data scientist, using machine learning to find patterns in financial statements to guide investment decisions.
 
 ---
 

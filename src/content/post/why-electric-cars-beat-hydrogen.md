@@ -41,6 +41,10 @@ No, I don't think hydrogen cars are the future. Not the near future, at least. I
 
 Electric cars are the way to go.
 
+## Looking back
+
+The market agreed. Battery cars kept taking share year after year, while hydrogen cars stayed a rounding error. In February 2024 Shell closed its hydrogen stations for cars in California, the one US state that had really tried to build a network. The infrastructure problem turned out to be the one that killed it.
+
 ---
 
 *Not investment advice.*

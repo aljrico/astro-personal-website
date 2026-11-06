@@ -67,7 +67,7 @@ Make no mistake. Nobody in the world is even close to being able to produce what
 
 And that is a big geopolitical problem. The world runs on chips. What was true of oil in the last century is true of chips now. We can burn oil to produce energy. We can spin turbines with wind. Hell, we've even learned to bombard atoms with neutrons until they split, and use the heat to boil water and spin more turbines. If countries clash, everyone can get energy one way or another. **The real bottleneck in the case of open conflict is processing power**: the smart machines that turn all that energy into something useful.
 
-Big data, cloud computing, AI, blockchain. Whatever you're excited about, it runs on computing power. That means a hell of a lot of high-performance chips, almost all of them manufactured in TSMC's factories in Taiwan. This is why Taiwan is a geopolitical ticking time bomb.
+Big data, cloud computing, AI, blockchain. Whatever you're excited about, it runs on computing power. That means a huge number of high-performance chips, almost all of them manufactured in TSMC's factories in Taiwan. This is why Taiwan is a geopolitical ticking time bomb.
 
 Governments know this. Both Europe and the US have announced plans to throw buckets of cash at whoever helps build chip manufacturing at home. That might be Intel's biggest selling point right now, since it ticks every box for that public funding. And the most crucial step in Intel's plan to build fabs in Europe and the US? Buying ASML machines.
 

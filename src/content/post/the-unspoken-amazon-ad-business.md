@@ -7,7 +7,7 @@ tags: ["amazon", "advertising", "business"]
 
 *Originally posted on [eToro](https://www.etoro.com/posts/60ac7900-7877-11ec-8080-8000733e0f6d) on 18 January 2022. Figures are as of that date.*
 
-Everybody knows Google and Facebook are the giants of advertising. They dominate ads on Instagram, YouTube, Facebook, you name it.
+Everybody knows Google and Facebook are the giants of advertising. They dominate ads on Instagram, YouTube and Facebook.
 
 There's a hot debate about whether one will dethrone the other (my bet is on Google, by the way). But we rarely hear about Amazon in this race. Is it insignificant?
 

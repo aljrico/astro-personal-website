@@ -17,7 +17,7 @@ At the stage Apple is at with the iPhone, the most impactful thing it can do is 
 
 C1 is another one of those moments. To the shock of nobody, one of the most crucial parts of a phone is the modem: the little machine that keeps you connected. Consumers overlook it for one reason. Almost everyone in the market, Apple included, has been using the exact same modems, the ones Qualcomm makes. With nothing to compare against, everyone took current modem performance for granted.
 
-That's only natural when you know Qualcomm has held an iron grip on phone modems for decades, charging astronomical prices and imposing ruthless deals that only worked because phone makers had no alternative. It enjoyed a position similar to the one Intel had in PCs a couple of decades ago. What happened to Intel? AMD and Nvidia happened. And eventually the M chips happened. C1 is what's now happening to Qualcomm.
+That's only natural when you know Qualcomm has held an iron grip on phone modems for decades, charging astronomical prices and imposing ruthless deals that only worked because phone makers had no alternative. It enjoyed a position similar to the one Intel had in PCs a couple of decades ago. What happened to Intel? AMD happened, on TSMC's factories. And eventually the M chips happened. C1 is what's now happening to Qualcomm.
 
 Many engineers said this might be near impossible to build. Radio-frequency engineering is a nightmare of a field: tons of weird edge cases, interference issues and nearly unpredictable physics. Most of the technology we take for granted is built on decades of tribal knowledge that Qualcomm was gatekeeping.
 

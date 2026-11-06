@@ -11,11 +11,13 @@ Knowledge work is extremely hard to quantify and measure, even though it's the m
 
 Encouraging intangible work is obviously much easier said than done. Let me be honest for a moment: the vast majority of middle managers couldn't set genuinely SMART goals if their lives depended on it, and few companies have processes that make it easier. How companies work internally is often hard to see from the outside, beyond leaks and rumours. So it's very hard to tell which companies are good at measuring the productivity or impact of knowledge work.
 
-But it's actually very easy to spot the companies that are terrible at it. Just look for this behaviour: **they desperately push return-to-office policies.**
+But there's one signal I've learned to watch for: **how leadership talks when it pushes everyone back to the office.**
 
-You can see it in headlines, official announcements and public comments from leadership. They despise remote work and accuse workers of "slacking off" when they're allowed to work on their own terms. They think everyone will be more productive if they all sit in the same office at the same time. You can tell they think of the office as a factory.
+Some companies explain it in terms of the work. These teams build hardware together, these teams onboard juniors better in person. Fair enough. Others despise remote work and accuse workers of "slacking off" the moment they're out of sight. They think everyone will be more productive if they all sit in the same room at the same time. You can tell they think of the office as a factory.
 
-Whenever I see that, I see a company with a bad working culture, a poor hiring strategy and no real understanding of how to measure knowledge work.
+The second kind worries me. It tells me leadership can't tell good work from bad without watching people do it. That's a company that doesn't know how to measure knowledge work, and it's guessing.
+
+It's a signal, not a verdict. Plenty of companies with blanket mandates are doing fine, and a great business can carry a mediocre culture for years. But when I'm weighing two companies, it counts.
 
 ## Telling teams apart
 

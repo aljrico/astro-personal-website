@@ -42,7 +42,7 @@ It's easy to get blinded by a big green number and ignore the risk behind it. If
 
 ## Losing less is a head start
 
-In March 2020 the market had its worst crash since 2008. A portfolio that falls less in a crash also has less to climb back, so it gets back to its high sooner and starts compounding again before everyone else. That was my experience: I was hedged across sectors going into it, my portfolio fell a bit less than the S&P 500, and it recovered noticeably faster. A small gap on the way down becomes a head start on the way up. And the way compounding works, those head starts add up.
+In March 2020 the market had its worst crash since 2008. A portfolio that falls less in a crash also has less to climb back, so it gets back to its high sooner and starts compounding again before everyone else. That was my experience: I was diversified across sectors going into it, my portfolio fell a bit less than the S&P 500, and it recovered noticeably faster. A small gap on the way down becomes a head start on the way up. And the way compounding works, those head starts add up.
 
 Everyone seems focused on finding the next big thing. The next Amazon, the next Tesla. Hardly anyone thinks about risk management. That ends up costing them money.
 
